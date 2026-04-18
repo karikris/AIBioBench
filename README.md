@@ -1,4 +1,4 @@
-# AIBioBench-
+# AIBioBench
 A lightweight benchmark suite for comparing local Ollama AI models on data analytics and bioinformatics challenges.
 
 AIBioBench is designed to run structured benchmarks using task and schema files in this repository, with model definitions configured in `ollama-bench.py`. The goal is to make local model testing reproducible, easy to extend, and useful for comparing model performance on realistic technical tasks.
