@@ -1,0 +1,42 @@
+{
+  "benchmark_id": "plant_photosynthesis_snowflake_v1",
+  "version": "1.0.0",
+  "dataset_file": "shared_dataset.json",
+  "cases_file": "benchmark_cases.jsonl",
+  "gold_file": "gold_answers.jsonl",
+  "results_template_file": "results_template.jsonl",
+  "schemas": {
+    "case": "benchmark_case.schema.json",
+    "gold": "gold_answer.schema.json",
+    "result": "run_result.schema.json"
+  },
+  "standard_instructions_file": "standard_instructions.json",
+  "case_count": 40,
+  "passes": {
+    "1": {
+      "language": "sql",
+      "difficulty": "easy",
+      "count": 8
+    },
+    "2": {
+      "language": "sql",
+      "difficulty": "medium",
+      "count": 8
+    },
+    "3": {
+      "language": "sql",
+      "difficulty": "hard",
+      "count": 8
+    },
+    "4": {
+      "language": "python",
+      "difficulty": "extra_hard",
+      "count": 8
+    },
+    "5": {
+      "language": "python",
+      "difficulty": "extreme_hard",
+      "count": 8
+    }
+  }
+}

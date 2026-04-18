@@ -1,0 +1,248 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://example.org/schemas/benchmark_case.schema.json",
+  "title": "BenchmarkCase",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "benchmark_id",
+    "dataset_id",
+    "case_id",
+    "pass",
+    "query",
+    "difficulty",
+    "language",
+    "prompt",
+    "standard_instructions_id",
+    "expected_result_id",
+    "scoring",
+    "metadata"
+  ],
+  "properties": {
+    "benchmark_id": {
+      "type": "string",
+      "minLength": 1
+    },
+    "dataset_id": {
+      "type": "string",
+      "minLength": 1
+    },
+    "case_id": {
+      "type": "string",
+      "pattern": "^pass[1-5]\\.query[1-8]$"
+    },
+    "pass": {
+      "type": "integer",
+      "minimum": 1,
+      "maximum": 5
+    },
+    "query": {
+      "type": "integer",
+      "minimum": 1,
+      "maximum": 8
+    },
+    "difficulty": {
+      "type": "string",
+      "enum": [
+        "easy",
+        "medium",
+        "hard",
+        "extra_hard",
+        "extreme_hard"
+      ]
+    },
+    "language": {
+      "type": "string",
+      "enum": [
+        "sql",
+        "python"
+      ]
+    },
+    "prompt": {
+      "type": "string",
+      "minLength": 1
+    },
+    "standard_instructions_id": {
+      "type": "string",
+      "enum": [
+        "sql_v1",
+        "python_v1"
+      ]
+    },
+    "expected_result_id": {
+      "type": "string",
+      "pattern": "^pass[1-5]\\.query[1-8]$"
+    },
+    "scoring": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "method",
+        "max_score",
+        "row_order_matters",
+        "column_order_matters"
+      ],
+      "properties": {
+        "method": {
+          "type": "string",
+          "enum": [
+            "exact_ordered_table"
+          ]
+        },
+        "max_score": {
+          "type": "number",
+          "const": 1.0
+        },
+        "row_order_matters": {
+          "type": "boolean"
+        },
+        "column_order_matters": {
+          "type": "boolean"
+        }
+      }
+    },
+    "metadata": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "tags"
+      ],
+      "properties": {
+        "tags": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "uniqueItems": true
+        }
+      }
+    }
+  },
+  "allOf": [
+    {
+      "if": {
+        "properties": {
+          "pass": {
+            "enum": [
+              1,
+              2,
+              3
+            ]
+          }
+        }
+      },
+      "then": {
+        "properties": {
+          "language": {
+            "const": "sql"
+          },
+          "standard_instructions_id": {
+            "const": "sql_v1"
+          }
+        }
+      }
+    },
+    {
+      "if": {
+        "properties": {
+          "pass": {
+            "enum": [
+              4,
+              5
+            ]
+          }
+        }
+      },
+      "then": {
+        "properties": {
+          "language": {
+            "const": "python"
+          },
+          "standard_instructions_id": {
+            "const": "python_v1"
+          }
+        }
+      }
+    },
+    {
+      "if": {
+        "properties": {
+          "pass": {
+            "const": 1
+          }
+        }
+      },
+      "then": {
+        "properties": {
+          "difficulty": {
+            "const": "easy"
+          }
+        }
+      }
+    },
+    {
+      "if": {
+        "properties": {
+          "pass": {
+            "const": 2
+          }
+        }
+      },
+      "then": {
+        "properties": {
+          "difficulty": {
+            "const": "medium"
+          }
+        }
+      }
+    },
+    {
+      "if": {
+        "properties": {
+          "pass": {
+            "const": 3
+          }
+        }
+      },
+      "then": {
+        "properties": {
+          "difficulty": {
+            "const": "hard"
+          }
+        }
+      }
+    },
+    {
+      "if": {
+        "properties": {
+          "pass": {
+            "const": 4
+          }
+        }
+      },
+      "then": {
+        "properties": {
+          "difficulty": {
+            "const": "extra_hard"
+          }
+        }
+      }
+    },
+    {
+      "if": {
+        "properties": {
+          "pass": {
+            "const": 5
+          }
+        }
+      },
+      "then": {
+        "properties": {
+          "difficulty": {
+            "const": "extreme_hard"
+          }
+        }
+      }
+    }
+  ]
+}

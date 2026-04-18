@@ -1,0 +1,53 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://example.org/schemas/gold_answer.schema.json",
+  "title": "GoldAnswer",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "benchmark_id",
+    "case_id",
+    "columns",
+    "rows",
+    "row_order_matters",
+    "column_order_matters"
+  ],
+  "properties": {
+    "benchmark_id": {
+      "type": "string",
+      "minLength": 1
+    },
+    "case_id": {
+      "type": "string",
+      "pattern": "^pass[1-5]\\.query[1-8]$"
+    },
+    "columns": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "type": "string"
+      }
+    },
+    "rows": {
+      "type": "array",
+      "items": {
+        "type": "array",
+        "items": {
+          "type": [
+            "string",
+            "number",
+            "integer",
+            "boolean",
+            "null"
+          ]
+        }
+      }
+    },
+    "row_order_matters": {
+      "type": "boolean"
+    },
+    "column_order_matters": {
+      "type": "boolean"
+    }
+  }
+}

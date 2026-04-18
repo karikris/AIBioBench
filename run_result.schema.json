@@ -1,0 +1,98 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://example.org/schemas/run_result.schema.json",
+  "title": "RunResult",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "benchmark_id",
+    "run_id",
+    "case_id",
+    "model_name",
+    "status",
+    "answer_text",
+    "parsed_columns",
+    "parsed_rows",
+    "score",
+    "max_score",
+    "error"
+  ],
+  "properties": {
+    "benchmark_id": {
+      "type": "string",
+      "minLength": 1
+    },
+    "run_id": {
+      "type": "string",
+      "minLength": 1
+    },
+    "case_id": {
+      "type": "string",
+      "pattern": "^pass[1-5]\\.query[1-8]$"
+    },
+    "model_name": {
+      "type": "string",
+      "minLength": 1
+    },
+    "status": {
+      "type": "string",
+      "enum": [
+        "pending",
+        "ok",
+        "error",
+        "skipped"
+      ]
+    },
+    "answer_text": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "parsed_columns": {
+      "type": [
+        "array",
+        "null"
+      ],
+      "items": {
+        "type": "string"
+      }
+    },
+    "parsed_rows": {
+      "type": [
+        "array",
+        "null"
+      ],
+      "items": {
+        "type": "array",
+        "items": {
+          "type": [
+            "string",
+            "number",
+            "integer",
+            "boolean",
+            "null"
+          ]
+        }
+      }
+    },
+    "score": {
+      "type": [
+        "number",
+        "null"
+      ],
+      "minimum": 0,
+      "maximum": 1
+    },
+    "max_score": {
+      "type": "number",
+      "const": 1.0
+    },
+    "error": {
+      "type": [
+        "string",
+        "null"
+      ]
+    }
+  }
+}
