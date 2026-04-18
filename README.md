@@ -19,7 +19,7 @@ AIBioBench is designed to run structured benchmarks using task and schema files 
   - `shared_dataset.json`
   - `standard_instructions.json`
   - `benchmark_manifest.json`
-- Model configuration and execution logic in `ollama-bench.py`
+- Model configuration and execution logic in `aibiobench.py`
 
 ## Goal
 
@@ -30,7 +30,7 @@ To evaluate local AI models on practical tasks at the intersection of:
 
 ## Acknowledgements
 
-This project was developed with appreciation for the **Plant Energy and Biotechnology Lab at Monash University** and **Dr Ermakova**, Group Leader and Senior Lecturer, whose research environment helped inspire this work.
+This project was developed with appreciation for the **Plant Energy and Biotechnology Lab at Monash University** and **Dr Ermakova**, Group Leader / Senior Lecturer, whose research environment inspired this work.
 
 ## Contributing
 
