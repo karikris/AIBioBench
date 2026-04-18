@@ -1,0 +1,6 @@
+sample_id,plant_line_id,tissue,condition,batch,expr_ndhb,expr_pgr5,expr_ndhk
+S1,Line_A,mature_leaf,high_light,B1,1200,800,150
+S2,Line_B,mature_leaf,control,B1,300,500,90
+S3,Line_C,young_leaf,drought,B2,900,700,110
+S4,Line_D,young_leaf,control,B2,100,400,50
+S5,Line_E,root,high_light,B3,20,30,5
