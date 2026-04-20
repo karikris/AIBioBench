@@ -1,4 +1,3 @@
-
 #!/usr/bin/env python3
 import argparse
 import csv
@@ -7,13 +6,13 @@ import math
 import os
 import re
 import signal
+import statistics
 import subprocess
 import sys
 import threading
 import time
-import urllib.error
 import urllib.request
-from collections import Counter
+from collections import Counter, defaultdict
 from datetime import datetime, timezone
 from pathlib import Path
 from typing import Any, Dict, Iterable, List, Optional, Tuple
@@ -60,14 +59,11 @@ OUTPUT_TABLE_SCHEMA: Dict[str, Any] = {
             "type": "array",
             "items": {
                 "type": "array",
-                "items": {
-                    "type": ["string", "number", "integer", "boolean", "null"]
-                },
+                "items": {"type": ["string", "number", "integer", "boolean", "null"]},
             },
         },
     },
 }
-
 OUTPUT_TABLE_VALIDATOR = Draft202012Validator(OUTPUT_TABLE_SCHEMA)
 
 
@@ -113,6 +109,16 @@ def canonicalize_scalar(value: Any) -> Any:
 
 def canonicalize_row(row: Iterable[Any]) -> Tuple[Any, ...]:
     return tuple(canonicalize_scalar(v) for v in row)
+
+
+def scalar_for_json(value: Any) -> Any:
+    if isinstance(value, float) and (math.isnan(value) or math.isinf(value)):
+        return None
+    return value
+
+
+def json_safe(row: Dict[str, Any]) -> Dict[str, Any]:
+    return {k: scalar_for_json(v) for k, v in row.items()}
 
 
 def parse_json_response(text: str) -> Tuple[Optional[dict], Optional[str]]:
@@ -314,14 +320,16 @@ class ResourceSampler(threading.Thread):
                 self.gpu_names = names
             if not utils:
                 return {}
+            valid_power = [x for x in power if not math.isnan(x)]
+            valid_temp = [x for x in temp if not math.isnan(x)]
             return {
                 "gpu_util_avg_pct": sum(utils) / len(utils),
                 "gpu_util_max_pct": max(utils),
                 "gpu_mem_used_mib": sum(mem_used),
                 "gpu_mem_total_mib": sum(mem_total),
                 "gpu_mem_util_pct": 100.0 * safe_div(sum(mem_used), sum(mem_total)),
-                "gpu_power_draw_w": None if all(math.isnan(x) for x in power) else sum(x for x in power if not math.isnan(x)),
-                "gpu_temp_avg_c": None if all(math.isnan(x) for x in temp) else sum(x for x in temp if not math.isnan(x)) / len([x for x in temp if not math.isnan(x)]),
+                "gpu_power_draw_w": None if not valid_power else sum(valid_power),
+                "gpu_temp_avg_c": None if not valid_temp else sum(valid_temp) / len(valid_temp),
             }
         except Exception:
             return {}
@@ -422,13 +430,13 @@ def build_chat_payload(model: str, prompt: str, schema: dict, options: dict, kee
     }
 
 
-def call_nonstream(path: str, payload: dict, model: str, case_id: str) -> dict:
+def call_nonstream(path: str, payload: dict, model: str, case_attempt_id: str) -> dict:
     url = BASE + path
     data = json.dumps(payload).encode("utf-8")
     req = urllib.request.Request(url, data=data, headers={"Content-Type": "application/json"}, method="POST")
 
     t0 = time.perf_counter()
-    hb = Heartbeat(model=model, case_id=case_id, endpoint_name=path, started_at=t0)
+    hb = Heartbeat(model=model, case_id=case_attempt_id, endpoint_name=path, started_at=t0)
     sampler = ResourceSampler()
     hb.start()
     sampler.start()
@@ -447,12 +455,12 @@ def call_nonstream(path: str, payload: dict, model: str, case_id: str) -> dict:
         sampler.join(timeout=1)
 
 
-def invoke_nonstream(path: str, model: str, prompt: str, schema: dict, case_id: str, options: dict, keep_alive: str) -> dict:
+def invoke_nonstream(path: str, model: str, prompt: str, schema: dict, case_attempt_id: str, options: dict, keep_alive: str) -> dict:
     if path == "/generate":
         payload = build_generate_payload(model, prompt, schema, options, keep_alive)
     else:
         payload = build_chat_payload(model, prompt, schema, options, keep_alive)
-    return call_nonstream(path, payload, model, case_id)
+    return call_nonstream(path, payload, model, case_attempt_id)
 
 
 def derive_memory_speed_metrics(row: dict) -> None:
@@ -476,13 +484,6 @@ def derive_memory_speed_metrics(row: dict) -> None:
         row["memory_speed_hint"] = "mixed_gpu_host"
     else:
         row["memory_speed_hint"] = "mostly_host_offloaded"
-
-
-def scalar_for_json(value: Any) -> Any:
-    if isinstance(value, float):
-        if math.isnan(value) or math.isinf(value):
-            return None
-    return value
 
 
 def make_csv_text(table_name: str, table: dict) -> str:
@@ -511,8 +512,7 @@ def build_case_prompt(case: dict, dataset: dict, instruction_lookup: Dict[str, d
         f"{inst}\n\n"
         "For this automated benchmark run, do NOT output SQL or Python code.\n"
         "Return ONLY the final result table as JSON matching the required schema.\n"
-        "The JSON must be:\n"
-        '{"columns": [...], "rows": [[...], ...]}\n'
+        'The JSON must be: {"columns": [...], "rows": [[...], ...]}\n'
         "Use JSON null for NULL values.\n"
         "Preserve exact column order and row order requested by the task.\n"
         "Do not include markdown. Do not include commentary.\n\n"
@@ -577,6 +577,7 @@ def load_benchmark(manifest_path: Path, validate: bool = True) -> dict:
     instructions = load_json(base_dir / manifest["standard_instructions_file"])
     cases = load_jsonl(base_dir / manifest["cases_file"])
     gold = load_jsonl(base_dir / manifest["gold_file"])
+    results_template = load_jsonl(base_dir / manifest["results_template_file"]) if manifest.get("results_template_file") else []
 
     if validate:
         validate_records(cases, case_schema, base_dir / manifest["cases_file"])
@@ -584,6 +585,9 @@ def load_benchmark(manifest_path: Path, validate: bool = True) -> dict:
 
     instruction_lookup = {x["standard_instructions_id"]: x for x in instructions["instructions"]}
     gold_lookup = {x["case_id"]: x for x in gold}
+    template_lookup: Dict[Tuple[str, int], dict] = {}
+    for rec in results_template:
+        template_lookup[(rec["case_id"], int(rec["attempt_index"]))] = rec
 
     case_ids = {c["case_id"] for c in cases}
     gold_ids = set(gold_lookup)
@@ -600,6 +604,7 @@ def load_benchmark(manifest_path: Path, validate: bool = True) -> dict:
         "gold": gold,
         "instruction_lookup": instruction_lookup,
         "gold_lookup": gold_lookup,
+        "template_lookup": template_lookup,
         "case_schema": case_schema,
         "gold_schema": gold_schema,
         "result_schema": result_schema,
@@ -615,19 +620,59 @@ def multiset_diff_counts(gold_rows: List[List[Any]], pred_rows: List[List[Any]])
     return sum(missing.values()), sum(extra.values())
 
 
+def canonicalize_table(columns: List[str], rows: List[List[Any]]) -> Tuple[List[str], List[List[Any]]]:
+    return [canonicalize_scalar(x) for x in columns], [list(canonicalize_row(r)) for r in rows]
+
+
+def compare_numeric(gold_value: Any, pred_value: Any, tol: float) -> bool:
+    gv = canonicalize_scalar(gold_value)
+    pv = canonicalize_scalar(pred_value)
+    if gv is None and pv is None:
+        return True
+    try:
+        return abs(float(gv) - float(pv)) <= tol
+    except Exception:
+        return gv == pv
+
+
+def build_row_dicts(columns: List[str], rows: List[List[Any]]) -> List[Dict[str, Any]]:
+    out = []
+    for row in rows:
+        d = {}
+        for i, col in enumerate(columns):
+            d[col] = canonicalize_scalar(row[i]) if i < len(row) else None
+        out.append(d)
+    return out
+
+
+def with_occurrence_keys(row_dicts: List[Dict[str, Any]], identity_cols: List[str]) -> List[Tuple[Tuple[Any, ...], int, Dict[str, Any]]]:
+    seen: Dict[Tuple[Any, ...], int] = defaultdict(int)
+    out = []
+    for row in row_dicts:
+        identity = tuple(row.get(col) for col in identity_cols)
+        seen[identity] += 1
+        out.append((identity, seen[identity], row))
+    return out
+
+
 def score_exact_ordered_table(case: dict, gold: dict, pred_columns: List[str], pred_rows: List[List[Any]]) -> Dict[str, Any]:
-    gold_columns = gold["columns"]
-    gold_rows = gold["rows"]
+    gold_columns, gold_rows = gold["columns"], gold["rows"]
     row_order_matters = case["scoring"].get("row_order_matters", True)
     column_order_matters = case["scoring"].get("column_order_matters", True)
 
-    gold_columns_norm = [canonicalize_scalar(x) for x in gold_columns]
-    pred_columns_norm = [canonicalize_scalar(x) for x in pred_columns]
-    pred_rows_norm = [list(canonicalize_row(r)) for r in pred_rows]
-    gold_rows_norm = [list(canonicalize_row(r)) for r in gold_rows]
+    gold_columns_norm, gold_rows_norm = canonicalize_table(gold_columns, gold_rows)
+    pred_columns_norm, pred_rows_norm = canonicalize_table(pred_columns, pred_rows)
 
-    column_exact_match = pred_columns_norm == gold_columns_norm if column_order_matters else sorted(pred_columns_norm) == sorted(gold_columns_norm)
-    row_exact_match = pred_rows_norm == gold_rows_norm if row_order_matters else Counter(map(tuple, pred_rows_norm)) == Counter(map(tuple, gold_rows_norm))
+    column_exact_match = (
+        pred_columns_norm == gold_columns_norm
+        if column_order_matters
+        else sorted(pred_columns_norm) == sorted(gold_columns_norm)
+    )
+    row_exact_match = (
+        pred_rows_norm == gold_rows_norm
+        if row_order_matters
+        else Counter(map(tuple, pred_rows_norm)) == Counter(map(tuple, gold_rows_norm))
+    )
     exact_match = column_exact_match and row_exact_match
 
     max_rows = max(len(gold_rows_norm), len(pred_rows_norm))
@@ -656,6 +701,9 @@ def score_exact_ordered_table(case: dict, gold: dict, pred_columns: List[str], p
     return {
         "score": float(case["scoring"].get("max_score", 1.0) if exact_match else 0.0),
         "max_score": float(case["scoring"].get("max_score", 1.0)),
+        "row_set_correctness_score": 1.0 if row_exact_match else 0.0,
+        "numeric_correctness_score": 1.0 if row_exact_match else 0.0,
+        "sort_order_correctness_score": 1.0 if row_exact_match else 0.0,
         "exact_match": exact_match,
         "column_exact_match": column_exact_match,
         "row_exact_match": row_exact_match,
@@ -675,8 +723,182 @@ def score_exact_ordered_table(case: dict, gold: dict, pred_columns: List[str], p
     }
 
 
+def score_row_numeric_sort_split(case: dict, gold: dict, pred_columns: List[str], pred_rows: List[List[Any]]) -> Dict[str, Any]:
+    gold_columns = gold["columns"]
+    gold_rows = gold["rows"]
+    scoring_cfg = case["scoring"]
+    weights = scoring_cfg["split_weights"]
+    tol = float(scoring_cfg.get("numeric_tolerance_abs", 0.0))
+    identity_cols = list(scoring_cfg["row_identity_columns"])
+    numeric_cols = list(scoring_cfg.get("numeric_columns", []))
+
+    gold_columns_norm, gold_rows_norm = canonicalize_table(gold_columns, gold_rows)
+    pred_columns_norm, pred_rows_norm = canonicalize_table(pred_columns, pred_rows)
+
+    row_order_matters = scoring_cfg.get("row_order_matters", True)
+    column_order_matters = scoring_cfg.get("column_order_matters", True)
+
+    column_exact_match = (
+        pred_columns_norm == gold_columns_norm
+        if column_order_matters
+        else sorted(pred_columns_norm) == sorted(gold_columns_norm)
+    )
+    row_exact_match = (
+        pred_rows_norm == gold_rows_norm
+        if row_order_matters
+        else Counter(map(tuple, pred_rows_norm)) == Counter(map(tuple, gold_rows_norm))
+    )
+    exact_match = column_exact_match and row_exact_match
+
+    gold_row_dicts = build_row_dicts(gold_columns_norm, gold_rows_norm)
+    pred_row_dicts = build_row_dicts(pred_columns_norm, pred_rows_norm)
+    gold_eff = with_occurrence_keys(gold_row_dicts, identity_cols) if all(c in gold_columns_norm for c in identity_cols) else []
+    pred_eff = with_occurrence_keys(pred_row_dicts, identity_cols) if all(c in pred_columns_norm for c in identity_cols) else []
+
+    gold_eff_keys = [(ident, occ) for ident, occ, _ in gold_eff]
+    pred_eff_keys = [(ident, occ) for ident, occ, _ in pred_eff]
+
+    gold_counter = Counter(gold_eff_keys)
+    pred_counter = Counter(pred_eff_keys)
+    matched_counter = gold_counter & pred_counter
+    matched_row_count = sum(matched_counter.values())
+    row_set_den = max(len(gold_eff_keys), len(pred_eff_keys), 1)
+    row_set_correctness_score = safe_div(matched_row_count, row_set_den)
+
+    pred_eff_map = {(ident, occ): row for ident, occ, row in pred_eff}
+    numeric_total = max(len(gold_eff_keys) * max(len(numeric_cols), 1), 1)
+    numeric_matches = 0
+
+    if not numeric_cols:
+        numeric_correctness_score = 1.0
+    else:
+        for ident, occ, gold_row in gold_eff:
+            pred_row = pred_eff_map.get((ident, occ))
+            for col in numeric_cols:
+                if pred_row is not None and col in gold_row and col in pred_row and compare_numeric(gold_row.get(col), pred_row.get(col), tol):
+                    numeric_matches += 1
+        numeric_correctness_score = safe_div(numeric_matches, len(gold_eff_keys) * len(numeric_cols))
+
+    sort_den = max(len(gold_eff_keys), len(pred_eff_keys), 1)
+    sort_pos_matches = 0
+    for i in range(min(len(gold_eff_keys), len(pred_eff_keys))):
+        if gold_eff_keys[i] == pred_eff_keys[i]:
+            sort_pos_matches += 1
+    sort_order_correctness_score = safe_div(sort_pos_matches, sort_den)
+
+    max_rows = max(len(gold_rows_norm), len(pred_rows_norm))
+    max_cols = max(len(gold_columns_norm), len(pred_columns_norm))
+    aligned_total_cells = max_rows * max_cols
+    aligned_cell_matches = 0
+    sentinel = object()
+    for i in range(max_rows):
+        for j in range(max_cols):
+            gv = sentinel
+            pv = sentinel
+            if i < len(gold_rows_norm) and j < len(gold_rows_norm[i]):
+                gv = gold_rows_norm[i][j]
+            if i < len(pred_rows_norm) and j < len(pred_rows_norm[i]):
+                pv = pred_rows_norm[i][j]
+            if gv == pv:
+                aligned_cell_matches += 1
+
+    row_position_matches = 0
+    for i in range(min(len(gold_rows_norm), len(pred_rows_norm))):
+        if pred_rows_norm[i] == gold_rows_norm[i]:
+            row_position_matches += 1
+
+    missing_rows_count, extra_rows_count = multiset_diff_counts(gold_rows_norm, pred_rows_norm)
+
+    total_score = (
+        weights["row_set_correctness"] * row_set_correctness_score
+        + weights["numeric_correctness"] * numeric_correctness_score
+        + weights["sort_order_correctness"] * sort_order_correctness_score
+    )
+
+    return {
+        "score": total_score,
+        "max_score": float(scoring_cfg.get("max_score", 1.0)),
+        "row_set_correctness_score": row_set_correctness_score,
+        "numeric_correctness_score": numeric_correctness_score,
+        "sort_order_correctness_score": sort_order_correctness_score,
+        "exact_match": exact_match,
+        "column_exact_match": column_exact_match,
+        "row_exact_match": row_exact_match,
+        "gold_column_count": len(gold_columns_norm),
+        "pred_column_count": len(pred_columns_norm),
+        "gold_row_count": len(gold_rows_norm),
+        "pred_row_count": len(pred_rows_norm),
+        "row_count_match": len(pred_rows_norm) == len(gold_rows_norm),
+        "column_count_match": len(pred_columns_norm) == len(gold_columns_norm),
+        "row_position_matches": row_position_matches,
+        "row_position_accuracy": safe_div(row_position_matches, max(len(gold_rows_norm), len(pred_rows_norm), 1)),
+        "aligned_cell_matches": aligned_cell_matches,
+        "aligned_total_cells": aligned_total_cells,
+        "aligned_cell_accuracy": safe_div(aligned_cell_matches, max(aligned_total_cells, 1)),
+        "missing_rows_count": missing_rows_count,
+        "extra_rows_count": extra_rows_count,
+        "matched_row_count_by_identity": matched_row_count,
+        "numeric_cell_matches": numeric_matches,
+        "numeric_cell_total": len(gold_eff_keys) * len(numeric_cols) if numeric_cols else 0,
+    }
+
+
+def score_case(case: dict, gold: dict, pred_columns: List[str], pred_rows: List[List[Any]]) -> Dict[str, Any]:
+    method = case["scoring"]["method"]
+    if method == "row_numeric_sort_split_v1":
+        return score_row_numeric_sort_split(case, gold, pred_columns, pred_rows)
+    if method == "exact_ordered_table":
+        return score_exact_ordered_table(case, gold, pred_columns, pred_rows)
+    raise ValueError(f"Unsupported scoring method: {method}")
+
+
+def audience_band(value: int) -> str:
+    if value >= 5:
+        return "critical"
+    if value >= 4:
+        return "high"
+    if value >= 3:
+        return "medium"
+    return "low"
+
+
+def estimate_cost_usd(prompt_tokens: int, completion_tokens: int, prompt_cost_per_1m: float, completion_cost_per_1m: float) -> float:
+    return (
+        safe_div(prompt_tokens, 1_000_000.0) * prompt_cost_per_1m
+        + safe_div(completion_tokens, 1_000_000.0) * completion_cost_per_1m
+    )
+
+
+def infer_repairability(case: dict, score_row: dict, manifest: dict) -> Tuple[bool, Optional[str]]:
+    if score_row.get("exact_match"):
+        return False, None
+
+    repair_class = case["metadata"].get("repairability_class")
+    row_score = float(score_row.get("row_set_correctness_score", 0.0) or 0.0)
+    num_score = float(score_row.get("numeric_correctness_score", 0.0) or 0.0)
+    sort_score = float(score_row.get("sort_order_correctness_score", 0.0) or 0.0)
+    total_score = float(score_row.get("score", 0.0) or 0.0)
+
+    if repair_class == "human_repairable":
+        example_note = None
+        for ex in manifest.get("repairable_near_miss_examples", []):
+            if ex.get("case_id") == case["case_id"]:
+                example_note = ex.get("why_salvageable")
+                break
+
+        likely = (
+            (row_score >= 0.99 and num_score >= 0.99 and sort_score < 1.0)
+            or (row_score >= 0.80 and num_score >= 0.80 and total_score >= 0.80)
+        )
+        if likely:
+            note = example_note or "Human review can likely salvage this near-miss without recomputing the full analysis."
+            return True, note
+    return False, None
+
+
 def run_case(
     model: str,
+    provider: str,
     case: dict,
     gold: dict,
     dataset: dict,
@@ -684,13 +906,19 @@ def run_case(
     options: dict,
     keep_alive: str,
     cold_start: bool,
+    attempt_index: int,
+    repeat_group_id: str,
+    repeat_count_planned: int,
+    manifest: dict,
+    prompt_cost_per_1m: float,
+    completion_cost_per_1m: float,
 ) -> dict:
     case_id = case["case_id"]
     answer_columns = gold["columns"]
     prompt = build_case_prompt(case, dataset, instruction_lookup, answer_columns)
 
     if cold_start:
-        log(f"{model} {case_id}: cold start requested; stopping loaded copy first")
+        log(f"{model} {case_id} attempt={attempt_index}: cold start requested; stopping loaded copy first")
         stop_model(model)
 
     primary_path = "/generate"
@@ -700,13 +928,15 @@ def run_case(
     output_validation_error = ""
     status = "ok"
     error = None
+    parsed = None
 
     prompt_chars = len(prompt)
     prompt_bytes = len(prompt.encode("utf-8"))
 
     try:
-        log(f"{model} {case_id}: starting primary request via {primary_path}")
-        primary = invoke_nonstream(primary_path, model, prompt, OUTPUT_TABLE_SCHEMA, case_id, options, keep_alive)
+        case_attempt_id = f"{case_id}.attempt{attempt_index}"
+        log(f"{model} {case_id} attempt={attempt_index}: starting primary request via {primary_path}")
+        primary = invoke_nonstream(primary_path, model, prompt, OUTPUT_TABLE_SCHEMA, case_attempt_id, options, keep_alive)
         parsed, parse_error = parse_json_response(primary["answer_text"])
         result = primary
 
@@ -719,8 +949,8 @@ def run_case(
                 parsed = None
 
         if parsed is None:
-            log(f"{model} {case_id}: primary {primary_path} invalid; retrying via {fallback_path}")
-            fallback = invoke_nonstream(fallback_path, model, prompt, OUTPUT_TABLE_SCHEMA, case_id + "_fallback_chat", options, keep_alive)
+            log(f"{model} {case_id} attempt={attempt_index}: primary invalid; retrying via {fallback_path}")
+            fallback = invoke_nonstream(fallback_path, model, prompt, OUTPUT_TABLE_SCHEMA, case_attempt_id + ".fallback_chat", options, keep_alive)
             fallback_parsed, fallback_err = parse_json_response(fallback["answer_text"])
             fallback_validation_error = ""
             if fallback_parsed is not None:
@@ -752,12 +982,15 @@ def run_case(
         if parsed is not None:
             pred_columns = parsed.get("columns", [])
             pred_rows = parsed.get("rows", [])
-            scoring = score_exact_ordered_table(case, gold, pred_columns, pred_rows)
+            scoring = score_case(case, gold, pred_columns, pred_rows)
         else:
             pred_columns = []
             pred_rows = []
-            scoring = score_exact_ordered_table(case, gold, pred_columns, pred_rows)
+            scoring = score_case(case, gold, pred_columns, pred_rows)
             scoring["score"] = 0.0
+            scoring["row_set_correctness_score"] = 0.0
+            scoring["numeric_correctness_score"] = 0.0
+            scoring["sort_order_correctness_score"] = 0.0
 
     except Exception as e:
         status = "error"
@@ -780,14 +1013,31 @@ def run_case(
         }
         pred_columns = []
         pred_rows = []
-        scoring = score_exact_ordered_table(case, gold, pred_columns, pred_rows)
+        scoring = score_case(case, gold, pred_columns, pred_rows)
         scoring["score"] = 0.0
+        scoring["row_set_correctness_score"] = 0.0
+        scoring["numeric_correctness_score"] = 0.0
+        scoring["sort_order_correctness_score"] = 0.0
         parse_error = error
 
     ps = get_ps_model(model) or {}
     ps_loaded_gib = bytes_to_gib(ps.get("size", 0) or 0)
     ps_vram_gib = bytes_to_gib(ps.get("size_vram", 0) or 0)
 
+    prompt_tokens = int(result.get("server_prompt_eval_count", 0) or 0)
+    completion_tokens = int(result.get("server_eval_count", 0) or 0)
+    total_tokens = prompt_tokens + completion_tokens
+    estimated_cost = estimate_cost_usd(prompt_tokens, completion_tokens, prompt_cost_per_1m, completion_cost_per_1m)
+
+    repairable_near_miss, repair_notes = infer_repairability(case, scoring, manifest)
+    if scoring.get("exact_match"):
+        failure_families = []
+        primary_failure_family = None
+    else:
+        failure_families = list(case["metadata"].get("failure_families", []))
+        primary_failure_family = case["metadata"].get("failure_family_primary")
+
+    audience = case["metadata"].get("audience_relevance", {})
     row = {
         "benchmark_id": case["benchmark_id"],
         "dataset_id": case["dataset_id"],
@@ -797,6 +1047,10 @@ def run_case(
         "difficulty": case["difficulty"],
         "language": case["language"],
         "model": model,
+        "provider": provider,
+        "attempt_index": attempt_index,
+        "repeat_group_id": repeat_group_id,
+        "repeat_count_planned": repeat_count_planned,
         "status": status,
         "cold_start": cold_start,
         "endpoint_used": result["endpoint_used"],
@@ -804,6 +1058,9 @@ def run_case(
         "valid_json": parsed is not None if status == "ok" else False,
         "score": scoring["score"],
         "max_score": scoring["max_score"],
+        "row_set_correctness_score": scoring.get("row_set_correctness_score"),
+        "numeric_correctness_score": scoring.get("numeric_correctness_score"),
+        "sort_order_correctness_score": scoring.get("sort_order_correctness_score"),
         "exact_match": scoring["exact_match"],
         "column_exact_match": scoring["column_exact_match"],
         "row_exact_match": scoring["row_exact_match"],
@@ -825,10 +1082,10 @@ def run_case(
         "server_load_s": result["server_load_s"],
         "server_prompt_eval_s": result["server_prompt_eval_s"],
         "server_eval_s": result["server_eval_s"],
-        "server_prompt_eval_count": result["server_prompt_eval_count"],
-        "server_eval_count": result["server_eval_count"],
-        "server_prompt_tps": safe_div(result["server_prompt_eval_count"], result["server_prompt_eval_s"]),
-        "server_gen_tps": safe_div(result["server_eval_count"], result["server_eval_s"]),
+        "server_prompt_eval_count": prompt_tokens,
+        "server_eval_count": completion_tokens,
+        "server_prompt_tps": safe_div(prompt_tokens, result["server_prompt_eval_s"]),
+        "server_gen_tps": safe_div(completion_tokens, result["server_eval_s"]),
         "server_overhead_s": result["server_overhead_s"],
         "server_unaccounted_s": result["server_unaccounted_s"],
         "done_reason": result["done_reason"],
@@ -848,6 +1105,25 @@ def run_case(
         "ps_loaded_gib": ps_loaded_gib,
         "ps_vram_gib": ps_vram_gib,
         "ps_expires_at": ps.get("expires_at", ""),
+        "prompt_tokens": prompt_tokens,
+        "completion_tokens": completion_tokens,
+        "total_tokens": total_tokens,
+        "estimated_cost_usd": estimated_cost,
+        "cost_per_correct_answer_usd": estimated_cost,
+        "repairable_near_miss": repairable_near_miss,
+        "repair_notes": repair_notes or "",
+        "failure_family_primary_case": case["metadata"].get("failure_family_primary"),
+        "failure_families_case_json": json.dumps(case["metadata"].get("failure_families", []), ensure_ascii=False),
+        "result_failure_families_json": json.dumps(failure_families, ensure_ascii=False),
+        "result_primary_failure_family": primary_failure_family or "",
+        "repairability_class": case["metadata"].get("repairability_class", ""),
+        "tags_json": json.dumps(case["metadata"].get("tags", []), ensure_ascii=False),
+        "procurement_relevance": audience.get("procurement"),
+        "research_relevance": audience.get("research"),
+        "model_selection_relevance": audience.get("model_selection"),
+        "procurement_score_band": audience_band(int(audience.get("procurement", 1))),
+        "research_score_band": audience_band(int(audience.get("research", 1))),
+        "model_selection_score_band": audience_band(int(audience.get("model_selection", 1))),
         "parsed_columns_json": json.dumps(pred_columns, ensure_ascii=False),
         "parsed_rows_json": json.dumps(pred_rows, ensure_ascii=False),
         "gold_columns_json": json.dumps(gold["columns"], ensure_ascii=False),
@@ -862,50 +1138,69 @@ def run_case(
     derive_memory_speed_metrics(row)
 
     log(
-        f"{model} {case_id}: status={row['status']} valid_json={row['valid_json']} "
-        f"score={row['score']:.1f}/{row['max_score']:.1f} exact={row['exact_match']} "
-        f"endpoint={row['endpoint_used']} fallback={row['fallback_used']}"
+        f"{model} {case_id} attempt={attempt_index}: status={row['status']} valid_json={row['valid_json']} "
+        f"score={row['score']:.3f}/{row['max_score']:.1f} exact={row['exact_match']} "
+        f"row={row['row_set_correctness_score']:.3f} num={row['numeric_correctness_score']:.3f} "
+        f"sort={row['sort_order_correctness_score']:.3f}"
     )
     log(
-        f"{model} {case_id}: client_wall_s={row['client_wall_s']:.2f} server_total_s={row['server_total_s']:.2f} "
-        f"load_s={row['server_load_s']:.2f} prompt_eval_s={row['server_prompt_eval_s']:.2f} eval_s={row['server_eval_s']:.2f}"
+        f"{model} {case_id} attempt={attempt_index}: wall={row['client_wall_s']:.2f}s total={row['server_total_s']:.2f}s "
+        f"load={row['server_load_s']:.2f}s prompt_eval={row['server_prompt_eval_s']:.2f}s eval={row['server_eval_s']:.2f}s "
+        f"prompt_toks={prompt_tokens} completion_toks={completion_tokens}"
     )
     log(
-        f"{model} {case_id}: prompt_tps={row['server_prompt_tps']:.2f} gen_tps={row['server_gen_tps']:.2f} "
+        f"{model} {case_id} attempt={attempt_index}: prompt_tps={row['server_prompt_tps']:.2f} gen_tps={row['server_gen_tps']:.2f} "
         f"gpu_share={100 * row['ps_vram_ratio']:.0f}% host_share={100 * row['ps_host_ratio_est']:.0f}% "
-        f"loaded_gib={row['ps_loaded_gib']:.2f} vram_gib={row['ps_vram_gib']:.2f}"
+        f"loaded_gib={row['ps_loaded_gib']:.2f} vram_gib={row['ps_vram_gib']:.2f} cost_usd={row['estimated_cost_usd']:.6f}"
     )
     if row.get("resource_samples", 0):
         log(
-            f"{model} {case_id}: sys_cpu_avg={row.get('system_cpu_avg', 0.0):.1f}% "
+            f"{model} {case_id} attempt={attempt_index}: sys_cpu_avg={row.get('system_cpu_avg', 0.0):.1f}% "
             f"ollama_cpu_avg={row.get('ollama_cpu_avg', 0.0):.1f}% "
             f"ollama_rss_avg_mib={row.get('ollama_rss_mib_avg', 0.0):.1f}"
         )
 
     if row["parse_error"]:
         response_sample = row["response_text"][:800].replace("\n", "\\n")
-        log(f"{model} {case_id}: parse_error={row['parse_error']}")
-        log(f"{model} {case_id}: raw_response_sample={response_sample!r}")
+        log(f"{model} {case_id} attempt={attempt_index}: parse_error={row['parse_error']}")
+        log(f"{model} {case_id} attempt={attempt_index}: raw_response_sample={response_sample!r}")
 
-    return row
+    return json_safe(row)
 
 
-def make_run_result_record(benchmark_id: str, run_id: str, case_id: str, model_name: str, row: dict) -> dict:
-    status = "ok" if row.get("exact_match") else ("error" if row.get("status") == "error" else "ok")
+def make_run_result_record(benchmark_id: str, run_id: str, row: dict) -> dict:
     rec = {
         "benchmark_id": benchmark_id,
         "run_id": run_id,
-        "case_id": case_id,
-        "model_name": model_name,
-        "status": status,
+        "case_id": row["case_id"],
+        "model_name": row["model"],
+        "provider": row["provider"],
+        "attempt_index": row["attempt_index"],
+        "repeat_group_id": row["repeat_group_id"],
+        "repeat_count_planned": row["repeat_count_planned"],
+        "status": "error" if row.get("status") == "error" else "ok",
         "answer_text": row.get("response_text") or None,
         "parsed_columns": json.loads(row.get("parsed_columns_json") or "null"),
         "parsed_rows": json.loads(row.get("parsed_rows_json") or "null"),
         "score": row.get("score"),
         "max_score": row.get("max_score"),
+        "row_set_correctness_score": row.get("row_set_correctness_score"),
+        "numeric_correctness_score": row.get("numeric_correctness_score"),
+        "sort_order_correctness_score": row.get("sort_order_correctness_score"),
+        "exact_match": row.get("exact_match"),
+        "failure_families": json.loads(row.get("result_failure_families_json") or "[]"),
+        "primary_failure_family": row.get("result_primary_failure_family") or None,
+        "repairable_near_miss": row.get("repairable_near_miss"),
+        "repair_notes": row.get("repair_notes") or None,
+        "prompt_tokens": row.get("prompt_tokens"),
+        "completion_tokens": row.get("completion_tokens"),
+        "total_tokens": row.get("total_tokens"),
+        "estimated_cost_usd": row.get("estimated_cost_usd"),
+        "cost_per_correct_answer_usd": row.get("cost_per_correct_answer_usd"),
+        "wall_s": row.get("client_wall_s"),
         "error": row.get("error") or row.get("parse_error") or None,
     }
-    return rec
+    return json_safe(rec)
 
 
 def aggregate_rows(rows: List[dict], group_keys: List[str]) -> List[dict]:
@@ -917,47 +1212,115 @@ def aggregate_rows(rows: List[dict], group_keys: List[str]) -> List[dict]:
     out = []
     for key, items in sorted(groups.items()):
         rec = {k: v for k, v in zip(group_keys, key)}
-        rec["cases"] = len(items)
-        rec["exact_matches"] = sum(1 for x in items if x.get("exact_match"))
-        rec["valid_json_cases"] = sum(1 for x in items if x.get("valid_json"))
-        rec["score"] = sum(float(x.get("score", 0.0) or 0.0) for x in items)
-        rec["max_score"] = sum(float(x.get("max_score", 0.0) or 0.0) for x in items)
-        rec["accuracy"] = safe_div(rec["score"], rec["max_score"])
-        rec["exact_match_rate"] = safe_div(rec["exact_matches"], rec["cases"])
-        rec["valid_json_rate"] = safe_div(rec["valid_json_cases"], rec["cases"])
-        rec["client_wall_s_total"] = sum(float(x.get("client_wall_s", 0.0) or 0.0) for x in items)
+        scores = [float(x.get("score", 0.0) or 0.0) for x in items]
+        row_scores = [float(x.get("row_set_correctness_score", 0.0) or 0.0) for x in items]
+        num_scores = [float(x.get("numeric_correctness_score", 0.0) or 0.0) for x in items]
+        sort_scores = [float(x.get("sort_order_correctness_score", 0.0) or 0.0) for x in items]
+        exacts = [bool(x.get("exact_match")) for x in items]
+
+        rec["attempts"] = len(items)
+        rec["exact_matches"] = sum(exacts)
+        rec["valid_json_attempts"] = sum(1 for x in items if x.get("valid_json"))
+        rec["score_total"] = sum(scores)
+        rec["max_score_total"] = sum(float(x.get("max_score", 0.0) or 0.0) for x in items)
+        rec["mean_score"] = safe_div(rec["score_total"], rec["attempts"])
+        rec["accuracy"] = safe_div(rec["score_total"], rec["max_score_total"])
+        rec["exact_match_rate"] = safe_div(rec["exact_matches"], rec["attempts"])
+        rec["valid_json_rate"] = safe_div(rec["valid_json_attempts"], rec["attempts"])
+        rec["row_set_correctness_mean"] = safe_div(sum(row_scores), rec["attempts"])
+        rec["numeric_correctness_mean"] = safe_div(sum(num_scores), rec["attempts"])
+        rec["sort_order_correctness_mean"] = safe_div(sum(sort_scores), rec["attempts"])
+        rec["estimated_cost_usd_total"] = sum(float(x.get("estimated_cost_usd", 0.0) or 0.0) for x in items)
+        rec["cost_per_correct_answer_usd"] = safe_div(rec["estimated_cost_usd_total"], max(rec["exact_matches"], 1))
+        rec["wall_s_total"] = sum(float(x.get("client_wall_s", 0.0) or 0.0) for x in items)
+        rec["wall_s_mean"] = safe_div(rec["wall_s_total"], rec["attempts"])
         rec["server_total_s_total"] = sum(float(x.get("server_total_s", 0.0) or 0.0) for x in items)
-        rec["server_eval_tokens_total"] = sum(int(x.get("server_eval_count", 0) or 0) for x in items)
-        rec["server_prompt_tokens_total"] = sum(int(x.get("server_prompt_eval_count", 0) or 0) for x in items)
-        rec["mean_gen_tps"] = safe_div(
-            sum(float(x.get("server_gen_tps", 0.0) or 0.0) for x in items),
-            len(items),
-        )
-        rec["mean_prompt_tps"] = safe_div(
-            sum(float(x.get("server_prompt_tps", 0.0) or 0.0) for x in items),
-            len(items),
-        )
-        rec["mean_ps_loaded_gib"] = safe_div(
-            sum(float(x.get("ps_loaded_gib", 0.0) or 0.0) for x in items),
-            len(items),
-        )
-        rec["mean_ps_vram_gib"] = safe_div(
-            sum(float(x.get("ps_vram_gib", 0.0) or 0.0) for x in items),
-            len(items),
-        )
-        rec["mean_system_cpu_avg"] = safe_div(
-            sum(float(x.get("system_cpu_avg", 0.0) or 0.0) for x in items),
-            len(items),
-        )
-        rec["mean_ollama_cpu_avg"] = safe_div(
-            sum(float(x.get("ollama_cpu_avg", 0.0) or 0.0) for x in items),
-            len(items),
-        )
-        rec["mean_gpu_util_pct_avg"] = safe_div(
-            sum(float(x.get("gpu_util_pct_avg", 0.0) or 0.0) for x in items),
-            len(items),
-        )
-        out.append(rec)
+        rec["prompt_tokens_total"] = sum(int(x.get("prompt_tokens", 0) or 0) for x in items)
+        rec["completion_tokens_total"] = sum(int(x.get("completion_tokens", 0) or 0) for x in items)
+        rec["total_tokens_total"] = sum(int(x.get("total_tokens", 0) or 0) for x in items)
+        rec["mean_gen_tps"] = safe_div(sum(float(x.get("server_gen_tps", 0.0) or 0.0) for x in items), rec["attempts"])
+        rec["mean_prompt_tps"] = safe_div(sum(float(x.get("server_prompt_tps", 0.0) or 0.0) for x in items), rec["attempts"])
+        rec["mean_ps_loaded_gib"] = safe_div(sum(float(x.get("ps_loaded_gib", 0.0) or 0.0) for x in items), rec["attempts"])
+        rec["mean_ps_vram_gib"] = safe_div(sum(float(x.get("ps_vram_gib", 0.0) or 0.0) for x in items), rec["attempts"])
+        rec["mean_system_cpu_avg"] = safe_div(sum(float(x.get("system_cpu_avg", 0.0) or 0.0) for x in items), rec["attempts"])
+        rec["mean_ollama_cpu_avg"] = safe_div(sum(float(x.get("ollama_cpu_avg", 0.0) or 0.0) for x in items), rec["attempts"])
+        rec["mean_gpu_util_pct_avg"] = safe_div(sum(float(x.get("gpu_util_pct_avg", 0.0) or 0.0) for x in items), rec["attempts"])
+        out.append(json_safe(rec))
+    return out
+
+
+def explode_failure_family_rows(rows: List[dict]) -> List[dict]:
+    out = []
+    for row in rows:
+        families = json.loads(row.get("failure_families_case_json") or "[]")
+        for family in families:
+            rec = dict(row)
+            rec["failure_family"] = family
+            out.append(rec)
+    return out
+
+
+def build_repeatability_summary(rows: List[dict]) -> List[dict]:
+    groups: Dict[Tuple[str, str], List[dict]] = defaultdict(list)
+    for row in rows:
+        groups[(str(row["model"]), str(row["case_id"]))].append(row)
+
+    out = []
+    for (model, case_id), items in sorted(groups.items()):
+        items = sorted(items, key=lambda x: int(x["attempt_index"]))
+        scores = [float(x.get("score", 0.0) or 0.0) for x in items]
+        exacts = [bool(x.get("exact_match")) for x in items]
+        mean_score = safe_div(sum(scores), len(scores))
+        stddev = statistics.pstdev(scores) if len(scores) > 1 else 0.0
+        exact_count = sum(exacts)
+        stable_failure = exact_count == 0
+        stable_success = exact_count == len(exacts)
+        prompt_sensitive_failure = 0 < exact_count < len(exacts)
+
+        first = items[0]
+        rec = {
+            "model": model,
+            "case_id": case_id,
+            "pass": first["pass"],
+            "difficulty": first["difficulty"],
+            "language": first["language"],
+            "attempts": len(items),
+            "attempt_exact_match_rate": safe_div(exact_count, len(exacts)),
+            "attempt_score_mean": mean_score,
+            "attempt_score_stddev": stddev,
+            "attempt_score_cv": safe_div(stddev, mean_score) if mean_score else 0.0,
+            "stable_failure": stable_failure,
+            "stable_success": stable_success,
+            "prompt_sensitive_failure": prompt_sensitive_failure,
+            "stable_failure_rate": 1.0 if stable_failure else 0.0,
+            "prompt_sensitive_failure_rate": 1.0 if prompt_sensitive_failure else 0.0,
+            "failure_family_primary_case": first.get("failure_family_primary_case"),
+            "failure_families_case_json": first.get("failure_families_case_json"),
+            "repairability_class": first.get("repairability_class"),
+            "estimated_cost_usd_total": sum(float(x.get("estimated_cost_usd", 0.0) or 0.0) for x in items),
+            "wall_s_total": sum(float(x.get("client_wall_s", 0.0) or 0.0) for x in items),
+        }
+        out.append(json_safe(rec))
+    return out
+
+
+def build_model_repeatability_summary(repeat_rows: List[dict]) -> List[dict]:
+    groups: Dict[str, List[dict]] = defaultdict(list)
+    for row in repeat_rows:
+        groups[str(row["model"])].append(row)
+    out = []
+    for model, items in sorted(groups.items()):
+        rec = {
+            "model": model,
+            "cases": len(items),
+            "attempt_exact_match_rate_mean": safe_div(sum(float(x["attempt_exact_match_rate"]) for x in items), len(items)),
+            "attempt_score_stddev_mean": safe_div(sum(float(x["attempt_score_stddev"]) for x in items), len(items)),
+            "attempt_score_cv_mean": safe_div(sum(float(x["attempt_score_cv"]) for x in items), len(items)),
+            "stable_failure_rate": safe_div(sum(1 for x in items if x["stable_failure"]), len(items)),
+            "prompt_sensitive_failure_rate": safe_div(sum(1 for x in items if x["prompt_sensitive_failure"]), len(items)),
+            "stable_success_rate": safe_div(sum(1 for x in items if x["stable_success"]), len(items)),
+        }
+        out.append(json_safe(rec))
     return out
 
 
@@ -965,15 +1328,14 @@ def print_summary_table(rows: List[dict]) -> None:
     cols = [
         ("model", 24),
         ("case_id", 14),
-        ("ok", 3),
+        ("att", 3),
+        ("exact", 5),
         ("score", 7),
+        ("row", 6),
+        ("num", 6),
+        ("sort", 6),
         ("gen_tps", 9),
-        ("gpu_share", 10),
-        ("host_share", 11),
-        ("loaded_gib", 11),
-        ("vram_gib", 10),
-        ("sys_cpu", 8),
-        ("ollama_cpu", 11),
+        ("cost", 10),
     ]
     header = " ".join(name.ljust(width) for name, width in cols)
     print("\n" + header)
@@ -982,15 +1344,14 @@ def print_summary_table(rows: List[dict]) -> None:
         vals = {
             "model": str(r["model"])[:24],
             "case_id": str(r["case_id"])[:14],
-            "ok": "Y" if r.get("exact_match") else "N",
-            "score": f"{r['score']:.1f}/{r['max_score']:.1f}",
+            "att": str(r["attempt_index"]),
+            "exact": "Y" if r.get("exact_match") else "N",
+            "score": f"{r['score']:.3f}",
+            "row": f"{r['row_set_correctness_score']:.2f}",
+            "num": f"{r['numeric_correctness_score']:.2f}",
+            "sort": f"{r['sort_order_correctness_score']:.2f}",
             "gen_tps": f"{r['server_gen_tps']:.2f}",
-            "gpu_share": f"{100 * r['ps_vram_ratio']:.0f}%",
-            "host_share": f"{100 * r['ps_host_ratio_est']:.0f}%",
-            "loaded_gib": f"{r['ps_loaded_gib']:.2f}",
-            "vram_gib": f"{r['ps_vram_gib']:.2f}",
-            "sys_cpu": f"{r.get('system_cpu_avg', 0.0):.1f}",
-            "ollama_cpu": f"{r.get('ollama_cpu_avg', 0.0):.1f}",
+            "cost": f"{r['estimated_cost_usd']:.4f}",
         }
         print(" ".join(vals[name].ljust(width) for name, width in cols))
 
@@ -999,14 +1360,14 @@ def print_model_summary(rows: List[dict]) -> None:
     agg = aggregate_rows(rows, ["model"])
     cols = [
         ("model", 24),
-        ("cases", 6),
-        ("exact", 6),
-        ("acc", 7),
-        ("json", 7),
+        ("atts", 6),
+        ("exact", 7),
+        ("mean", 7),
+        ("row", 7),
+        ("num", 7),
+        ("sort", 7),
+        ("cost/corr", 10),
         ("wall_s", 10),
-        ("gen_tps", 10),
-        ("gpu_gib", 10),
-        ("sys_cpu", 10),
     ]
     header = " ".join(name.ljust(width) for name, width in cols)
     print("\n" + header)
@@ -1014,19 +1375,22 @@ def print_model_summary(rows: List[dict]) -> None:
     for r in agg:
         vals = {
             "model": str(r["model"])[:24],
-            "cases": str(r["cases"]),
-            "exact": str(r["exact_matches"]),
-            "acc": f"{100*r['accuracy']:.1f}%",
-            "json": f"{100*r['valid_json_rate']:.1f}%",
-            "wall_s": f"{r['client_wall_s_total']:.1f}",
-            "gen_tps": f"{r['mean_gen_tps']:.2f}",
-            "gpu_gib": f"{r['mean_ps_vram_gib']:.2f}",
-            "sys_cpu": f"{r['mean_system_cpu_avg']:.1f}",
+            "atts": str(r["attempts"]),
+            "exact": f"{100*r['exact_match_rate']:.1f}%",
+            "mean": f"{100*r['mean_score']:.1f}%",
+            "row": f"{100*r['row_set_correctness_mean']:.1f}%",
+            "num": f"{100*r['numeric_correctness_mean']:.1f}%",
+            "sort": f"{100*r['sort_order_correctness_mean']:.1f}%",
+            "cost/corr": f"{r['cost_per_correct_answer_usd']:.4f}",
+            "wall_s": f"{r['wall_s_total']:.1f}",
         }
         print(" ".join(vals[name].ljust(width) for name, width in cols))
 
 
 def write_csv(path: Path, rows: List[dict]) -> None:
+    if not rows:
+        path.write_text("", encoding="utf-8")
+        return
     fieldnames = sorted({k for row in rows for k in row.keys()})
     with path.open("w", newline="", encoding="utf-8") as f:
         writer = csv.DictWriter(f, fieldnames=fieldnames)
@@ -1037,7 +1401,7 @@ def write_csv(path: Path, rows: List[dict]) -> None:
 def write_jsonl(path: Path, rows: List[dict]) -> None:
     with path.open("w", encoding="utf-8") as f:
         for row in rows:
-            f.write(json.dumps(row, ensure_ascii=False) + "\n")
+            f.write(json.dumps(json_safe(row), ensure_ascii=False) + "\n")
 
 
 def resolve_default_manifest() -> Path:
@@ -1045,8 +1409,11 @@ def resolve_default_manifest() -> Path:
     candidates = [
         script_dir / "benchmark_manifest.json",
         Path.cwd() / "benchmark_manifest.json",
+        script_dir / "AIBioBench_v2" / "benchmark_manifest.json",
+        Path.cwd() / "AIBioBench_v2" / "benchmark_manifest.json",
         script_dir / "plant_benchmark_jsonl" / "benchmark_manifest.json",
         Path.cwd() / "plant_benchmark_jsonl" / "benchmark_manifest.json",
+        Path("/mnt/data/AIBioBench_v2/benchmark_manifest.json"),
         Path("/mnt/data/plant_benchmark_jsonl/benchmark_manifest.json"),
     ]
     for path in candidates:
@@ -1054,26 +1421,32 @@ def resolve_default_manifest() -> Path:
             return path
     raise FileNotFoundError(
         "Could not find benchmark_manifest.json next to the script, in the current working directory, "
-        "or in a plant_benchmark_jsonl subdirectory. Use --manifest."
+        "or in supported subdirectories. Use --manifest."
     )
 
 
 def parse_args() -> argparse.Namespace:
-    p = argparse.ArgumentParser(description="Run AIBioBench Ollama benchmark cases from JSONL case/gold files.")
+    p = argparse.ArgumentParser(description="Run AIBioBench benchmark cases from JSONL case/gold files.")
     p.add_argument("--manifest", type=Path, default=resolve_default_manifest())
     p.add_argument("--output-dir", type=Path, default=None)
+    p.add_argument("--provider", default="ollama")
     p.add_argument("--models", nargs="*", default=DEFAULT_MODELS)
     p.add_argument("--passes", nargs="*", type=int, default=[1, 2, 3, 4, 5])
     p.add_argument("--languages", nargs="*", default=None)
     p.add_argument("--case-ids", nargs="*", default=None)
     p.add_argument("--limit", type=int, default=None)
+    p.add_argument("--repeats", type=int, default=None)
+    p.add_argument("--repeat-group-id", default="default_repeatability_v2")
     p.add_argument("--no-validate", action="store_true")
     p.add_argument("--keep-alive", default=KEEP_ALIVE)
     p.add_argument("--temperature", type=float, default=DEFAULT_OPTIONS["temperature"])
     p.add_argument("--top-p", type=float, default=DEFAULT_OPTIONS["top_p"])
     p.add_argument("--top-k", type=int, default=DEFAULT_OPTIONS["top_k"])
+    p.add_argument("--prompt-cost-per-1m", type=float, default=0.0)
+    p.add_argument("--completion-cost-per-1m", type=float, default=0.0)
     p.add_argument("--no-cold-first-case", action="store_false", dest="cold_first_case")
     p.add_argument("--no-stop-between-models", action="store_false", dest="stop_between_models")
+    p.add_argument("--dry-run", action="store_true")
     p.set_defaults(cold_first_case=True, stop_between_models=True)
     return p.parse_args()
 
@@ -1118,15 +1491,24 @@ def main() -> None:
     if not selected_cases:
         raise SystemExit("No benchmark cases selected.")
 
+    repeats = int(args.repeats or manifest.get("default_repeats_per_case", 1))
     run_started_at_utc = utc_now_iso()
     run_id = f"{manifest['benchmark_id']}__{datetime.now().strftime('%Y%m%d_%H%M%S')}"
     repo_root = args.manifest.resolve().parent
     output_dir = args.output_dir or (repo_root / "results" / run_id)
+
+    log(f"Manifest: {args.manifest}")
+    log(f"Benchmark: {manifest['benchmark_id']} v{manifest['version']}")
+    log(f"Selected cases: {len(selected_cases)} | Repeats per case: {repeats} | Models: {len(args.models)}")
+    if args.dry_run:
+        for case in selected_cases:
+            log(f"DRY RUN case={case['case_id']} pass={case['pass']} lang={case['language']} difficulty={case['difficulty']}")
+        return
+
     output_dir.mkdir(parents=True, exist_ok=True)
 
     version = api_json("GET", "/version").get("version", "unknown")
     log(f"Ollama version: {version}")
-    log(f"Benchmark: {manifest['benchmark_id']} v{manifest['version']} | selected_cases={len(selected_cases)} | models={len(args.models)}")
     log("Stopping any currently loaded models before benchmark...")
     stop_all_loaded()
 
@@ -1154,46 +1536,64 @@ def main() -> None:
             f"cfg_num_ctx={cfg_num_ctx or '-'}"
         )
 
-        for idx, case in enumerate(selected_cases):
+        first_attempt = True
+        for case in selected_cases:
             gold = gold_lookup[case["expected_result_id"]]
-            row = run_case(
-                model=model,
-                case=case,
-                gold=gold,
-                dataset=dataset,
-                instruction_lookup=instruction_lookup,
-                options=options,
-                keep_alive=args.keep_alive,
-                cold_start=bool(args.cold_first_case and idx == 0),
-            )
-            row["family"] = family
-            row["parameter_size"] = param_size
-            row["quantization"] = quant
-            row["cfg_num_ctx"] = cfg_num_ctx
-            row["ollama_version"] = version
-            row["run_id"] = run_id
-            row["run_started_at_utc"] = run_started_at_utc
-            all_rows.append(row)
+            for attempt_index in range(1, repeats + 1):
+                row = run_case(
+                    model=model,
+                    provider=args.provider,
+                    case=case,
+                    gold=gold,
+                    dataset=dataset,
+                    instruction_lookup=instruction_lookup,
+                    options=options,
+                    keep_alive=args.keep_alive,
+                    cold_start=bool(args.cold_first_case and first_attempt),
+                    attempt_index=attempt_index,
+                    repeat_group_id=args.repeat_group_id,
+                    repeat_count_planned=repeats,
+                    manifest=manifest,
+                    prompt_cost_per_1m=args.prompt_cost_per_1m,
+                    completion_cost_per_1m=args.completion_cost_per_1m,
+                )
+                first_attempt = False
+                row["family"] = family
+                row["parameter_size"] = param_size
+                row["quantization"] = quant
+                row["cfg_num_ctx"] = cfg_num_ctx
+                row["ollama_version"] = version
+                row["run_id"] = run_id
+                row["run_started_at_utc"] = run_started_at_utc
+                all_rows.append(json_safe(row))
 
-            result_rec = make_run_result_record(manifest["benchmark_id"], run_id, case["case_id"], model, row)
-            validate_single_record(result_rec, result_schema, f"result {model} {case['case_id']}")
-            result_rows.append(result_rec)
+                result_rec = make_run_result_record(manifest["benchmark_id"], run_id, row)
+                validate_single_record(result_rec, result_schema, f"result {model} {case['case_id']} attempt={attempt_index}")
+                result_rows.append(json_safe(result_rec))
 
         if args.stop_between_models:
             stop_model(model)
             log(f"{model}: selected cases complete; model stopped")
 
-    all_rows.sort(key=lambda r: (r["model"], r["pass"], r["query"]))
-    result_rows.sort(key=lambda r: (r["model_name"], r["case_id"]))
+    all_rows.sort(key=lambda r: (r["model"], r["case_id"], int(r["attempt_index"])))
+    result_rows.sort(key=lambda r: (r["model_name"], r["case_id"], int(r["attempt_index"])))
 
     print_model_summary(all_rows)
     print_summary_table(all_rows)
+
+    repeatability_rows = build_repeatability_summary(all_rows)
+    model_repeatability_rows = build_model_repeatability_summary(repeatability_rows)
 
     detailed_csv = output_dir / "detailed_results.csv"
     detailed_jsonl = output_dir / "detailed_results.jsonl"
     run_results_jsonl = output_dir / "run_results.jsonl"
     model_summary_csv = output_dir / "summary_by_model.csv"
     model_pass_summary_csv = output_dir / "summary_by_model_pass.csv"
+    failure_primary_summary_csv = output_dir / "summary_by_failure_family_primary.csv"
+    failure_exploded_summary_csv = output_dir / "summary_by_failure_family_exploded.csv"
+    model_failure_primary_summary_csv = output_dir / "summary_by_model_failure_family_primary.csv"
+    repeatability_csv = output_dir / "summary_repeatability_by_model_case.csv"
+    model_repeatability_csv = output_dir / "summary_repeatability_by_model.csv"
     run_meta_json = output_dir / "run_meta.json"
 
     write_csv(detailed_csv, all_rows)
@@ -1201,6 +1601,11 @@ def main() -> None:
     write_jsonl(run_results_jsonl, result_rows)
     write_csv(model_summary_csv, aggregate_rows(all_rows, ["model"]))
     write_csv(model_pass_summary_csv, aggregate_rows(all_rows, ["model", "pass", "language", "difficulty"]))
+    write_csv(failure_primary_summary_csv, aggregate_rows(all_rows, ["failure_family_primary_case"]))
+    write_csv(model_failure_primary_summary_csv, aggregate_rows(all_rows, ["model", "failure_family_primary_case"]))
+    write_csv(failure_exploded_summary_csv, aggregate_rows(explode_failure_family_rows(all_rows), ["failure_family"]))
+    write_csv(repeatability_csv, repeatability_rows)
+    write_csv(model_repeatability_csv, model_repeatability_rows)
 
     run_meta = {
         "run_id": run_id,
@@ -1208,15 +1613,21 @@ def main() -> None:
         "benchmark_version": manifest["version"],
         "manifest_path": str(args.manifest),
         "ollama_version": version,
+        "provider": args.provider,
         "models": args.models,
         "passes": args.passes,
+        "repeats": repeats,
         "case_count": len(selected_cases),
         "cases": [c["case_id"] for c in selected_cases],
         "options": options,
         "keep_alive": args.keep_alive,
+        "prompt_cost_per_1m": args.prompt_cost_per_1m,
+        "completion_cost_per_1m": args.completion_cost_per_1m,
         "run_started_at_utc": run_started_at_utc,
         "output_dir": str(output_dir),
         "repo_root": str(repo_root),
+        "reporting_views": manifest.get("reporting_views", {}),
+        "repairable_near_miss_examples": manifest.get("repairable_near_miss_examples", []),
     }
     run_meta_json.write_text(json.dumps(run_meta, indent=2), encoding="utf-8")
 
@@ -1225,6 +1636,10 @@ def main() -> None:
     log(f"Run results JSONL written to: {run_results_jsonl}")
     log(f"Model summary CSV written to: {model_summary_csv}")
     log(f"Model/pass summary CSV written to: {model_pass_summary_csv}")
+    log(f"Failure-family summary CSV written to: {failure_primary_summary_csv}")
+    log(f"Exploded failure-family summary CSV written to: {failure_exploded_summary_csv}")
+    log(f"Repeatability by model/case CSV written to: {repeatability_csv}")
+    log(f"Repeatability by model CSV written to: {model_repeatability_csv}")
     log(f"Run metadata JSON written to: {run_meta_json}")
 
 
