@@ -1,0 +1,6 @@
+gene_id,gene_symbol,pathway,gene_role
+G1,NDHB,chloroplast_NDH_complex,ndh_membrane_arm
+G2,NDHK,chloroplast_NDH_complex,ndh_membrane_arm
+G3,PGR5,cyclic_electron_flow,pgr_regulator
+G4,NDHT,chlororespiration,ndh_lumen_module
+G5,PGR1B,PSI_photoprotection,pgr_regulator

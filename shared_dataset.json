@@ -1,7 +1,34 @@
 {
-  "benchmark_id": "plant_photosynthesis_snowflake_v1",
-  "dataset_id": "plant_photosynthesis_snowflake_v1_dataset",
+  "benchmark_id": "AIBioBench_photosynthesis_snowflake_v2",
+  "dataset_id": "AIBioBench_photosynthesis_dataset_v2",
   "schema_text": "fact_calls -> sample_dim and fact_calls -> variant_dim -> gene_dim",
+  "schema_diagram": "fact_calls\n\u251c\u2500\u2500 sample_dim\n\u2514\u2500\u2500 variant_dim\n    \u2514\u2500\u2500 gene_dim",
+  "theme": "plant_photosynthesis",
+  "expression_mapping": {
+    "NDHB": "expr_ndhb",
+    "NDHK": "expr_ndhk",
+    "PGR5": "expr_pgr5"
+  },
+  "notes": {
+    "orphan_fact_sample_keys": [
+      "S999"
+    ],
+    "orphan_fact_variant_keys": [
+      "V999"
+    ],
+    "orphan_variant_gene_keys": [
+      "G999"
+    ],
+    "unused_samples": [
+      "S5"
+    ],
+    "unused_variants": [
+      "V6"
+    ],
+    "genes_without_variants": [
+      "G5"
+    ]
+  },
   "tables": {
     "fact_calls": {
       "columns": [

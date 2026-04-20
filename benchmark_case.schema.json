@@ -1,7 +1,7 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
-  "$id": "https://example.org/schemas/benchmark_case.schema.json",
-  "title": "BenchmarkCase",
+  "$id": "https://github.com/karikris/AIBioBench/schemas/benchmark_case.schema.json",
+  "title": "AIBioBenchBenchmarkCase",
   "type": "object",
   "additionalProperties": false,
   "required": [
@@ -29,7 +29,7 @@
     },
     "case_id": {
       "type": "string",
-      "pattern": "^pass[1-5]\\.query[1-8]$"
+      "pattern": "^pass[1-5]\\.query([1-9]|10)$"
     },
     "pass": {
       "type": "integer",
@@ -39,7 +39,7 @@
     "query": {
       "type": "integer",
       "minimum": 1,
-      "maximum": 8
+      "maximum": 10
     },
     "difficulty": {
       "type": "string",
@@ -65,13 +65,13 @@
     "standard_instructions_id": {
       "type": "string",
       "enum": [
-        "sql_v1",
-        "python_v1"
+        "sql_v2",
+        "python_v2"
       ]
     },
     "expected_result_id": {
       "type": "string",
-      "pattern": "^pass[1-5]\\.query[1-8]$"
+      "pattern": "^pass[1-5]\\.query([1-9]|10)$"
     },
     "scoring": {
       "type": "object",
@@ -80,14 +80,17 @@
         "method",
         "max_score",
         "row_order_matters",
-        "column_order_matters"
+        "column_order_matters",
+        "split_weights",
+        "numeric_columns",
+        "sort_key_columns",
+        "row_identity_columns",
+        "numeric_tolerance_abs"
       ],
       "properties": {
         "method": {
           "type": "string",
-          "enum": [
-            "exact_ordered_table"
-          ]
+          "const": "row_numeric_sort_split_v1"
         },
         "max_score": {
           "type": "number",
@@ -98,6 +101,59 @@
         },
         "column_order_matters": {
           "type": "boolean"
+        },
+        "split_weights": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "row_set_correctness",
+            "numeric_correctness",
+            "sort_order_correctness"
+          ],
+          "properties": {
+            "row_set_correctness": {
+              "type": "number",
+              "minimum": 0,
+              "maximum": 1
+            },
+            "numeric_correctness": {
+              "type": "number",
+              "minimum": 0,
+              "maximum": 1
+            },
+            "sort_order_correctness": {
+              "type": "number",
+              "minimum": 0,
+              "maximum": 1
+            }
+          }
+        },
+        "numeric_columns": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "uniqueItems": true
+        },
+        "sort_key_columns": {
+          "type": "array",
+          "minItems": 1,
+          "items": {
+            "type": "string"
+          },
+          "uniqueItems": true
+        },
+        "row_identity_columns": {
+          "type": "array",
+          "minItems": 1,
+          "items": {
+            "type": "string"
+          },
+          "uniqueItems": true
+        },
+        "numeric_tolerance_abs": {
+          "type": "number",
+          "minimum": 0
         }
       }
     },
@@ -105,7 +161,11 @@
       "type": "object",
       "additionalProperties": false,
       "required": [
-        "tags"
+        "tags",
+        "failure_family_primary",
+        "failure_families",
+        "audience_relevance",
+        "repairability_class"
       ],
       "properties": {
         "tags": {
@@ -114,6 +174,88 @@
             "type": "string"
           },
           "uniqueItems": true
+        },
+        "failure_family_primary": {
+          "type": "string",
+          "enum": [
+            "inner_join_accuracy",
+            "sorting_presentation",
+            "outer_join_coverage",
+            "snowflake_traversal",
+            "aggregation_numeric",
+            "decision_support",
+            "join_key_integrity",
+            "orphan_key_audit",
+            "ranking_and_priority",
+            "failure_family_audit",
+            "audit_reconciliation",
+            "expression_mapping",
+            "presentation_table",
+            "repairability_review",
+            "expression_transform",
+            "statistical_summary",
+            "repeatability_probe"
+          ]
+        },
+        "failure_families": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "enum": [
+              "inner_join_accuracy",
+              "sorting_presentation",
+              "outer_join_coverage",
+              "snowflake_traversal",
+              "aggregation_numeric",
+              "decision_support",
+              "join_key_integrity",
+              "orphan_key_audit",
+              "ranking_and_priority",
+              "failure_family_audit",
+              "audit_reconciliation",
+              "expression_mapping",
+              "presentation_table",
+              "repairability_review",
+              "expression_transform",
+              "statistical_summary",
+              "repeatability_probe"
+            ]
+          },
+          "minItems": 1,
+          "uniqueItems": true
+        },
+        "audience_relevance": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "procurement",
+            "research",
+            "model_selection"
+          ],
+          "properties": {
+            "procurement": {
+              "type": "integer",
+              "minimum": 1,
+              "maximum": 5
+            },
+            "research": {
+              "type": "integer",
+              "minimum": 1,
+              "maximum": 5
+            },
+            "model_selection": {
+              "type": "integer",
+              "minimum": 1,
+              "maximum": 5
+            }
+          }
+        },
+        "repairability_class": {
+          "type": "string",
+          "enum": [
+            "strict",
+            "human_repairable"
+          ]
         }
       }
     }
@@ -137,7 +279,7 @@
             "const": "sql"
           },
           "standard_instructions_id": {
-            "const": "sql_v1"
+            "const": "sql_v2"
           }
         }
       }
@@ -159,7 +301,7 @@
             "const": "python"
           },
           "standard_instructions_id": {
-            "const": "python_v1"
+            "const": "python_v2"
           }
         }
       }

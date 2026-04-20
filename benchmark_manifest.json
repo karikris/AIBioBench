@@ -1,6 +1,7 @@
 {
-  "benchmark_id": "plant_photosynthesis_snowflake_v1",
-  "version": "1.0.0",
+  "benchmark_id": "AIBioBench_photosynthesis_snowflake_v2",
+  "version": "2.0.0",
+  "repo": "github.com/karikris/AIBioBench",
   "dataset_file": "shared_dataset.json",
   "cases_file": "benchmark_cases.jsonl",
   "gold_file": "gold_answers.jsonl",
@@ -11,32 +12,90 @@
     "result": "run_result.schema.json"
   },
   "standard_instructions_file": "standard_instructions.json",
-  "case_count": 40,
+  "case_count": 50,
+  "default_repeats_per_case": 3,
   "passes": {
     "1": {
       "language": "sql",
       "difficulty": "easy",
-      "count": 8
+      "count": 10
     },
     "2": {
       "language": "sql",
       "difficulty": "medium",
-      "count": 8
+      "count": 10
     },
     "3": {
       "language": "sql",
       "difficulty": "hard",
-      "count": 8
+      "count": 10
     },
     "4": {
       "language": "python",
       "difficulty": "extra_hard",
-      "count": 8
+      "count": 10
     },
     "5": {
       "language": "python",
       "difficulty": "extreme_hard",
-      "count": 8
+      "count": 10
     }
+  },
+  "scoring_method": "row_numeric_sort_split_v1",
+  "reporting_views": {
+    "group_by": [
+      "model_name",
+      "pass",
+      "difficulty",
+      "language",
+      "failure_family_primary",
+      "failure_families",
+      "procurement_score_band",
+      "research_score_band",
+      "model_selection_score_band"
+    ],
+    "summary_metrics": [
+      "exact_match_rate",
+      "mean_score",
+      "row_set_correctness_mean",
+      "numeric_correctness_mean",
+      "sort_order_correctness_mean",
+      "estimated_cost_usd_total",
+      "cost_per_correct_answer_usd",
+      "wall_s_mean"
+    ],
+    "repeatability_metrics": [
+      "attempt_exact_match_rate",
+      "attempt_score_stddev",
+      "attempt_score_cv",
+      "stable_failure_rate",
+      "prompt_sensitive_failure_rate"
+    ]
+  },
+  "repairable_near_miss_examples": [
+    {
+      "case_id": "pass2.query9",
+      "example_pattern": "Correct row-set and numerics but rows sorted by pathway before condition.",
+      "why_salvageable": "A human reviewer can re-sort the final table without recomputing joins.",
+      "salvage_class": "human_repairable"
+    },
+    {
+      "case_id": "pass4.query10",
+      "example_pattern": "Correct join_status values but one repairable_by_human flag omitted.",
+      "why_salvageable": "A reviewer can inspect the orphan pattern and recover the intended decision.",
+      "salvage_class": "human_repairable"
+    }
+  ],
+  "cost_tracking": {
+    "required_result_fields": [
+      "estimated_cost_usd",
+      "cost_per_correct_answer_usd"
+    ],
+    "definition": "cost_per_correct_answer_usd = total_estimated_cost_usd / max(number_of_correct_answers, 1)"
+  },
+  "runner_notes": {
+    "repeatability": "Run each case at least three times per model to distinguish stable failures from prompt-sensitive failures.",
+    "failure_family_reporting": "Aggregate by failure_family_primary and failure_families, not only by case_id.",
+    "compatibility": "Designed for the flat-root GitHub AIBioBench layout."
   }
 }

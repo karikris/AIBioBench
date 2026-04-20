@@ -1,7 +1,7 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
-  "$id": "https://example.org/schemas/run_result.schema.json",
-  "title": "RunResult",
+  "$id": "https://github.com/karikris/AIBioBench/schemas/run_result.schema.json",
+  "title": "AIBioBenchRunResult",
   "type": "object",
   "additionalProperties": false,
   "required": [
@@ -9,12 +9,30 @@
     "run_id",
     "case_id",
     "model_name",
+    "provider",
+    "attempt_index",
+    "repeat_group_id",
+    "repeat_count_planned",
     "status",
     "answer_text",
     "parsed_columns",
     "parsed_rows",
     "score",
     "max_score",
+    "row_set_correctness_score",
+    "numeric_correctness_score",
+    "sort_order_correctness_score",
+    "exact_match",
+    "failure_families",
+    "primary_failure_family",
+    "repairable_near_miss",
+    "repair_notes",
+    "prompt_tokens",
+    "completion_tokens",
+    "total_tokens",
+    "estimated_cost_usd",
+    "cost_per_correct_answer_usd",
+    "wall_s",
     "error"
   ],
   "properties": {
@@ -28,11 +46,27 @@
     },
     "case_id": {
       "type": "string",
-      "pattern": "^pass[1-5]\\.query[1-8]$"
+      "pattern": "^pass[1-5]\\.query([1-9]|10)$"
     },
     "model_name": {
       "type": "string",
       "minLength": 1
+    },
+    "provider": {
+      "type": "string",
+      "minLength": 1
+    },
+    "attempt_index": {
+      "type": "integer",
+      "minimum": 1
+    },
+    "repeat_group_id": {
+      "type": "string",
+      "minLength": 1
+    },
+    "repeat_count_planned": {
+      "type": "integer",
+      "minimum": 1
     },
     "status": {
       "type": "string",
@@ -87,6 +121,102 @@
     "max_score": {
       "type": "number",
       "const": 1.0
+    },
+    "row_set_correctness_score": {
+      "type": [
+        "number",
+        "null"
+      ],
+      "minimum": 0,
+      "maximum": 1
+    },
+    "numeric_correctness_score": {
+      "type": [
+        "number",
+        "null"
+      ],
+      "minimum": 0,
+      "maximum": 1
+    },
+    "sort_order_correctness_score": {
+      "type": [
+        "number",
+        "null"
+      ],
+      "minimum": 0,
+      "maximum": 1
+    },
+    "exact_match": {
+      "type": [
+        "boolean",
+        "null"
+      ]
+    },
+    "failure_families": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "primary_failure_family": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "repairable_near_miss": {
+      "type": [
+        "boolean",
+        "null"
+      ]
+    },
+    "repair_notes": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "prompt_tokens": {
+      "type": [
+        "integer",
+        "null"
+      ],
+      "minimum": 0
+    },
+    "completion_tokens": {
+      "type": [
+        "integer",
+        "null"
+      ],
+      "minimum": 0
+    },
+    "total_tokens": {
+      "type": [
+        "integer",
+        "null"
+      ],
+      "minimum": 0
+    },
+    "estimated_cost_usd": {
+      "type": [
+        "number",
+        "null"
+      ],
+      "minimum": 0
+    },
+    "cost_per_correct_answer_usd": {
+      "type": [
+        "number",
+        "null"
+      ],
+      "minimum": 0
+    },
+    "wall_s": {
+      "type": [
+        "number",
+        "null"
+      ],
+      "minimum": 0
     },
     "error": {
       "type": [
