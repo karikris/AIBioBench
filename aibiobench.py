@@ -23,15 +23,19 @@ from jsonschema import Draft202012Validator
 BASE = "http://127.0.0.1:11434/api"
 
 DEFAULT_MODELS = [
-    "qwen36-64:latest",
-    "qwen36-256:latest",
-    "phi4-mini-128:latest",
-    "gemma4-26b-256:latest",
-    "gemma4-26b-64:latest",
-    "gemma4-31b-256:latest",
-    "gemma4-31b-64:latest",
-    "qwen3-coder-30b-256:latest",
-    "qwen3-coder-30b-64:latest",
+    "mixtral-8x22b-sqlbench:latest",
+    "gemma4-26b-sqlbench:latest",
+    "phi4-mini-sqlbench:latest",
+    "qwen2.5-72b-sqlbench:latest",
+    "codellama-70b-sqlbench:latest",
+    "llama3-70b-sqlbench:latest",
+    "dbrx-sqlbench:latest",
+    "deepseek-coder-33b-sqlbench:latest",
+    "gemma4-31b-sqlbench:latest",
+    "qwen2.5-coder-32b-sqlbench:latest",
+    "qwen3-coder-30b-sqlbench:latest",
+    "qwen3.6-sqlbench:latest",
+    "command-r-plus-sqlbench:latest",
 ]
 
 DEFAULT_OPTIONS = {
@@ -1425,12 +1429,21 @@ def resolve_default_manifest() -> Path:
     )
 
 
+def resolve_default_models(args_models: Optional[List[str]], manifest: dict) -> List[str]:
+    if args_models is not None:
+        return args_models
+    manifest_models = manifest.get("default_models")
+    if isinstance(manifest_models, list) and manifest_models:
+        return [str(model) for model in manifest_models]
+    return list(DEFAULT_MODELS)
+
+
 def parse_args() -> argparse.Namespace:
     p = argparse.ArgumentParser(description="Run AIBioBench benchmark cases from JSONL case/gold files.")
     p.add_argument("--manifest", type=Path, default=resolve_default_manifest())
     p.add_argument("--output-dir", type=Path, default=None)
     p.add_argument("--provider", default="ollama")
-    p.add_argument("--models", nargs="*", default=DEFAULT_MODELS)
+    p.add_argument("--models", nargs="*", default=None)
     p.add_argument("--passes", nargs="*", type=int, default=[1, 2, 3, 4, 5])
     p.add_argument("--languages", nargs="*", default=None)
     p.add_argument("--case-ids", nargs="*", default=None)
@@ -1473,6 +1486,7 @@ def main() -> None:
     gold_lookup = bm["gold_lookup"]
     instruction_lookup = bm["instruction_lookup"]
     result_schema = bm["result_schema"]
+    models = resolve_default_models(args.models, manifest)
 
     selected_cases = []
     for case in cases:
@@ -1499,7 +1513,7 @@ def main() -> None:
 
     log(f"Manifest: {args.manifest}")
     log(f"Benchmark: {manifest['benchmark_id']} v{manifest['version']}")
-    log(f"Selected cases: {len(selected_cases)} | Repeats per case: {repeats} | Models: {len(args.models)}")
+    log(f"Selected cases: {len(selected_cases)} | Repeats per case: {repeats} | Models: {len(models)}")
     if args.dry_run:
         for case in selected_cases:
             log(f"DRY RUN case={case['case_id']} pass={case['pass']} lang={case['language']} difficulty={case['difficulty']}")
@@ -1515,7 +1529,7 @@ def main() -> None:
     all_rows: List[dict] = []
     result_rows: List[dict] = []
 
-    for model in args.models:
+    for model in models:
         log("=" * 96)
         log(f"Testing model: {model}")
         try:
@@ -1614,7 +1628,7 @@ def main() -> None:
         "manifest_path": str(args.manifest),
         "ollama_version": version,
         "provider": args.provider,
-        "models": args.models,
+        "models": models,
         "passes": args.passes,
         "repeats": repeats,
         "case_count": len(selected_cases),
