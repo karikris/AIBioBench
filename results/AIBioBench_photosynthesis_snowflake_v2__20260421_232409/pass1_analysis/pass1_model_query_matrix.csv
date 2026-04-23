@@ -1,0 +1,131 @@
+model,display_model,case_id,query,short_name,exact_attempts,exact_rate,mean_score,mean_aligned_cell_accuracy,dominant_failure_mode,stable_outcome
+codellama-70b-sqlbench:latest,CodeLlama 70B,pass1.query1,Q1,Sample inner join,0,0.0,0.625,0.475,row_count_mismatch,stable_fail
+codellama-70b-sqlbench:latest,CodeLlama 70B,pass1.query2,Q2,Variant join + qual sort,0,0.0,0.42500000000000004,0.225,row_count_mismatch,stable_fail
+codellama-70b-sqlbench:latest,CodeLlama 70B,pass1.query3,Q3,Sample left join,3,1.0,1.0,1.0,exact,stable_exact
+codellama-70b-sqlbench:latest,CodeLlama 70B,pass1.query4,Q4,Outer join aggregate,0,0.0,0.9299999999999999,0.85,same_count_wrong_values,stable_fail
+codellama-70b-sqlbench:latest,CodeLlama 70B,pass1.query5,Q5,Variant to gene chain,0,0.0,0.2380952380952381,0.5952380952380952,row_count_mismatch,stable_fail
+codellama-70b-sqlbench:latest,CodeLlama 70B,pass1.query6,Q6,Impact aggregate,0,0.0,0.6375,0.5,row_count_mismatch,stable_fail
+codellama-70b-sqlbench:latest,CodeLlama 70B,pass1.query7,Q7,Tissue qual aggregate,0,0.0,0.5,0.25,same_count_wrong_values,stable_fail
+codellama-70b-sqlbench:latest,CodeLlama 70B,pass1.query8,Q8,Condition expression aggregate,0,0.0,0.8,0.5555555555555556,same_count_wrong_values,stable_fail
+codellama-70b-sqlbench:latest,CodeLlama 70B,pass1.query9,Q9,Condition decision screen,0,0.0,0.7777777777777778,0.4444444444444445,same_count_wrong_values,stable_fail
+codellama-70b-sqlbench:latest,CodeLlama 70B,pass1.query10,Q10,Variant anomaly audit,0,0.0,0.3333333333333333,0.7037037037037037,same_count_wrong_values,stable_fail
+command-r-plus-sqlbench:latest,Command R+,pass1.query1,Q1,Sample inner join,0,0.0,0.9,0.7481481481481481,row_count_mismatch,stable_fail
+command-r-plus-sqlbench:latest,Command R+,pass1.query2,Q2,Variant join + qual sort,0,0.0,0.7888888888888889,0.35555555555555557,row_count_mismatch,stable_fail
+command-r-plus-sqlbench:latest,Command R+,pass1.query3,Q3,Sample left join,0,0.0,1.0,1.0,same_count_wrong_values,stable_fail
+command-r-plus-sqlbench:latest,Command R+,pass1.query4,Q4,Outer join aggregate,0,0.0,0.97,0.95,same_count_wrong_values,stable_fail
+command-r-plus-sqlbench:latest,Command R+,pass1.query5,Q5,Variant to gene chain,0,0.0,0.8571428571428572,0.8571428571428571,same_count_wrong_values,stable_fail
+command-r-plus-sqlbench:latest,Command R+,pass1.query6,Q6,Impact aggregate,0,0.0,0.7375,0.3333333333333333,same_count_wrong_values,stable_fail
+command-r-plus-sqlbench:latest,Command R+,pass1.query7,Q7,Tissue qual aggregate,0,0.0,0.41666666666666663,0.027777777777777776,row_count_mismatch,stable_fail
+command-r-plus-sqlbench:latest,Command R+,pass1.query8,Q8,Condition expression aggregate,0,0.0,0.8,0.5555555555555556,same_count_wrong_values,stable_fail
+command-r-plus-sqlbench:latest,Command R+,pass1.query9,Q9,Condition decision screen,0,0.0,0.8333333333333333,0.5833333333333334,same_count_wrong_values,stable_fail
+command-r-plus-sqlbench:latest,Command R+,pass1.query10,Q10,Variant anomaly audit,1,0.3333333333333333,1.0,0.9814814814814815,same_count_wrong_values,partial_exact
+dbrx-sqlbench:latest,DBRX,pass1.query1,Q1,Sample inner join,0,0.0,0.9,0.8074074074074075,row_count_mismatch,stable_fail
+dbrx-sqlbench:latest,DBRX,pass1.query2,Q2,Variant join + qual sort,0,0.0,0.7888888888888889,0.35555555555555557,row_count_mismatch,stable_fail
+dbrx-sqlbench:latest,DBRX,pass1.query3,Q3,Sample left join,1,0.3333333333333333,0.9555555555555556,0.762962962962963,same_count_wrong_values,partial_exact
+dbrx-sqlbench:latest,DBRX,pass1.query4,Q4,Outer join aggregate,0,0.0,0.7822222222222223,0.638888888888889,row_count_mismatch,stable_fail
+dbrx-sqlbench:latest,DBRX,pass1.query5,Q5,Variant to gene chain,0,0.0,0.6285714285714286,0.35714285714285715,same_count_wrong_values,stable_fail
+dbrx-sqlbench:latest,DBRX,pass1.query6,Q6,Impact aggregate,0,0.0,0.7875,0.5277777777777778,same_count_wrong_values,stable_fail
+dbrx-sqlbench:latest,DBRX,pass1.query7,Q7,Tissue qual aggregate,0,0.0,0.4611111111111111,0.08333333333333333,same_count_wrong_values,stable_fail
+dbrx-sqlbench:latest,DBRX,pass1.query8,Q8,Condition expression aggregate,0,0.0,0.455,0.21666666666666667,row_count_mismatch,stable_fail
+dbrx-sqlbench:latest,DBRX,pass1.query9,Q9,Condition decision screen,0,0.0,0.5916666666666667,0.3125,row_count_mismatch,stable_fail
+dbrx-sqlbench:latest,DBRX,pass1.query10,Q10,Variant anomaly audit,0,0.0,1.0,0.8333333333333334,same_count_wrong_values,stable_fail
+deepseek-coder-33b-sqlbench:latest,DeepSeek Coder 33B,pass1.query1,Q1,Sample inner join,0,0.0,0.9,0.7555555555555555,row_count_mismatch,stable_fail
+deepseek-coder-33b-sqlbench:latest,DeepSeek Coder 33B,pass1.query2,Q2,Variant join + qual sort,0,0.0,0.725462962962963,0.2648148148148148,row_count_mismatch,stable_fail
+deepseek-coder-33b-sqlbench:latest,DeepSeek Coder 33B,pass1.query3,Q3,Sample left join,0,0.0,1.0,0.9333333333333333,same_count_wrong_values,stable_fail
+deepseek-coder-33b-sqlbench:latest,DeepSeek Coder 33B,pass1.query4,Q4,Outer join aggregate,0,0.0,0.7933333333333334,0.7083333333333334,row_count_mismatch,stable_fail
+deepseek-coder-33b-sqlbench:latest,DeepSeek Coder 33B,pass1.query5,Q5,Variant to gene chain,0,0.0,0.8,0.4166666666666667,row_count_mismatch,stable_fail
+deepseek-coder-33b-sqlbench:latest,DeepSeek Coder 33B,pass1.query6,Q6,Impact aggregate,0,0.0,0.5375,0.08333333333333333,same_count_wrong_values,stable_fail
+deepseek-coder-33b-sqlbench:latest,DeepSeek Coder 33B,pass1.query7,Q7,Tissue qual aggregate,0,0.0,0.5166666666666666,0.25,row_count_mismatch,stable_fail
+deepseek-coder-33b-sqlbench:latest,DeepSeek Coder 33B,pass1.query8,Q8,Condition expression aggregate,0,0.0,0.75,0.4444444444444444,same_count_wrong_values,stable_fail
+deepseek-coder-33b-sqlbench:latest,DeepSeek Coder 33B,pass1.query9,Q9,Condition decision screen,0,0.0,0.7333333333333334,0.3333333333333333,same_count_wrong_values,stable_fail
+deepseek-coder-33b-sqlbench:latest,DeepSeek Coder 33B,pass1.query10,Q10,Variant anomaly audit,0,0.0,0.0,0.75,type_only,stable_fail
+gemma4-26b-sqlbench:latest,Gemma 4 26B,pass1.query1,Q1,Sample inner join,0,0.0,0.875,0.8583333333333333,row_count_mismatch,stable_fail
+gemma4-26b-sqlbench:latest,Gemma 4 26B,pass1.query2,Q2,Variant join + qual sort,0,0.0,0.8500000000000001,0.375,order_only,stable_fail
+gemma4-26b-sqlbench:latest,Gemma 4 26B,pass1.query3,Q3,Sample left join,3,1.0,1.0,1.0,exact,stable_exact
+gemma4-26b-sqlbench:latest,Gemma 4 26B,pass1.query4,Q4,Outer join aggregate,3,1.0,1.0,1.0,exact,stable_exact
+gemma4-26b-sqlbench:latest,Gemma 4 26B,pass1.query5,Q5,Variant to gene chain,0,0.0,0.8,0.5833333333333334,row_count_mismatch,stable_fail
+gemma4-26b-sqlbench:latest,Gemma 4 26B,pass1.query6,Q6,Impact aggregate,0,0.0,0.6000000000000001,0.4166666666666667,row_count_mismatch,stable_fail
+gemma4-26b-sqlbench:latest,Gemma 4 26B,pass1.query7,Q7,Tissue qual aggregate,0,0.0,0.4333333333333333,0.0,row_count_mismatch,stable_fail
+gemma4-26b-sqlbench:latest,Gemma 4 26B,pass1.query8,Q8,Condition expression aggregate,0,0.0,0.8,0.5555555555555556,same_count_wrong_values,stable_fail
+gemma4-26b-sqlbench:latest,Gemma 4 26B,pass1.query9,Q9,Condition decision screen,0,0.0,0.8666666666666667,0.6666666666666666,same_count_wrong_values,stable_fail
+gemma4-26b-sqlbench:latest,Gemma 4 26B,pass1.query10,Q10,Variant anomaly audit,3,1.0,1.0,1.0,exact,stable_exact
+gemma4-31b-sqlbench:latest,Gemma 4 31B,pass1.query1,Q1,Sample inner join,3,1.0,1.0,1.0,exact,stable_exact
+gemma4-31b-sqlbench:latest,Gemma 4 31B,pass1.query2,Q2,Variant join + qual sort,0,0.0,0.9500000000000001,0.8,order_only,stable_fail
+gemma4-31b-sqlbench:latest,Gemma 4 31B,pass1.query3,Q3,Sample left join,3,1.0,1.0,1.0,exact,stable_exact
+gemma4-31b-sqlbench:latest,Gemma 4 31B,pass1.query4,Q4,Outer join aggregate,2,0.6666666666666666,0.99,0.9833333333333333,exact,partial_exact
+gemma4-31b-sqlbench:latest,Gemma 4 31B,pass1.query5,Q5,Variant to gene chain,2,0.6666666666666666,0.9541666666666667,0.8854166666666666,exact,partial_exact
+gemma4-31b-sqlbench:latest,Gemma 4 31B,pass1.query6,Q6,Impact aggregate,0,0.0,0.925,0.8333333333333334,same_count_wrong_values,stable_fail
+gemma4-31b-sqlbench:latest,Gemma 4 31B,pass1.query7,Q7,Tissue qual aggregate,0,0.0,0.7,0.0,same_count_wrong_values,stable_fail
+gemma4-31b-sqlbench:latest,Gemma 4 31B,pass1.query8,Q8,Condition expression aggregate,0,0.0,0.8,0.5555555555555556,same_count_wrong_values,stable_fail
+gemma4-31b-sqlbench:latest,Gemma 4 31B,pass1.query9,Q9,Condition decision screen,0,0.0,0.9333333333333333,0.8333333333333334,same_count_wrong_values,stable_fail
+gemma4-31b-sqlbench:latest,Gemma 4 31B,pass1.query10,Q10,Variant anomaly audit,3,1.0,1.0,1.0,exact,stable_exact
+llama3-70b-sqlbench:latest,Llama 3 70B,pass1.query1,Q1,Sample inner join,0,0.0,0.9,0.7777777777777778,row_count_mismatch,stable_fail
+llama3-70b-sqlbench:latest,Llama 3 70B,pass1.query2,Q2,Variant join + qual sort,0,0.0,0.825925925925926,0.45925925925925926,row_count_mismatch,stable_fail
+llama3-70b-sqlbench:latest,Llama 3 70B,pass1.query3,Q3,Sample left join,0,0.0,0.9666666666666667,0.9037037037037037,same_count_wrong_values,stable_fail
+llama3-70b-sqlbench:latest,Llama 3 70B,pass1.query4,Q4,Outer join aggregate,0,0.0,0.7733333333333334,0.6805555555555556,row_count_mismatch,stable_fail
+llama3-70b-sqlbench:latest,Llama 3 70B,pass1.query5,Q5,Variant to gene chain,0,0.0,0.8,0.5833333333333334,row_count_mismatch,stable_fail
+llama3-70b-sqlbench:latest,Llama 3 70B,pass1.query6,Q6,Impact aggregate,0,0.0,0.8875,0.75,same_count_wrong_values,stable_fail
+llama3-70b-sqlbench:latest,Llama 3 70B,pass1.query7,Q7,Tissue qual aggregate,0,0.0,0.4333333333333333,0.0,row_count_mismatch,stable_fail
+llama3-70b-sqlbench:latest,Llama 3 70B,pass1.query8,Q8,Condition expression aggregate,0,0.0,0.65,0.4074074074074074,row_count_mismatch,stable_fail
+llama3-70b-sqlbench:latest,Llama 3 70B,pass1.query9,Q9,Condition decision screen,0,0.0,0.7666666666666666,0.4166666666666667,same_count_wrong_values,stable_fail
+llama3-70b-sqlbench:latest,Llama 3 70B,pass1.query10,Q10,Variant anomaly audit,3,1.0,1.0,1.0,exact,stable_exact
+mixtral-8x22b-sqlbench:latest,Mixtral 8x22B,pass1.query1,Q1,Sample inner join,0,0.0,0.8916666666666667,0.8416666666666667,row_count_mismatch,stable_fail
+mixtral-8x22b-sqlbench:latest,Mixtral 8x22B,pass1.query2,Q2,Variant join + qual sort,0,0.0,0.7166666666666667,0.19166666666666668,same_count_wrong_values,stable_fail
+mixtral-8x22b-sqlbench:latest,Mixtral 8x22B,pass1.query3,Q3,Sample left join,2,0.6666666666666666,1.0,0.9777777777777777,exact,partial_exact
+mixtral-8x22b-sqlbench:latest,Mixtral 8x22B,pass1.query4,Q4,Outer join aggregate,0,0.0,0.8033333333333335,0.7222222222222222,row_count_mismatch,stable_fail
+mixtral-8x22b-sqlbench:latest,Mixtral 8x22B,pass1.query5,Q5,Variant to gene chain,0,0.0,0.8,0.5833333333333334,row_count_mismatch,stable_fail
+mixtral-8x22b-sqlbench:latest,Mixtral 8x22B,pass1.query6,Q6,Impact aggregate,0,0.0,0.6375,0.5,row_count_mismatch,stable_fail
+mixtral-8x22b-sqlbench:latest,Mixtral 8x22B,pass1.query7,Q7,Tissue qual aggregate,0,0.0,0.5611111111111111,0.1111111111111111,same_count_wrong_values,stable_fail
+mixtral-8x22b-sqlbench:latest,Mixtral 8x22B,pass1.query8,Q8,Condition expression aggregate,0,0.0,0.8500000000000001,0.6666666666666666,same_count_wrong_values,stable_fail
+mixtral-8x22b-sqlbench:latest,Mixtral 8x22B,pass1.query9,Q9,Condition decision screen,0,0.0,0.7666666666666666,0.4166666666666667,same_count_wrong_values,stable_fail
+mixtral-8x22b-sqlbench:latest,Mixtral 8x22B,pass1.query10,Q10,Variant anomaly audit,0,0.0,1.0,0.9722222222222222,same_count_wrong_values,stable_fail
+phi4-mini-sqlbench:latest,Phi-4 Mini,pass1.query1,Q1,Sample inner join,0,0.0,0.9,0.8,row_count_mismatch,stable_fail
+phi4-mini-sqlbench:latest,Phi-4 Mini,pass1.query2,Q2,Variant join + qual sort,0,0.0,0.61875,0.19166666666666668,row_count_mismatch,stable_fail
+phi4-mini-sqlbench:latest,Phi-4 Mini,pass1.query3,Q3,Sample left join,0,0.0,0.9333333333333333,0.8666666666666667,same_count_wrong_values,stable_fail
+phi4-mini-sqlbench:latest,Phi-4 Mini,pass1.query4,Q4,Outer join aggregate,0,0.0,0.540952380952381,0.3535714285714286,row_count_mismatch,stable_fail
+phi4-mini-sqlbench:latest,Phi-4 Mini,pass1.query5,Q5,Variant to gene chain,0,0.0,0.7428571428571429,0.38756613756613756,row_count_mismatch,stable_fail
+phi4-mini-sqlbench:latest,Phi-4 Mini,pass1.query6,Q6,Impact aggregate,0,0.0,0.5791666666666666,0.3888888888888889,row_count_mismatch,stable_fail
+phi4-mini-sqlbench:latest,Phi-4 Mini,pass1.query7,Q7,Tissue qual aggregate,0,0.0,0.5,0.125,same_count_wrong_values,stable_fail
+phi4-mini-sqlbench:latest,Phi-4 Mini,pass1.query8,Q8,Condition expression aggregate,0,0.0,0.45555555555555555,0.1111111111111111,row_count_mismatch,stable_fail
+phi4-mini-sqlbench:latest,Phi-4 Mini,pass1.query9,Q9,Condition decision screen,0,0.0,0.7083333333333333,0.3819444444444445,same_count_wrong_values,stable_fail
+phi4-mini-sqlbench:latest,Phi-4 Mini,pass1.query10,Q10,Variant anomaly audit,0,0.0,0.9629629629629629,0.5740740740740741,same_count_wrong_values,stable_fail
+qwen2.5-72b-sqlbench:latest,Qwen 2.5 72B,pass1.query1,Q1,Sample inner join,0,0.0,0.875,0.8833333333333333,row_count_mismatch,stable_fail
+qwen2.5-72b-sqlbench:latest,Qwen 2.5 72B,pass1.query2,Q2,Variant join + qual sort,0,0.0,0.6,0.15,row_count_mismatch,stable_fail
+qwen2.5-72b-sqlbench:latest,Qwen 2.5 72B,pass1.query3,Q3,Sample left join,3,1.0,1.0,1.0,exact,stable_exact
+qwen2.5-72b-sqlbench:latest,Qwen 2.5 72B,pass1.query4,Q4,Outer join aggregate,1,0.3333333333333333,0.98,0.9666666666666667,same_count_wrong_values,partial_exact
+qwen2.5-72b-sqlbench:latest,Qwen 2.5 72B,pass1.query5,Q5,Variant to gene chain,0,0.0,0.8625,0.65625,row_count_mismatch,stable_fail
+qwen2.5-72b-sqlbench:latest,Qwen 2.5 72B,pass1.query6,Q6,Impact aggregate,0,0.0,0.8500000000000001,0.6666666666666666,same_count_wrong_values,stable_fail
+qwen2.5-72b-sqlbench:latest,Qwen 2.5 72B,pass1.query7,Q7,Tissue qual aggregate,0,0.0,0.4666666666666667,0.16666666666666666,row_count_mismatch,stable_fail
+qwen2.5-72b-sqlbench:latest,Qwen 2.5 72B,pass1.query8,Q8,Condition expression aggregate,0,0.0,0.8500000000000001,0.6666666666666666,same_count_wrong_values,stable_fail
+qwen2.5-72b-sqlbench:latest,Qwen 2.5 72B,pass1.query9,Q9,Condition decision screen,0,0.0,0.9111111111111111,0.7777777777777778,same_count_wrong_values,stable_fail
+qwen2.5-72b-sqlbench:latest,Qwen 2.5 72B,pass1.query10,Q10,Variant anomaly audit,3,1.0,1.0,1.0,exact,stable_exact
+qwen2.5-coder-32b-sqlbench:latest,Qwen 2.5 Coder 32B,pass1.query1,Q1,Sample inner join,0,0.0,0.8916666666666667,0.8333333333333334,row_count_mismatch,stable_fail
+qwen2.5-coder-32b-sqlbench:latest,Qwen 2.5 Coder 32B,pass1.query2,Q2,Variant join + qual sort,0,0.0,0.6,0.175,row_count_mismatch,stable_fail
+qwen2.5-coder-32b-sqlbench:latest,Qwen 2.5 Coder 32B,pass1.query3,Q3,Sample left join,3,1.0,1.0,1.0,exact,stable_exact
+qwen2.5-coder-32b-sqlbench:latest,Qwen 2.5 Coder 32B,pass1.query4,Q4,Outer join aggregate,0,0.0,0.96,0.9333333333333333,same_count_wrong_values,stable_fail
+qwen2.5-coder-32b-sqlbench:latest,Qwen 2.5 Coder 32B,pass1.query5,Q5,Variant to gene chain,0,0.0,0.8,0.5833333333333334,row_count_mismatch,stable_fail
+qwen2.5-coder-32b-sqlbench:latest,Qwen 2.5 Coder 32B,pass1.query6,Q6,Impact aggregate,0,0.0,0.925,0.8333333333333334,same_count_wrong_values,stable_fail
+qwen2.5-coder-32b-sqlbench:latest,Qwen 2.5 Coder 32B,pass1.query7,Q7,Tissue qual aggregate,0,0.0,0.55,0.125,same_count_wrong_values,stable_fail
+qwen2.5-coder-32b-sqlbench:latest,Qwen 2.5 Coder 32B,pass1.query8,Q8,Condition expression aggregate,0,0.0,0.8833333333333334,0.7407407407407407,same_count_wrong_values,stable_fail
+qwen2.5-coder-32b-sqlbench:latest,Qwen 2.5 Coder 32B,pass1.query9,Q9,Condition decision screen,0,0.0,0.8444444444444444,0.611111111111111,same_count_wrong_values,stable_fail
+qwen2.5-coder-32b-sqlbench:latest,Qwen 2.5 Coder 32B,pass1.query10,Q10,Variant anomaly audit,3,1.0,1.0,1.0,exact,stable_exact
+qwen3-coder-30b-sqlbench:latest,Qwen3 Coder 30B,pass1.query1,Q1,Sample inner join,0,0.0,0.0,0.6444444444444445,row_count_mismatch,stable_fail
+qwen3-coder-30b-sqlbench:latest,Qwen3 Coder 30B,pass1.query2,Q2,Variant join + qual sort,0,0.0,0.625,0.225,row_count_mismatch,stable_fail
+qwen3-coder-30b-sqlbench:latest,Qwen3 Coder 30B,pass1.query3,Q3,Sample left join,0,0.0,0.0,0.8,type_only,stable_fail
+qwen3-coder-30b-sqlbench:latest,Qwen3 Coder 30B,pass1.query4,Q4,Outer join aggregate,0,0.0,0.97,0.95,same_count_wrong_values,stable_fail
+qwen3-coder-30b-sqlbench:latest,Qwen3 Coder 30B,pass1.query5,Q5,Variant to gene chain,0,0.0,0.0,0.4444444444444444,row_count_mismatch,stable_fail
+qwen3-coder-30b-sqlbench:latest,Qwen3 Coder 30B,pass1.query6,Q6,Impact aggregate,0,0.0,0.8875,0.75,same_count_wrong_values,stable_fail
+qwen3-coder-30b-sqlbench:latest,Qwen3 Coder 30B,pass1.query7,Q7,Tissue qual aggregate,0,0.0,0.3833333333333333,0.16666666666666666,row_count_mismatch,stable_fail
+qwen3-coder-30b-sqlbench:latest,Qwen3 Coder 30B,pass1.query8,Q8,Condition expression aggregate,0,0.0,0.8,0.5555555555555556,same_count_wrong_values,stable_fail
+qwen3-coder-30b-sqlbench:latest,Qwen3 Coder 30B,pass1.query9,Q9,Condition decision screen,0,0.0,0.8333333333333333,0.5833333333333334,same_count_wrong_values,stable_fail
+qwen3-coder-30b-sqlbench:latest,Qwen3 Coder 30B,pass1.query10,Q10,Variant anomaly audit,0,0.0,0.0,0.75,type_only,stable_fail
+qwen3.6-sqlbench:latest,Qwen3.6,pass1.query1,Q1,Sample inner join,0,0.0,0.9,0.8,row_count_mismatch,stable_fail
+qwen3.6-sqlbench:latest,Qwen3.6,pass1.query2,Q2,Variant join + qual sort,0,0.0,0.8111111111111111,0.4666666666666667,row_count_mismatch,stable_fail
+qwen3.6-sqlbench:latest,Qwen3.6,pass1.query3,Q3,Sample left join,3,1.0,1.0,1.0,exact,stable_exact
+qwen3.6-sqlbench:latest,Qwen3.6,pass1.query4,Q4,Outer join aggregate,0,0.0,0.94,0.9,same_count_wrong_values,stable_fail
+qwen3.6-sqlbench:latest,Qwen3.6,pass1.query5,Q5,Variant to gene chain,0,0.0,0.8,0.5833333333333334,row_count_mismatch,stable_fail
+qwen3.6-sqlbench:latest,Qwen3.6,pass1.query6,Q6,Impact aggregate,0,0.0,0.8500000000000001,0.6666666666666666,same_count_wrong_values,stable_fail
+qwen3.6-sqlbench:latest,Qwen3.6,pass1.query7,Q7,Tissue qual aggregate,0,0.0,0.6,0.0,same_count_wrong_values,stable_fail
+qwen3.6-sqlbench:latest,Qwen3.6,pass1.query8,Q8,Condition expression aggregate,0,0.0,0.75,0.4444444444444444,same_count_wrong_values,stable_fail
+qwen3.6-sqlbench:latest,Qwen3.6,pass1.query9,Q9,Condition decision screen,0,0.0,0.7666666666666666,0.4166666666666667,same_count_wrong_values,stable_fail
+qwen3.6-sqlbench:latest,Qwen3.6,pass1.query10,Q10,Variant anomaly audit,3,1.0,1.0,1.0,exact,stable_exact

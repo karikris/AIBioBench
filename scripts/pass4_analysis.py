@@ -1,326 +1,877 @@
 #!/usr/bin/env python3
 import csv
+import json
+import math
+import os
 import sys
+import warnings
 from collections import Counter, defaultdict
 from pathlib import Path
+from statistics import mean
+
+os.environ.setdefault("MPLCONFIGDIR", "/tmp/matplotlib")
+warnings.filterwarnings("ignore", message="Unable to import Axes3D.*")
 
 import matplotlib.pyplot as plt
-from matplotlib.colors import LinearSegmentedColormap, ListedColormap
+from matplotlib.colors import LinearSegmentedColormap
 
-import pass3_analysis as base
 
+PAGE_BG = "#071521"
+PANEL_BG = "#0D2438"
+GRID = "#24425F"
+TEXT = "#EAF4FF"
+BLUE_DARK = "#0F4C81"
+BLUE = "#2F80ED"
+BLUE_LIGHT = "#89C8FF"
+BLUE_PALE = "#D9F0FF"
+BLUE_MID = "#4DA3FF"
+FAIL_LIGHT = "#5D8CB8"
 
 QUERY_LABELS = {
     "pass4.query1": "Q1\nreconcile\nmetrics",
     "pass4.query2": "Q2\ncondition\npathway",
     "pass4.query3": "Q3\nbatch\nrole",
-    "pass4.query4": "Q4\ncontrol\nshared",
+    "pass4.query4": "Q4\nshared\ngenes",
     "pass4.query5": "Q5\ngene\nprofile",
     "pass4.query6": "Q6\nsample\nburden",
     "pass4.query7": "Q7\norphan-key\nreport",
     "pass4.query8": "Q8\npresentation\ntable",
+    "pass4.query9": "Q9\npathway\nreliability",
+    "pass4.query10": "Q10\nrepairability\naudit",
 }
 
-QUERY_NOTES = {
-    "pass4.query1": "Pandas reconciliation summary; failures indicate weak audit counting across complete chains, missing dimensions, and unused dimension rows.",
-    "pass4.query2": "Complete-chain condition/pathway aggregation; hard parts are expression mapping, pathway grouping, and exact numeric rounding.",
-    "pass4.query3": "Complete-chain non-reference batch/gene-role summary; models must filter genotype, compute VAF, and map expression to PGR5 correctly.",
-    "pass4.query4": "Genes observed in both control and non-control conditions; this is a narrow decision-support filter with one expected row.",
-    "pass4.query5": "Gene-preserving profile through variant, fact, and sample joins; failures usually mishandle zero-call genes, distinct matched samples, or expression averaging.",
-    "pass4.query6": "Sample-level burden table; models must filter non-reference high/moderate complete-chain calls while preserving zero-burden samples.",
-    "pass4.query7": "Union-style orphan-key report; failures tend to miss one source table, duplicate keys, or assign the wrong orphan type.",
-    "pass4.query8": "Final presentation table; this stresses complete-chain filtering, matched expression mapping, VAF/log2 arithmetic, exact column order, and multi-key sorting.",
+QUERY_SHORT_NAMES = {
+    "pass4.query1": "Reconciliation metrics",
+    "pass4.query2": "Condition-pathway aggregate",
+    "pass4.query3": "Batch-role non-reference summary",
+    "pass4.query4": "Control/non-control shared genes",
+    "pass4.query5": "Gene-preserving profile",
+    "pass4.query6": "Sample burden table",
+    "pass4.query7": "Orphan-key report",
+    "pass4.query8": "Final presentation table",
+    "pass4.query9": "Pathway reliability summary",
+    "pass4.query10": "Repairability audit",
+}
+
+MODEL_DISPLAY = {
+    "codellama-70b-sqlbench:latest": "CodeLlama 70B",
+    "command-r-plus-sqlbench:latest": "Command R+",
+    "dbrx-sqlbench:latest": "DBRX",
+    "deepseek-coder-33b-sqlbench:latest": "DeepSeek Coder 33B",
+    "gemma4-26b-sqlbench:latest": "Gemma 4 26B",
+    "gemma4-31b-sqlbench:latest": "Gemma 4 31B",
+    "llama3-70b-sqlbench:latest": "Llama 3 70B",
+    "mixtral-8x22b-sqlbench:latest": "Mixtral 8x22B",
+    "phi4-mini-sqlbench:latest": "Phi-4 Mini",
+    "qwen2.5-72b-sqlbench:latest": "Qwen 2.5 72B",
+    "qwen2.5-coder-32b-sqlbench:latest": "Qwen 2.5 Coder 32B",
+    "qwen3-coder-30b-sqlbench:latest": "Qwen3 Coder 30B",
+    "qwen3.6-sqlbench:latest": "Qwen3.6",
+}
+
+MODEL_GROUP_COLORS = {
+    "Only exact converter": BLUE_PALE,
+    "Higher partial-credit operators": BLUE_LIGHT,
+    "Middle partial-credit operators": BLUE_MID,
+    "Brittle / low-coverage": BLUE_DARK,
+}
+
+ISSUE_LABELS = {
+    "q1_complete_chain_wrong": "Miscounted complete_chain_rows in the reconciliation summary.",
+    "q1_missing_status_wrong": "Miscounted one or more missing sample/variant/gene fact-row categories.",
+    "q1_unused_dimension_wrong": "Miscounted unused samples, unused variants, or genes with no variants.",
+    "q2_wrong_group_set": "Returned the wrong condition-pathway group set for complete-chain rows.",
+    "q2_leaked_incomplete_pathway": "Leaked incomplete-chain or non-gold pathways into the aggregate.",
+    "q2_wrong_counts_or_alt": "Miscomputed call_count or total_alt_reads.",
+    "q2_wrong_quality": "Miscomputed mean_qual.",
+    "q2_wrong_expression": "Mapped or averaged expr_ndhb incorrectly.",
+    "q3_wrong_group_set": "Returned the wrong batch-gene_role group set.",
+    "q3_leaked_extra_group": "Leaked reference, incomplete-chain, or non-gold batch/role groups.",
+    "q3_wrong_counts_or_quality": "Miscomputed non_reference_calls or avg_qual.",
+    "q3_wrong_vaf": "Miscomputed max_vaf.",
+    "q3_wrong_expr": "Mapped or averaged expr_pgr5 incorrectly.",
+    "q4_wrong_gene_set": "Returned the wrong shared gene set.",
+    "q4_leaked_non_shared_gene": "Included genes that are not observed in both control and non-control complete-chain rows.",
+    "q4_wrong_counts": "Miscomputed control_calls or non_control_calls.",
+    "q4_wrong_total_alt": "Miscomputed total_alt_reads.",
+    "q5_missing_zero_call_gene": "Dropped zero-call genes NDHT or PGR1B from the gene-preserving profile.",
+    "q5_leaked_unknown_gene": "Included a non-gold gene or null gene row.",
+    "q5_wrong_variant_or_call_count": "Miscomputed variant_count or call_count.",
+    "q5_wrong_sample_or_tissue_count": "Miscomputed distinct matched sample or tissue counts.",
+    "q5_wrong_expression": "Mapped or averaged matched expression incorrectly.",
+    "q6_missing_sample": "Dropped one or more sample_dim rows, usually S5.",
+    "q6_included_s999": "Included S999 even though sample_dim is the preserving table.",
+    "q6_wrong_burden": "Miscomputed burden_genes.",
+    "q6_wrong_log2_expr": "Miscomputed mean_log2_marker_expr.",
+    "q7_wrong_orphan_row_set": "Returned the wrong orphan-key row set.",
+    "q7_wrong_source_table": "Used imprecise source_table labels such as fact_calls instead of fact_calls.sample_id or fact_calls.variant_id.",
+    "q7_wrong_orphan_type": "Returned incorrect orphan_type labels.",
+    "q7_extra_or_duplicate_rows": "Included extra or duplicate orphan rows.",
+    "q8_wrong_row_set": "Returned the wrong non-reference complete-chain call set.",
+    "q8_leaked_reference_or_incomplete": "Leaked reference, incomplete-chain, or orphan fact rows.",
+    "q8_wrong_expression_or_log": "Mapped matched_expr_count or log2_matched_expr incorrectly.",
+    "q8_wrong_vaf": "Computed VAF incorrectly.",
+    "q8_wrong_sort": "Returned the presentation table in the wrong order.",
+    "q9_wrong_pathway_set": "Returned the wrong pathway set.",
+    "q9_leaked_incomplete_pathway": "Leaked zero-call or incomplete pathways into the reliability summary.",
+    "q9_wrong_counts_or_rate": "Miscomputed call_count or non_reference_rate.",
+    "q9_wrong_vaf": "Miscomputed mean_vaf.",
+    "q9_wrong_expression": "Miscomputed mean_matched_expr.",
+    "q10_call6_status_wrong": "Misclassified call_id 6 / V5; it should be MISSING_GENE and repairable.",
+    "q10_call8_status_wrong": "Misclassified call_id 8 / S999; it should be MISSING_SAMPLE and repairable.",
+    "q10_call9_repairability_wrong": "Misclassified call_id 9 / V999 repairability; MISSING_VARIANT is not human-repairable.",
+    "q10_repairable_flags_wrong": "Set repairable_by_human incorrectly for complete-chain or missing rows.",
 }
 
 
-def case_number(case_id: str) -> int:
+def as_bool(value: str) -> bool:
+    return str(value).strip().lower() == "true"
+
+
+def as_float(value: str) -> float:
+    try:
+        return float(value)
+    except Exception:
+        return 0.0
+
+
+def safe_float(value):
+    try:
+        return float(value)
+    except Exception:
+        return None
+
+
+def numeric_close(value, expected, tol=0.001) -> bool:
+    if value is None and expected is None:
+        return True
+    got = safe_float(value)
+    if got is None or expected is None:
+        return False
+    return abs(got - expected) <= tol
+
+
+def coerce_numeric_strings(value):
+    if isinstance(value, list):
+        return [coerce_numeric_strings(v) for v in value]
+    if isinstance(value, str):
+        text = value.strip()
+        if text.isdigit():
+            return int(text)
+        try:
+            if "." in text and text.replace(".", "", 1).isdigit():
+                return float(text)
+        except Exception:
+            return value
+    return value
+
+
+def canonical_model_name(model: str) -> str:
+    return MODEL_DISPLAY.get(model, model.replace(":latest", ""))
+
+
+def wrap_display_name(name: str) -> str:
+    if " " not in name:
+        return name
+    first, rest = name.split(" ", 1)
+    return f"{first}\n{rest}"
+
+
+def case_sort_key(case_id: str) -> int:
     return int(case_id.split("query")[1])
+
+
+def classify_failure(row: dict) -> str:
+    if row["status"] != "ok" or not as_bool(row["valid_json"]):
+        return "invalid_json_or_error"
+    if not as_bool(row["column_exact_match"]):
+        return "column_error"
+    if as_bool(row["exact_match"]):
+        return "exact"
+    gold_rows = json.loads(row["gold_rows_json"])
+    pred_rows = json.loads(row["parsed_rows_json"])
+    if coerce_numeric_strings(pred_rows) == coerce_numeric_strings(gold_rows):
+        return "type_only"
+    if not as_bool(row["row_count_match"]):
+        return "row_count_mismatch"
+    if int(row["missing_rows_count"]) == 0 and int(row["extra_rows_count"]) == 0:
+        return "order_only"
+    return "same_count_wrong_values"
+
+
+def load_metadata(repo_root: Path):
+    case_meta = {}
+    with (repo_root / "benchmark_cases.jsonl").open(encoding="utf-8") as f:
+        for line in f:
+            item = json.loads(line)
+            if item["case_id"].startswith("pass4."):
+                case_meta[item["case_id"]] = item
+    gold = {}
+    with (repo_root / "gold_answers.jsonl").open(encoding="utf-8") as f:
+        for line in f:
+            item = json.loads(line)
+            if item["case_id"].startswith("pass4."):
+                gold[item["case_id"]] = item
+    return case_meta, gold
 
 
 def load_rows(results_dir: Path) -> list[dict]:
     rows = []
     with (results_dir / "detailed_results.csv").open(newline="", encoding="utf-8") as f:
         for row in csv.DictReader(f):
-            if row["pass"] == "4":
-                row["_failure_mode"] = base.classify_failure(row)
-                rows.append(row)
+            if row["pass"] != "4":
+                continue
+            row["_failure_mode"] = classify_failure(row)
+            row["_pred_rows"] = json.loads(row["parsed_rows_json"])
+            row["_gold_rows"] = json.loads(row["gold_rows_json"])
+            rows.append(row)
     return rows
 
 
-def build_summaries(rows: list[dict]):
+def write_csv(path: Path, rows: list[dict], fieldnames: list[str]) -> None:
+    with path.open("w", newline="", encoding="utf-8") as f:
+        writer = csv.DictWriter(f, fieldnames=fieldnames)
+        writer.writeheader()
+        writer.writerows(rows)
+
+
+def rows_by_index(rows, index=0):
+    out = {}
+    for row in rows:
+        if len(row) > index:
+            out[row[index]] = row
+    return out
+
+
+def rows_by_pair(rows, first=0, second=1):
+    out = {}
+    for row in rows:
+        if len(row) > max(first, second):
+            out[(row[first], row[second])] = row
+    return out
+
+
+def cell(row, index, default=None):
+    if row is None or len(row) <= index:
+        return default
+    return row[index]
+
+
+def value_matches(value, expected) -> bool:
+    if isinstance(expected, bool):
+        if isinstance(value, bool):
+            return value is expected
+        return as_bool(value) is expected
+    if isinstance(expected, (int, float)) and not isinstance(expected, bool):
+        return numeric_close(value, expected)
+    return value == expected
+
+
+def detect_issue_flags(case_id: str, pred_rows: list, gold_rows: list, row: dict) -> list[str]:
+    flags = []
+
+    if case_id == "pass4.query1":
+        pred = rows_by_index(pred_rows, 0)
+        expected = {
+            "fact_rows_total": 9,
+            "complete_chain_rows": 6,
+            "fact_rows_missing_sample": 1,
+            "fact_rows_missing_variant": 1,
+            "fact_rows_missing_gene": 1,
+            "unused_samples": 1,
+            "unused_variants": 1,
+            "genes_with_no_variants": 1,
+        }
+        if not value_matches(cell(pred.get("complete_chain_rows"), 1), 6):
+            flags.append("q1_complete_chain_wrong")
+        if any(not value_matches(cell(pred.get(k), 1), expected[k]) for k in ["fact_rows_missing_sample", "fact_rows_missing_variant", "fact_rows_missing_gene"]):
+            flags.append("q1_missing_status_wrong")
+        if any(not value_matches(cell(pred.get(k), 1), expected[k]) for k in ["unused_samples", "unused_variants", "genes_with_no_variants"]):
+            flags.append("q1_unused_dimension_wrong")
+
+    elif case_id == "pass4.query2":
+        pred = rows_by_pair(pred_rows, 0, 1)
+        expected = {
+            ("control", "chloroplast_NDH_complex"): (3, 10, 87.667, 233.333),
+            ("drought", "cyclic_electron_flow"): (1, 9, 70.0, 900.0),
+            ("high_light", "chloroplast_NDH_complex"): (2, 40, 93.0, 1200.0),
+        }
+        if set(pred) != set(expected):
+            flags.append("q2_wrong_group_set")
+        if any(key not in expected for key in pred):
+            flags.append("q2_leaked_incomplete_pathway")
+        for key, (count, alt, qual, expr) in expected.items():
+            if key in pred:
+                if not value_matches(cell(pred[key], 2), count) or not value_matches(cell(pred[key], 3), alt):
+                    flags.append("q2_wrong_counts_or_alt")
+                if not numeric_close(cell(pred[key], 4), qual):
+                    flags.append("q2_wrong_quality")
+                if not numeric_close(cell(pred[key], 5), expr):
+                    flags.append("q2_wrong_expression")
+
+    elif case_id == "pass4.query3":
+        pred = rows_by_pair(pred_rows, 0, 1)
+        expected = {("B1", "ndh_membrane_arm"): (3, 88.667, 1.0, 700.0), ("B2", "pgr_regulator"): (1, 70.0, 0.5, 700.0)}
+        if set(pred) != set(expected):
+            flags.append("q3_wrong_group_set")
+        if any(key not in expected for key in pred):
+            flags.append("q3_leaked_extra_group")
+        for key, (count, qual, max_vaf, expr) in expected.items():
+            if key in pred:
+                if not value_matches(cell(pred[key], 2), count) or not numeric_close(cell(pred[key], 3), qual):
+                    flags.append("q3_wrong_counts_or_quality")
+                if not numeric_close(cell(pred[key], 4), max_vaf):
+                    flags.append("q3_wrong_vaf")
+                if not numeric_close(cell(pred[key], 5), expr):
+                    flags.append("q3_wrong_expr")
+
+    elif case_id == "pass4.query4":
+        pred = rows_by_index(pred_rows, 0)
+        if set(pred) != {"NDHB"}:
+            flags.append("q4_wrong_gene_set")
+        if any(gene != "NDHB" for gene in pred):
+            flags.append("q4_leaked_non_shared_gene")
+        if "NDHB" in pred:
+            if not value_matches(cell(pred["NDHB"], 1), 1) or not value_matches(cell(pred["NDHB"], 2), 2):
+                flags.append("q4_wrong_counts")
+            if not value_matches(cell(pred["NDHB"], 3), 40):
+                flags.append("q4_wrong_total_alt")
+
+    elif case_id == "pass4.query5":
+        pred = rows_by_index(pred_rows, 0)
+        expected = {
+            "NDHB": (2, 4, 3, 1, 900.0),
+            "NDHK": (1, 2, 2, 2, 70.0),
+            "NDHT": (1, 0, 0, 0, None),
+            "PGR1B": (0, 0, 0, 0, None),
+            "PGR5": (1, 1, 1, 1, 700.0),
+        }
+        if "NDHT" not in pred or "PGR1B" not in pred:
+            flags.append("q5_missing_zero_call_gene")
+        if any(gene not in expected for gene in pred):
+            flags.append("q5_leaked_unknown_gene")
+        for gene, (variants, calls, samples, tissues, expr) in expected.items():
+            if gene in pred:
+                if not value_matches(cell(pred[gene], 1), variants) or not value_matches(cell(pred[gene], 2), calls):
+                    flags.append("q5_wrong_variant_or_call_count")
+                if not value_matches(cell(pred[gene], 3), samples) or not value_matches(cell(pred[gene], 4), tissues):
+                    flags.append("q5_wrong_sample_or_tissue_count")
+                if not numeric_close(cell(pred[gene], 5), expr):
+                    flags.append("q5_wrong_expression")
+
+    elif case_id == "pass4.query6":
+        pred = rows_by_index(pred_rows, 0)
+        expected = {"S1": (1, 9.038), "S2": (1, 7.903), "S3": (0, 8.688), "S4": (0, 6.993), "S5": (0, 3.977)}
+        if not set(expected).issubset(set(pred)):
+            flags.append("q6_missing_sample")
+        if "S999" in pred:
+            flags.append("q6_included_s999")
+        for sample, (burden, expr) in expected.items():
+            if sample in pred:
+                if not value_matches(cell(pred[sample], 2), burden):
+                    flags.append("q6_wrong_burden")
+                if not numeric_close(cell(pred[sample], 3), expr):
+                    flags.append("q6_wrong_log2_expr")
+
+    elif case_id == "pass4.query7":
+        expected = {
+            ("fact_calls.sample_id", "S999", "missing_in_sample_dim"),
+            ("fact_calls.variant_id", "V999", "missing_in_variant_dim"),
+            ("gene_dim.gene_id", "G5", "no_variants_attached"),
+            ("sample_dim.sample_id", "S5", "unused_dimension_row"),
+            ("variant_dim.gene_id", "G999", "missing_in_gene_dim"),
+            ("variant_dim.variant_id", "V6", "unused_dimension_row"),
+        }
+        pred_set = {tuple(r[:3]) for r in pred_rows if len(r) >= 3}
+        if pred_set != expected:
+            flags.append("q7_wrong_orphan_row_set")
+        if any(r and r[0] in {"fact_calls", "sample_dim", "variant_dim", "gene_dim"} for r in pred_rows):
+            flags.append("q7_wrong_source_table")
+        if any(len(r) >= 3 and tuple(r[:3]) not in expected for r in pred_rows):
+            flags.append("q7_wrong_orphan_type")
+        if len(pred_rows) != len(pred_set) or len(pred_set) > len(expected):
+            flags.append("q7_extra_or_duplicate_rows")
+
+    elif case_id == "pass4.query8":
+        pred = rows_by_index(pred_rows, 0)
+        expected_order = [4, 5, 1, 2]
+        expected = {
+            4: (0.5, 90, 6.508),
+            5: (0.5, 700, 9.453),
+            1: (0.4, 1200, 10.23),
+            2: (1.0, 1200, 10.23),
+        }
+        ids = list(pred.keys())
+        if set(ids) != set(expected):
+            flags.append("q8_wrong_row_set")
+        if any(i not in expected for i in ids):
+            flags.append("q8_leaked_reference_or_incomplete")
+        if ids != expected_order and set(ids) == set(expected):
+            flags.append("q8_wrong_sort")
+        for call_id, (vaf, expr, logv) in expected.items():
+            if call_id in pred and len(pred[call_id]) >= 15:
+                if not numeric_close(cell(pred[call_id], 11), vaf):
+                    flags.append("q8_wrong_vaf")
+                if not numeric_close(cell(pred[call_id], 12), expr) or not numeric_close(cell(pred[call_id], 13), logv):
+                    flags.append("q8_wrong_expression_or_log")
+
+    elif case_id == "pass4.query9":
+        pred = rows_by_index(pred_rows, 0)
+        expected = {"cyclic_electron_flow": (1, 1.0, 0.5, 700.0), "chloroplast_NDH_complex": (5, 0.6, 0.38, 568.0)}
+        if set(pred) != set(expected):
+            flags.append("q9_wrong_pathway_set")
+        if any(path not in expected for path in pred):
+            flags.append("q9_leaked_incomplete_pathway")
+        for path, (count, rate, vaf, expr) in expected.items():
+            if path in pred:
+                if not value_matches(cell(pred[path], 1), count) or not numeric_close(cell(pred[path], 2), rate):
+                    flags.append("q9_wrong_counts_or_rate")
+                if not numeric_close(cell(pred[path], 3), vaf):
+                    flags.append("q9_wrong_vaf")
+                if not numeric_close(cell(pred[path], 4), expr):
+                    flags.append("q9_wrong_expression")
+
+    elif case_id == "pass4.query10":
+        pred = rows_by_index(pred_rows, 0)
+        expected_status = {1: ("COMPLETE_CHAIN", False), 2: ("COMPLETE_CHAIN", False), 3: ("COMPLETE_CHAIN", False), 4: ("COMPLETE_CHAIN", False), 5: ("COMPLETE_CHAIN", False), 6: ("MISSING_GENE", True), 7: ("COMPLETE_CHAIN", False), 8: ("MISSING_SAMPLE", True), 9: ("MISSING_VARIANT", False)}
+        for call_id, (status, repairable) in expected_status.items():
+            pred_row = pred.get(call_id) or pred.get(str(call_id))
+            if pred_row is None or len(pred_row) < 5:
+                flags.append("q10_repairable_flags_wrong")
+                continue
+            pred_status = cell(pred_row, 3)
+            pred_repairable = cell(pred_row, 4)
+            if call_id == 6 and (pred_status != status or not value_matches(pred_repairable, repairable)):
+                flags.append("q10_call6_status_wrong")
+            elif call_id == 8 and (pred_status != status or not value_matches(pred_repairable, repairable)):
+                flags.append("q10_call8_status_wrong")
+            elif call_id == 9 and (pred_status != status or not value_matches(pred_repairable, repairable)):
+                flags.append("q10_call9_repairability_wrong")
+            elif not value_matches(pred_repairable, repairable):
+                flags.append("q10_repairable_flags_wrong")
+
+    return list(dict.fromkeys(flags))
+
+
+def build_summaries(rows: list[dict], case_meta: dict):
     by_model = defaultdict(list)
     by_case = defaultdict(list)
+    by_model_case = defaultdict(list)
     for row in rows:
         by_model[row["model"]].append(row)
         by_case[row["case_id"]].append(row)
+        by_model_case[(row["model"], row["case_id"])].append(row)
 
+    case_ids = sorted({r["case_id"] for r in rows}, key=case_sort_key)
     model_summary = []
     for model, items in by_model.items():
-        exact = sum(base.as_bool(r["exact_match"]) for r in items)
+        exact_attempts = sum(as_bool(r["exact_match"]) for r in items)
+        exact_query_coverage_any = sum(any(as_bool(r["exact_match"]) for r in by_model_case[(model, case_id)]) for case_id in case_ids)
+        stable_exact_queries = sum(sum(as_bool(r["exact_match"]) for r in by_model_case[(model, case_id)]) == 3 for case_id in case_ids)
+        partial_exact_queries = sum(0 < sum(as_bool(r["exact_match"]) for r in by_model_case[(model, case_id)]) < 3 for case_id in case_ids)
+        stable_fail_queries = sum(sum(as_bool(r["exact_match"]) for r in by_model_case[(model, case_id)]) == 0 for case_id in case_ids)
         modes = Counter(r["_failure_mode"] for r in items)
         model_summary.append(
             {
                 "model": model,
-                "display_model": base.MODEL_DISPLAY.get(model, model.replace(":latest", "")),
-                "cases": len(items),
-                "exact_matches": exact,
-                "accuracy": exact / len(items),
-                "total_score": sum(base.as_float(r["score"]) for r in items),
-                "mean_score": base.mean(base.as_float(r["score"]) for r in items),
-                "valid_json_rate": base.mean(base.as_bool(r["valid_json"]) for r in items),
-                "mean_aligned_cell_accuracy": base.mean(base.as_float(r["aligned_cell_accuracy"]) for r in items),
-                "row_count_match_rate": base.mean(base.as_bool(r["row_count_match"]) for r in items),
-                "total_wall_s": sum(base.as_float(r["client_wall_s"]) for r in items),
-                "mean_gen_tps": base.mean(base.as_float(r["server_gen_tps"]) for r in items),
-                "mean_gpu_share": base.mean(base.as_float(r["ps_vram_ratio"]) for r in items),
+                "display_model": canonical_model_name(model),
+                "attempts": len(items),
+                "exact_attempts": exact_attempts,
+                "exact_attempt_rate": exact_attempts / len(items),
+                "exact_query_coverage_any": exact_query_coverage_any,
+                "stable_exact_queries": stable_exact_queries,
+                "partial_exact_queries": partial_exact_queries,
+                "stable_fail_queries": stable_fail_queries,
+                "mean_score": mean(as_float(r["score"]) for r in items),
+                "mean_aligned_cell_accuracy": mean(as_float(r["aligned_cell_accuracy"]) for r in items),
+                "mean_row_set_correctness": mean(as_float(r["row_set_correctness_score"]) for r in items),
+                "mean_numeric_correctness": mean(as_float(r["numeric_correctness_score"]) for r in items),
+                "mean_sort_correctness": mean(as_float(r["sort_order_correctness_score"]) for r in items),
+                "row_count_mismatch_rate": mean(not as_bool(r["row_count_match"]) for r in items),
+                "mean_wall_s": mean(as_float(r["client_wall_s"]) for r in items),
+                "mean_gen_tps": mean(as_float(r["server_gen_tps"]) for r in items),
                 "exact": modes["exact"],
-                "row_count_mismatch": modes["row_count_mismatch"],
                 "order_only": modes["order_only"],
-                "same_count_wrong_values": modes["same_count_wrong_values"],
                 "type_only": modes["type_only"],
+                "same_count_wrong_values": modes["same_count_wrong_values"],
+                "row_count_mismatch": modes["row_count_mismatch"],
                 "column_error": modes["column_error"],
-                "invalid_json_or_error": modes["invalid_json_or_error"],
+                "dominant_failure_mode": modes.most_common(1)[0][0],
             }
         )
-
-    model_summary.sort(
-        key=lambda r: (
-            -r["exact_matches"],
-            -r["mean_aligned_cell_accuracy"],
-            r["total_wall_s"],
-            r["model"],
-        )
-    )
+    model_summary.sort(key=lambda r: (-r["exact_attempts"], -r["exact_query_coverage_any"], -r["mean_score"], r["mean_wall_s"], r["display_model"]))
 
     case_summary = []
-    for case_id in sorted(by_case, key=case_number):
+    for case_id in sorted(by_case, key=case_sort_key):
         items = by_case[case_id]
         modes = Counter(r["_failure_mode"] for r in items)
-        exact = sum(base.as_bool(r["exact_match"]) for r in items)
-        row_mismatch = sum(not base.as_bool(r["row_count_match"]) for r in items)
-        same_count_wrong = sum(
-            base.as_bool(r["row_count_match"]) and not base.as_bool(r["exact_match"])
-            for r in items
-        )
+        exact_attempts = sum(as_bool(r["exact_match"]) for r in items)
+        exact_models_any = sum(any(as_bool(r["exact_match"]) for r in by_model_case[(model, case_id)]) for model in sorted({r["model"] for r in items}))
+        exact_models_stable = sum(sum(as_bool(r["exact_match"]) for r in by_model_case[(model, case_id)]) == 3 for model in sorted({r["model"] for r in items}))
+        issue_counter = Counter()
+        issue_models = defaultdict(set)
+        for row in items:
+            issue_flags = detect_issue_flags(case_id, row["_pred_rows"], row["_gold_rows"], row)
+            row["_issue_flags"] = issue_flags
+            for issue in issue_flags:
+                issue_counter[issue] += 1
+                issue_models[issue].add(canonical_model_name(row["model"]))
+        top_issues = [
+            {
+                "issue_code": issue,
+                "issue_label": ISSUE_LABELS[issue],
+                "attempts_with_issue": count,
+                "attempt_pct": count / len(items),
+                "example_models": ", ".join(sorted(issue_models[issue])[:4]),
+            }
+            for issue, count in issue_counter.most_common(3)
+        ]
         case_summary.append(
             {
                 "case_id": case_id,
-                "query": f"Q{case_number(case_id)}",
-                "semantic_focus": QUERY_LABELS[case_id].replace("\n", " "),
-                "exact_models": exact,
-                "accuracy": exact / len(items),
-                "mean_score": base.mean(base.as_float(r["score"]) for r in items),
-                "mean_aligned_cell_accuracy": base.mean(base.as_float(r["aligned_cell_accuracy"]) for r in items),
-                "row_count_mismatch_models": row_mismatch,
-                "same_count_but_wrong_models": same_count_wrong,
-                "order_only": modes["order_only"],
-                "type_only": modes["type_only"],
-                "column_error": modes["column_error"],
+                "query": f"Q{case_sort_key(case_id)}",
+                "short_name": QUERY_SHORT_NAMES[case_id],
+                "prompt": case_meta[case_id]["prompt"],
+                "primary_failure_family": case_meta[case_id]["metadata"]["failure_family_primary"],
+                "exact_attempts": exact_attempts,
+                "exact_attempt_rate": exact_attempts / len(items),
+                "exact_models_any": exact_models_any,
+                "exact_models_stable": exact_models_stable,
+                "mean_score": mean(as_float(r["score"]) for r in items),
+                "mean_aligned_cell_accuracy": mean(as_float(r["aligned_cell_accuracy"]) for r in items),
+                "row_count_mismatch_attempts": sum(not as_bool(r["row_count_match"]) for r in items),
+                "same_count_wrong_attempts": sum(as_bool(r["row_count_match"]) and not as_bool(r["exact_match"]) for r in items),
+                "order_only_attempts": modes["order_only"],
+                "type_only_attempts": modes["type_only"],
+                "column_error_attempts": modes["column_error"],
                 "dominant_failure_mode": modes.most_common(1)[0][0],
-                "note": QUERY_NOTES[case_id],
+                "top_issues": top_issues,
             }
         )
 
-    return model_summary, case_summary
+    model_query_rows = []
+    for (model, case_id), items in sorted(by_model_case.items(), key=lambda x: (canonical_model_name(x[0][0]), case_sort_key(x[0][1]))):
+        modes = Counter(r["_failure_mode"] for r in items)
+        exact_attempts = sum(as_bool(r["exact_match"]) for r in items)
+        model_query_rows.append(
+            {
+                "model": model,
+                "display_model": canonical_model_name(model),
+                "case_id": case_id,
+                "query": f"Q{case_sort_key(case_id)}",
+                "short_name": QUERY_SHORT_NAMES[case_id],
+                "exact_attempts": exact_attempts,
+                "exact_rate": exact_attempts / len(items),
+                "mean_score": mean(as_float(r["score"]) for r in items),
+                "mean_aligned_cell_accuracy": mean(as_float(r["aligned_cell_accuracy"]) for r in items),
+                "dominant_failure_mode": modes.most_common(1)[0][0],
+                "stable_outcome": "stable_exact" if exact_attempts == 3 else ("partial_exact" if exact_attempts > 0 else "stable_fail"),
+            }
+        )
+    return model_summary, case_summary, model_query_rows
 
 
-def render_figure(rows: list[dict], model_summary: list[dict], case_summary: list[dict], out_base: Path) -> None:
+def compute_family_scores(model_query_rows: list[dict], case_meta: dict) -> list[dict]:
+    family_lookup = {row["case_id"]: case_meta[row["case_id"]]["metadata"]["failure_family_primary"] for row in model_query_rows}
+    acc = defaultdict(list)
+    for row in model_query_rows:
+        acc[(row["model"], family_lookup[row["case_id"]])].append(row)
+    return [
+        {
+            "model": model,
+            "display_model": canonical_model_name(model),
+            "family": family,
+            "mean_score": mean(item["mean_score"] for item in items),
+            "mean_exact_rate": mean(item["exact_rate"] for item in items),
+        }
+        for (model, family), items in sorted(acc.items(), key=lambda x: (canonical_model_name(x[0][0]), x[0][1]))
+    ]
+
+
+def assign_model_groups(model_summary: list[dict], model_query_rows: list[dict]) -> list[dict]:
+    matrix = defaultdict(dict)
+    for row in model_query_rows:
+        matrix[row["model"]][row["case_id"]] = row
+    groups = []
+    for item in model_summary:
+        model = item["model"]
+        audit_cases = ["pass4.query1", "pass4.query7", "pass4.query10"]
+        analytical_cases = ["pass4.query2", "pass4.query3", "pass4.query4", "pass4.query5", "pass4.query6", "pass4.query8", "pass4.query9"]
+        audit_score = mean(matrix[model][case]["mean_score"] for case in audit_cases)
+        analytical_score = mean(matrix[model][case]["mean_score"] for case in analytical_cases)
+        if item["exact_attempts"] > 0:
+            group = "Only exact converter"
+            reason = "Only model group with any exact pass-4 conversion, limited to the repairability audit."
+        elif item["mean_score"] >= 0.54:
+            group = "Higher partial-credit operators"
+            reason = "No exact conversions, but stronger partial credit on reconciliation, burden, and expression-mapping tasks."
+        elif item["mean_score"] >= 0.49:
+            group = "Middle partial-credit operators"
+            reason = "Some row-set recovery, but presentation, orphan-key, and expression calculations remained unstable."
+        else:
+            group = "Brittle / low-coverage"
+            reason = "Low exactness and low partial credit across most extra-hard Python tasks."
+        groups.append(
+            {
+                "model": model,
+                "display_model": item["display_model"],
+                "group": group,
+                "group_reason": reason,
+                "audit_score": audit_score,
+                "analytical_score": analytical_score,
+                "exact_attempts": item["exact_attempts"],
+                "stable_exact_queries": item["stable_exact_queries"],
+                "partial_exact_queries": item["partial_exact_queries"],
+                "stable_fail_queries": item["stable_fail_queries"],
+                "mean_score": item["mean_score"],
+            }
+        )
+    order = {"Only exact converter": 0, "Higher partial-credit operators": 1, "Middle partial-credit operators": 2, "Brittle / low-coverage": 3}
+    groups.sort(key=lambda r: (order[r["group"]], -r["exact_attempts"], -r["mean_score"], r["display_model"]))
+    return groups
+
+
+def style_axis(ax):
+    ax.set_facecolor(PANEL_BG)
+    for spine in ax.spines.values():
+        spine.set_color(GRID)
+    ax.tick_params(colors=TEXT, labelcolor=TEXT)
+    ax.title.set_color(TEXT)
+    ax.xaxis.label.set_color(TEXT)
+    ax.yaxis.label.set_color(TEXT)
+
+
+def render_visual_report(model_summary, case_summary, model_query_rows, family_scores, out_base: Path):
     models = [m["model"] for m in model_summary]
     model_labels = [m["display_model"] for m in model_summary]
     cases = [c["case_id"] for c in case_summary]
     case_labels = [QUERY_LABELS[c] for c in cases]
-    row_lookup = {(r["model"], r["case_id"]): r for r in rows}
-    exact_matrix = [
-        [1 if base.as_bool(row_lookup[(model, case)]["exact_match"]) else 0 for case in cases]
-        for model in models
-    ]
-    cell_matrix = [
-        [base.as_float(row_lookup[(model, case)]["aligned_cell_accuracy"]) for case in cases]
-        for model in models
-    ]
+    row_lookup = {(r["model"], r["case_id"]): r for r in model_query_rows}
+    exact_matrix = [[row_lookup[(model, case)]["exact_rate"] for case in cases] for model in models]
+    score_matrix = [[row_lookup[(model, case)]["mean_score"] for case in cases] for model in models]
 
-    fig = plt.figure(figsize=(18, 14), facecolor=base.BLUE_BG, constrained_layout=True)
-    gs = fig.add_gridspec(3, 2, height_ratios=[1.05, 1.15, 1.0])
-    fig.suptitle(
-        "AIBioBench Pass 4: Extra-Hard Pandas Audits and Presentation Tables",
-        fontsize=22,
-        fontweight="bold",
-        color=base.BLUE_TEXT,
-    )
+    family_order = ["audit_reconciliation", "aggregation_numeric", "decision_support", "expression_mapping", "orphan_key_audit", "presentation_table", "repairability_review"]
+    family_short = {
+        "audit_reconciliation": "Audit\nreconcile",
+        "aggregation_numeric": "Numeric\nagg",
+        "decision_support": "Decision\nsupport",
+        "expression_mapping": "Expression\nmapping",
+        "orphan_key_audit": "Orphan\nkey",
+        "presentation_table": "Presentation\ntable",
+        "repairability_review": "Repairability",
+    }
+    family_lookup = {(r["model"], r["family"]): r for r in family_scores}
+    family_matrix = [[family_lookup[(model, family)]["mean_score"] if (model, family) in family_lookup else float("nan") for family in family_order] for model in models]
+
+    fig = plt.figure(figsize=(21, 16), facecolor=PAGE_BG, constrained_layout=True)
+    gs = fig.add_gridspec(3, 2, height_ratios=[1.0, 1.25, 1.0])
+    fig.suptitle("AIBioBench Pass 4, Latest Run: Extra-Hard Python Audit and Presentation Failures", fontsize=24, fontweight="bold", color=TEXT)
 
     ax1 = fig.add_subplot(gs[0, 0])
+    style_axis(ax1)
     y = list(range(len(model_summary)))
-    exacts = [m["exact_matches"] for m in model_summary]
-    bar_colors = [
-        base.BLUE_DARK if x >= 4 else base.BLUE if x >= 3 else base.BLUE_MED if x >= 2 else base.BLUE_LIGHT
-        for x in exacts
-    ]
-    bars = ax1.barh(y, exacts, color=bar_colors)
+    exacts = [m["exact_attempts"] for m in model_summary]
+    colors = [BLUE_PALE if x > 0 else BLUE_DARK for x in exacts]
+    bars = ax1.barh(y, exacts, color=colors)
     ax1.set_yticks(y, model_labels)
     ax1.invert_yaxis()
-    ax1.set_xlim(0, 8)
-    ax1.set_xlabel("Exact matches out of 8 pass-4 cases", color=base.BLUE_TEXT)
-    ax1.set_title("Pass-4 Accuracy by Model", color=base.BLUE_TEXT, fontweight="bold")
-    ax1.grid(axis="x", color="#D4EAF7", linewidth=1)
+    ax1.set_xlim(0, 30)
+    ax1.set_xlabel("Exact attempts out of 30")
+    ax1.set_title("Exact Match Conversion by Model", fontweight="bold")
+    ax1.grid(axis="x", color=GRID, linewidth=1)
     for bar, item in zip(bars, model_summary):
-        ax1.text(
-            bar.get_width() + 0.07,
-            bar.get_y() + bar.get_height() / 2,
-            f"{item['exact_matches']}/8  ({100*item['accuracy']:.0f}%)",
-            va="center",
-            color=base.BLUE_TEXT,
-            fontsize=10,
-        )
+        ax1.text(min(bar.get_width() + 0.35, 29.4), bar.get_y() + bar.get_height() / 2, f"{item['exact_attempts']}/30  |  {item['exact_query_coverage_any']}/10 queries", va="center", color=TEXT, fontsize=9)
 
+    score_cmap = LinearSegmentedColormap.from_list("score_blues", [BLUE_DARK, BLUE, BLUE_LIGHT, BLUE_PALE])
     ax2 = fig.add_subplot(gs[0, 1])
-    partial_accuracy = [m["mean_aligned_cell_accuracy"] for m in model_summary]
-    ax2.scatter(
-        [m["mean_gen_tps"] for m in model_summary],
-        partial_accuracy,
-        s=[130 + 420 * m["mean_gpu_share"] for m in model_summary],
-        color=base.BLUE,
-        alpha=0.82,
-        edgecolors=base.BLUE_DARK,
-        linewidth=1.2,
-    )
-    for m in model_summary:
-        ax2.annotate(
-            m["display_model"].replace(" ", "\n", 1),
-            (m["mean_gen_tps"], m["mean_aligned_cell_accuracy"]),
-            xytext=(6, 5),
-            textcoords="offset points",
-            fontsize=8,
-            color=base.BLUE_TEXT,
-        )
-    ax2.set_xlabel("Mean generation tokens/sec", color=base.BLUE_TEXT)
-    ax2.set_ylabel("Mean aligned cell accuracy", color=base.BLUE_TEXT)
-    ax2.set_title("Throughput vs Partial Accuracy", color=base.BLUE_TEXT, fontweight="bold")
-    ax2.set_xlim(left=0)
-    ax2.set_ylim(0, min(1.0, max(partial_accuracy) + 0.18))
-    ax2.grid(color="#D4EAF7", linewidth=1)
+    style_axis(ax2)
+    im1 = ax2.imshow(exact_matrix, aspect="auto", cmap=score_cmap, vmin=0, vmax=1)
+    ax2.set_xticks(range(len(cases)), case_labels)
+    ax2.set_yticks(range(len(models)), model_labels)
+    ax2.set_title("Exact Rate by Model and Query (3 repeats)", fontweight="bold")
+    for i in range(len(models)):
+        for j in range(len(cases)):
+            val = exact_matrix[i][j]
+            ax2.text(j, i, f"{val:.0%}", ha="center", va="center", color=PAGE_BG if val >= 0.67 else TEXT, fontsize=8, fontweight="bold" if val > 0 else "normal")
+    cbar1 = fig.colorbar(im1, ax=ax2, fraction=0.028, pad=0.02)
+    cbar1.ax.tick_params(labelsize=8, colors=TEXT)
+    cbar1.outline.set_edgecolor(GRID)
 
     ax3 = fig.add_subplot(gs[1, 0])
-    exact_cmap = ListedColormap([base.BLUE_PALE, base.BLUE_DARK])
-    ax3.imshow(exact_matrix, aspect="auto", cmap=exact_cmap, vmin=0, vmax=1)
+    style_axis(ax3)
+    im2 = ax3.imshow(score_matrix, aspect="auto", cmap=score_cmap, vmin=0, vmax=1)
     ax3.set_xticks(range(len(cases)), case_labels)
     ax3.set_yticks(range(len(models)), model_labels)
-    ax3.set_title("Exact-Match Heatmap", color=base.BLUE_TEXT, fontweight="bold")
+    ax3.set_title("Mean Score by Model and Query", fontweight="bold")
     for i in range(len(models)):
         for j in range(len(cases)):
-            ax3.text(
-                j,
-                i,
-                "1" if exact_matrix[i][j] else "0",
-                ha="center",
-                va="center",
-                color="white" if exact_matrix[i][j] else base.BLUE_MUTED,
-                fontsize=9,
-                fontweight="bold",
-            )
+            val = score_matrix[i][j]
+            ax3.text(j, i, f"{val:.2f}", ha="center", va="center", color=PAGE_BG if val >= 0.83 else TEXT, fontsize=8, fontweight="bold" if val >= 0.95 else "normal")
+    cbar2 = fig.colorbar(im2, ax=ax3, fraction=0.028, pad=0.02)
+    cbar2.ax.tick_params(labelsize=8, colors=TEXT)
+    cbar2.outline.set_edgecolor(GRID)
 
     ax4 = fig.add_subplot(gs[1, 1])
-    cell_cmap = LinearSegmentedColormap.from_list(
-        "pass4_blues", [base.BLUE_PALE, base.BLUE_LIGHT, base.BLUE_MED, base.BLUE_DARK]
-    )
-    im = ax4.imshow(cell_matrix, aspect="auto", cmap=cell_cmap, vmin=0, vmax=1)
-    ax4.set_xticks(range(len(cases)), case_labels)
-    ax4.set_yticks(range(len(models)), model_labels)
-    ax4.set_title("Aligned Cell Accuracy: Partial Credit Pattern", color=base.BLUE_TEXT, fontweight="bold")
-    for i in range(len(models)):
-        for j in range(len(cases)):
-            val = cell_matrix[i][j]
-            ax4.text(
-                j,
-                i,
-                f"{val:.0%}",
-                ha="center",
-                va="center",
-                color="white" if val > 0.64 else base.BLUE_TEXT,
-                fontsize=8,
-                fontweight="bold" if val >= 1.0 else "normal",
-            )
-    cbar = fig.colorbar(im, ax=ax4, fraction=0.025, pad=0.02)
-    cbar.ax.tick_params(labelsize=8, colors=base.BLUE_TEXT)
-
-    ax5 = fig.add_subplot(gs[2, 0])
-    mode_order = [
-        ("exact", "Exact", base.BLUE_DARK),
-        ("order_only", "Correct rows, wrong order", base.BLUE),
-        ("type_only", "Type only", "#4FA3D9"),
-        ("same_count_wrong_values", "Same count, wrong values", "#8FC6E8"),
-        ("row_count_mismatch", "Wrong row count", "#CBE5F6"),
-        ("column_error", "Column error", "#DDEFF9"),
-    ]
+    style_axis(ax4)
+    mode_order = [("exact", "Exact", BLUE_PALE), ("order_only", "Right rows, wrong order", BLUE_LIGHT), ("type_only", "Type only", BLUE_MID), ("column_error", "Column error", "#6EA8D7"), ("same_count_wrong_values", "Same count, wrong values", FAIL_LIGHT), ("row_count_mismatch", "Wrong row count", BLUE_DARK)]
     bottoms = [0] * len(cases)
     for mode, label, color in mode_order:
-        vals = [sum(1 for r in rows if r["case_id"] == case and r["_failure_mode"] == mode) for case in cases]
-        ax5.bar(range(len(cases)), vals, bottom=bottoms, label=label, color=color, edgecolor=base.BLUE_BG)
+        vals = [sum(1 for row in model_query_rows if row["case_id"] == case and row["dominant_failure_mode"] == mode) for case in cases]
+        ax4.bar(range(len(cases)), vals, bottom=bottoms, label=label, color=color, edgecolor=PANEL_BG)
         bottoms = [b + v for b, v in zip(bottoms, vals)]
-    ax5.set_xticks(range(len(cases)), [f"Q{i + 1}" for i in range(len(cases))])
-    ax5.set_ylim(0, 9)
-    ax5.set_ylabel("Models", color=base.BLUE_TEXT)
-    ax5.set_title("Failure Mode by Query", color=base.BLUE_TEXT, fontweight="bold")
-    ax5.legend(loc="upper center", bbox_to_anchor=(0.5, -0.12), ncol=2, frameon=False, fontsize=9)
-    ax5.grid(axis="y", color="#D4EAF7", linewidth=1)
+    ax4.set_xticks(range(len(cases)), [c.split(".")[-1].upper() for c in cases])
+    ax4.set_ylim(0, len(models))
+    ax4.set_ylabel("Models")
+    ax4.set_title("Dominant Failure Mode by Query", fontweight="bold")
+    ax4.grid(axis="y", color=GRID, linewidth=1)
+    leg = ax4.legend(loc="upper center", bbox_to_anchor=(0.5, -0.12), ncol=2, frameon=False, fontsize=9)
+    for text in leg.get_texts():
+        text.set_color(TEXT)
+
+    ax5 = fig.add_subplot(gs[2, 0])
+    style_axis(ax5)
+    im3 = ax5.imshow(family_matrix, aspect="auto", cmap=score_cmap, vmin=0, vmax=1)
+    ax5.set_xticks(range(len(family_order)), [family_short[f] for f in family_order])
+    ax5.set_yticks(range(len(models)), model_labels)
+    ax5.set_title("Capability View: Mean Score by Failure Family", fontweight="bold")
+    for i in range(len(models)):
+        for j in range(len(family_order)):
+            val = family_matrix[i][j]
+            if not math.isnan(val):
+                ax5.text(j, i, f"{val:.2f}", ha="center", va="center", color=PAGE_BG if val >= 0.83 else TEXT, fontsize=8)
+    cbar3 = fig.colorbar(im3, ax=ax5, fraction=0.028, pad=0.02)
+    cbar3.ax.tick_params(labelsize=8, colors=TEXT)
+    cbar3.outline.set_edgecolor(GRID)
 
     ax6 = fig.add_subplot(gs[2, 1])
-    avg_cells = [c["mean_aligned_cell_accuracy"] for c in case_summary]
-    exact_by_case = [c["exact_models"] for c in case_summary]
-    ax6.plot(range(len(cases)), avg_cells, color=base.BLUE_DARK, linewidth=2.7, marker="o", markersize=8)
-    ax6.fill_between(range(len(cases)), avg_cells, color=base.BLUE_LIGHT, alpha=0.45)
-    for idx, (avg_cell, exact) in enumerate(zip(avg_cells, exact_by_case)):
-        ax6.text(idx, min(avg_cell + 0.035, 1.03), f"{exact}/9 exact", ha="center", color=base.BLUE_TEXT, fontsize=9)
-    ax6.set_xticks(range(len(cases)), [f"Q{i + 1}" for i in range(len(cases))])
-    ax6.set_ylim(0, 1.08)
-    ax6.set_ylabel("Mean aligned cell accuracy", color=base.BLUE_TEXT)
-    ax6.set_title("Extra-Hard Task Solvability by Query", color=base.BLUE_TEXT, fontweight="bold")
-    ax6.grid(axis="y", color="#D4EAF7", linewidth=1)
-
-    for ax in fig.axes:
-        ax.set_facecolor("white")
-        for spine in ax.spines.values():
-            spine.set_color("#C7E0F2")
-        ax.tick_params(colors=base.BLUE_TEXT)
-
+    style_axis(ax6)
+    query_scores = [c["mean_score"] for c in case_summary]
+    query_exacts = [c["exact_attempt_rate"] for c in case_summary]
+    x = list(range(len(cases)))
+    ax6.plot(x, query_scores, color=BLUE_PALE, linewidth=3, marker="o", markersize=8, label="Mean score")
+    ax6.plot(x, query_exacts, color=BLUE_MID, linewidth=2.3, marker="s", markersize=6, label="Exact rate")
+    ax6.fill_between(x, query_scores, color=BLUE_MID, alpha=0.15)
+    ax6.set_xticks(x, [c.split(".")[-1].upper() for c in cases])
+    ax6.set_ylim(0, 1.05)
+    ax6.set_ylabel("Rate / score")
+    ax6.set_title("Which Pass-4 Questions Broke the Models", fontweight="bold")
+    ax6.grid(axis="y", color=GRID, linewidth=1)
+    for idx, case in enumerate(case_summary):
+        ax6.text(idx, min(case["mean_score"] + 0.04, 1.02), f"{case['exact_attempts']}/39 exact", ha="center", va="bottom", color=TEXT, fontsize=8)
+    leg = ax6.legend(frameon=False, fontsize=9, loc="lower left")
+    for text in leg.get_texts():
+        text.set_color(TEXT)
     fig.savefig(out_base.with_suffix(".png"), dpi=220, facecolor=fig.get_facecolor())
     fig.savefig(out_base.with_suffix(".svg"), facecolor=fig.get_facecolor())
     plt.close(fig)
 
 
-def write_notes(path: Path, model_summary: list[dict], case_summary: list[dict]) -> None:
+def render_model_groups(groups: list[dict], out_base: Path):
+    fig = plt.figure(figsize=(18, 10), facecolor=PAGE_BG, constrained_layout=True)
+    gs = fig.add_gridspec(1, 2, width_ratios=[1.15, 1.0])
+    fig.suptitle("AIBioBench Pass 4: Model Grouping by Audit vs Analytical Python Performance", fontsize=22, fontweight="bold", color=TEXT)
+    ax1 = fig.add_subplot(gs[0, 0])
+    style_axis(ax1)
+    for item in groups:
+        color = MODEL_GROUP_COLORS[item["group"]]
+        ax1.scatter(item["audit_score"], item["analytical_score"], s=120 + item["exact_attempts"] * 80, color=color, edgecolors=BLUE_PALE, linewidth=1.2, alpha=0.95)
+        ax1.annotate(wrap_display_name(item["display_model"]), (item["audit_score"], item["analytical_score"]), xytext=(7, 6), textcoords="offset points", color=TEXT, fontsize=9)
+    ax1.set_xlabel("Audit/repairability tasks mean score\n(Q1, Q7, Q10)")
+    ax1.set_ylabel("Analytical/expression/presentation tasks mean score\n(Q2, Q3, Q4, Q5, Q6, Q8, Q9)")
+    ax1.set_xlim(0, 1.03)
+    ax1.set_ylim(0, 1.03)
+    ax1.set_title("Pass-4 exactness collapsed except repairability audit", fontweight="bold")
+    ax1.grid(color=GRID, linewidth=1)
+
+    ax2 = fig.add_subplot(gs[0, 1])
+    style_axis(ax2)
+    y = list(range(len(groups)))
+    stable_exact = [g["stable_exact_queries"] for g in groups]
+    partial = [g["partial_exact_queries"] for g in groups]
+    stable_fail = [g["stable_fail_queries"] for g in groups]
+    ax2.barh(y, stable_fail, color=BLUE_DARK, label="Stable fail")
+    ax2.barh(y, partial, left=stable_fail, color=BLUE_MID, label="Prompt-sensitive exact")
+    ax2.barh(y, stable_exact, left=[a + b for a, b in zip(stable_fail, partial)], color=BLUE_PALE, label="Stable exact")
+    ax2.set_yticks(y, [g["display_model"] for g in groups])
+    ax2.invert_yaxis()
+    ax2.set_xlim(0, 10)
+    ax2.set_xlabel("Queries out of 10")
+    ax2.set_title("Repeatability profile by model", fontweight="bold")
+    ax2.grid(axis="x", color=GRID, linewidth=1)
+    for idx, item in enumerate(groups):
+        ax2.text(9.95, idx, item["group"], ha="right", va="center", color=TEXT, fontsize=8)
+    leg = ax2.legend(loc="lower right", frameon=False, fontsize=9)
+    for text in leg.get_texts():
+        text.set_color(TEXT)
+    fig.savefig(out_base.with_suffix(".png"), dpi=220, facecolor=fig.get_facecolor())
+    fig.savefig(out_base.with_suffix(".svg"), facecolor=fig.get_facecolor())
+    plt.close(fig)
+
+
+def build_failure_point_rows(case_summary: list[dict]) -> list[dict]:
+    rows = []
+    for case in case_summary:
+        for issue in case["top_issues"]:
+            rows.append(
+                {
+                    "case_id": case["case_id"],
+                    "query": case["query"],
+                    "short_name": case["short_name"],
+                    "issue_code": issue["issue_code"],
+                    "issue_label": issue["issue_label"],
+                    "attempts_with_issue": issue["attempts_with_issue"],
+                    "attempt_pct": issue["attempt_pct"],
+                    "example_models": issue["example_models"],
+                }
+            )
+    return rows
+
+
+def write_notes(path: Path, model_summary: list[dict], case_summary: list[dict], groups: list[dict], results_dir: Path) -> None:
+    exact_zero = [case["query"] for case in case_summary if case["exact_attempts"] == 0]
+    total_exact = sum(case["exact_attempts"] for case in case_summary)
     lines = [
         "# AIBioBench Pass 4 Analysis",
         "",
-        "Pass 4 contains eight extra-hard Python/pandas tasks in the completed run. It stresses reconciliation metrics, complete-chain aggregation, expression mapping, sample burden scoring, orphan-key reporting, and final presentation-table construction.",
+        f"Run analyzed: `{results_dir.name}`",
         "",
-        "## Model Summary",
+        "Pass 4 contains ten extra-hard Python/pandas tasks, each repeated three times across thirteen models. The pressure shifts to reconciliation metrics, expression mapping, orphan-key union reports, presentation tables, and repairability review.",
         "",
-        "| Model | Exact | Accuracy | Mean Cell Accuracy | Row Count Match | Wall Time | Mean Gen TPS |",
-        "|---|---:|---:|---:|---:|---:|---:|",
+        "## Headline Findings",
+        "",
+        f"- **{model_summary[0]['display_model']}** led pass 4 with {model_summary[0]['exact_attempts']}/30 exact attempts and exact coverage on {model_summary[0]['exact_query_coverage_any']}/10 questions.",
+        f"- Exact matches nearly disappeared: only {total_exact}/390 attempts were exact, and {', '.join(exact_zero)} had zero exact attempts.",
+        "- Q10 repairability was the only query with any exact conversion; all analytical, presentation, and orphan-key tasks were exact-zero.",
+        "- The largest recurring failures were expression mapping, exact orphan-key labels, complete-chain filtering, and Python table presentation order.",
+        "",
+        "## Model Groups",
+        "",
+        "| Group | Models | Why they belong there |",
+        "|---|---|---|",
     ]
-    for m in model_summary:
-        lines.append(
-            f"| {m['display_model']} | {m['exact_matches']}/8 | {100*m['accuracy']:.1f}% | "
-            f"{100*m['mean_aligned_cell_accuracy']:.1f}% | {100*m['row_count_match_rate']:.1f}% | "
-            f"{m['total_wall_s']:.1f}s | {m['mean_gen_tps']:.2f} |"
-        )
-    lines.extend(
-        [
-            "",
-            "## Case Summary",
-            "",
-            "| Query | Exact Models | Mean Cell Accuracy | Row Count Mismatches | Same Count But Wrong | Dominant Failure |",
-            "|---|---:|---:|---:|---:|---|",
-        ]
-    )
-    for c in case_summary:
-        lines.append(
-            f"| {c['query']} | {c['exact_models']}/9 | {100*c['mean_aligned_cell_accuracy']:.1f}% | "
-            f"{c['row_count_mismatch_models']} | {c['same_count_but_wrong_models']} | {c['dominant_failure_mode']} |"
-        )
-    lines.extend(["", "## Query Notes", ""])
-    for c in case_summary:
-        lines.append(f"- **{c['query']}**: {c['note']}")
+    grouped = defaultdict(list)
+    reasons = {}
+    for item in groups:
+        grouped[item["group"]].append(item["display_model"])
+        reasons[item["group"]] = item["group_reason"]
+    for group in ["Only exact converter", "Higher partial-credit operators", "Middle partial-credit operators", "Brittle / low-coverage"]:
+        if group in grouped:
+            lines.append(f"| {group} | {', '.join(grouped[group])} | {reasons[group]} |")
+
+    lines.extend(["", "## Model Summary", "", "| Model | Exact Attempts | Queries With Any Exact | Stable Exact Queries | Mean Score | Mean Cell Accuracy | Dominant Failure Mode |", "|---|---:|---:|---:|---:|---:|---|"])
+    for item in model_summary:
+        lines.append(f"| {item['display_model']} | {item['exact_attempts']}/30 | {item['exact_query_coverage_any']}/10 | {item['stable_exact_queries']}/10 | {item['mean_score']:.3f} | {item['mean_aligned_cell_accuracy']:.3f} | {item['dominant_failure_mode']} |")
+
+    lines.extend(["", "## Query-by-Query Failure Points", "", "| Query | Focus | Exact Attempts | Mean Score | Top failure points |", "|---|---|---:|---:|---|"])
+    for case in case_summary:
+        issue_text = "; ".join(f"{issue['attempts_with_issue']}/39: {issue['issue_label']}" for issue in case["top_issues"])
+        lines.append(f"| {case['query']} | {case['short_name']} | {case['exact_attempts']}/39 | {case['mean_score']:.3f} | {issue_text} |")
+
+    lines.extend(["", "## Short Notes", ""])
+    for case in case_summary:
+        lines.append(f"- **{case['query']} {case['short_name']}**: {case['exact_attempts']}/39 exact, dominant failure mode `{case['dominant_failure_mode']}`. Primary family: `{case['primary_failure_family']}`.")
+        for issue in case["top_issues"]:
+            lines.append(f"Issue: {issue['attempts_with_issue']}/39 attempts. {issue['issue_label']} Example models: {issue['example_models']}.")
     path.write_text("\n".join(lines) + "\n", encoding="utf-8")
 
 
@@ -328,99 +879,34 @@ def main() -> int:
     if len(sys.argv) != 2:
         print("usage: pass4_analysis.py <results_dir>", file=sys.stderr)
         return 2
-
     results_dir = Path(sys.argv[1]).resolve()
     if not (results_dir / "detailed_results.csv").exists():
         print(f"missing detailed_results.csv in {results_dir}", file=sys.stderr)
         return 1
-
+    repo_root = results_dir.parent.parent
+    if not (repo_root / "benchmark_cases.jsonl").exists():
+        print(f"missing benchmark_cases.jsonl in repo root inferred from {results_dir}", file=sys.stderr)
+        return 1
     out_dir = results_dir / "pass4_analysis"
     out_dir.mkdir(exist_ok=True)
 
+    case_meta, _gold = load_metadata(repo_root)
     rows = load_rows(results_dir)
-    if not rows:
-        print("no pass-4 rows found", file=sys.stderr)
-        return 1
+    model_summary, case_summary, model_query_rows = build_summaries(rows, case_meta)
+    family_scores = compute_family_scores(model_query_rows, case_meta)
+    model_groups = assign_model_groups(model_summary, model_query_rows)
+    failure_point_rows = build_failure_point_rows(case_summary)
 
-    model_summary, case_summary = build_summaries(rows)
+    write_csv(out_dir / "pass4_model_summary.csv", model_summary, ["model", "display_model", "attempts", "exact_attempts", "exact_attempt_rate", "exact_query_coverage_any", "stable_exact_queries", "partial_exact_queries", "stable_fail_queries", "mean_score", "mean_aligned_cell_accuracy", "mean_row_set_correctness", "mean_numeric_correctness", "mean_sort_correctness", "row_count_mismatch_rate", "mean_wall_s", "mean_gen_tps", "exact", "order_only", "type_only", "same_count_wrong_values", "row_count_mismatch", "column_error", "dominant_failure_mode"])
+    write_csv(out_dir / "pass4_case_summary.csv", [{key: value for key, value in row.items() if key not in {"top_issues"}} for row in case_summary], ["case_id", "query", "short_name", "prompt", "primary_failure_family", "exact_attempts", "exact_attempt_rate", "exact_models_any", "exact_models_stable", "mean_score", "mean_aligned_cell_accuracy", "row_count_mismatch_attempts", "same_count_wrong_attempts", "order_only_attempts", "type_only_attempts", "column_error_attempts", "dominant_failure_mode"])
+    write_csv(out_dir / "pass4_model_query_matrix.csv", model_query_rows, ["model", "display_model", "case_id", "query", "short_name", "exact_attempts", "exact_rate", "mean_score", "mean_aligned_cell_accuracy", "dominant_failure_mode", "stable_outcome"])
+    write_csv(out_dir / "pass4_family_scores.csv", family_scores, ["model", "display_model", "family", "mean_score", "mean_exact_rate"])
+    write_csv(out_dir / "pass4_model_groups.csv", model_groups, ["model", "display_model", "group", "group_reason", "audit_score", "analytical_score", "exact_attempts", "stable_exact_queries", "partial_exact_queries", "stable_fail_queries", "mean_score"])
+    write_csv(out_dir / "pass4_query_failure_points.csv", failure_point_rows, ["case_id", "query", "short_name", "issue_code", "issue_label", "attempts_with_issue", "attempt_pct", "example_models"])
 
-    model_fields = [
-        "model",
-        "display_model",
-        "cases",
-        "exact_matches",
-        "accuracy",
-        "total_score",
-        "mean_score",
-        "valid_json_rate",
-        "mean_aligned_cell_accuracy",
-        "row_count_match_rate",
-        "total_wall_s",
-        "mean_gen_tps",
-        "mean_gpu_share",
-        "exact",
-        "row_count_mismatch",
-        "order_only",
-        "same_count_wrong_values",
-        "type_only",
-        "column_error",
-        "invalid_json_or_error",
-    ]
-    case_fields = [
-        "case_id",
-        "query",
-        "semantic_focus",
-        "exact_models",
-        "accuracy",
-        "mean_score",
-        "mean_aligned_cell_accuracy",
-        "row_count_mismatch_models",
-        "same_count_but_wrong_models",
-        "order_only",
-        "type_only",
-        "column_error",
-        "dominant_failure_mode",
-        "note",
-    ]
-    base.write_csv(out_dir / "pass4_model_summary.csv", model_summary, model_fields)
-    base.write_csv(out_dir / "pass4_case_summary.csv", case_summary, case_fields)
-
-    failure_rows = [
-        {
-            "model": r["model"],
-            "case_id": r["case_id"],
-            "exact_match": r["exact_match"],
-            "score": r["score"],
-            "failure_mode": r["_failure_mode"],
-            "aligned_cell_accuracy": r["aligned_cell_accuracy"],
-            "row_count_match": r["row_count_match"],
-            "pred_row_count": r["pred_row_count"],
-            "gold_row_count": r["gold_row_count"],
-            "missing_rows_count": r["missing_rows_count"],
-            "extra_rows_count": r["extra_rows_count"],
-        }
-        for r in rows
-    ]
-    base.write_csv(
-        out_dir / "pass4_failure_modes.csv",
-        failure_rows,
-        [
-            "model",
-            "case_id",
-            "exact_match",
-            "score",
-            "failure_mode",
-            "aligned_cell_accuracy",
-            "row_count_match",
-            "pred_row_count",
-            "gold_row_count",
-            "missing_rows_count",
-            "extra_rows_count",
-        ],
-    )
-
-    render_figure(rows, model_summary, case_summary, out_dir / "pass4_visual_report")
-    write_notes(out_dir / "pass4_analysis_notes.md", model_summary, case_summary)
+    render_visual_report(model_summary, case_summary, model_query_rows, family_scores, out_dir / "pass4_visual_report")
+    render_model_groups(model_groups, out_dir / "pass4_model_groups")
+    write_notes(out_dir / "pass4_analysis_notes.md", model_summary, case_summary, model_groups, results_dir)
     print(out_dir)
     return 0
 

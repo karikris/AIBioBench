@@ -1,0 +1,66 @@
+model,display_model,family,mean_score,mean_aligned_cell_accuracy,exact_attempts,queries
+gemma4-31b-sqlbench:latest,Gemma 4 31B,decision_support,0.80025,0.5297619047619048,0,2
+gemma4-26b-sqlbench:latest,Gemma 4 26B,decision_support,0.64825,0.4476190476190476,0,2
+deepseek-coder-33b-sqlbench:latest,DeepSeek Coder 33B,decision_support,0.6150833333333333,0.29444444444444445,0,2
+qwen2.5-72b-sqlbench:latest,Qwen 2.5 72B,decision_support,0.605,0.30608465608465607,0,2
+codellama-70b-sqlbench:latest,CodeLlama 70B,decision_support,0.5654444444444444,0.38650793650793647,0,2
+qwen3-coder-30b-sqlbench:latest,Qwen3 Coder 30B,decision_support,0.5595,0.3331349206349206,0,2
+phi4-mini-sqlbench:latest,Phi-4 Mini,decision_support,0.5531666666666666,0.2277777777777778,0,2
+command-r-plus-sqlbench:latest,Command R+,decision_support,0.5426666666666667,0.40714285714285714,0,2
+llama3-70b-sqlbench:latest,Llama 3 70B,decision_support,0.5274166666666666,0.30892857142857144,0,2
+dbrx-sqlbench:latest,DBRX,decision_support,0.5010277777777778,0.24153439153439155,0,2
+qwen3.6-sqlbench:latest,Qwen3.6,decision_support,0.46249999999999997,0.3351190476190476,0,2
+mixtral-8x22b-sqlbench:latest,Mixtral 8x22B,decision_support,0.44875,0.20317460317460317,0,2
+qwen2.5-coder-32b-sqlbench:latest,Qwen 2.5 Coder 32B,decision_support,0.33,0.28915343915343916,0,2
+gemma4-31b-sqlbench:latest,Gemma 4 31B,expression_transform,0.7347222222222222,0.4444444444444444,0,2
+gemma4-26b-sqlbench:latest,Gemma 4 26B,expression_transform,0.7205555555555555,0.44999999999999996,0,2
+qwen2.5-72b-sqlbench:latest,Qwen 2.5 72B,expression_transform,0.6797222222222222,0.3759259259259259,0,2
+qwen3-coder-30b-sqlbench:latest,Qwen3 Coder 30B,expression_transform,0.6572222222222222,0.34259259259259256,0,2
+dbrx-sqlbench:latest,DBRX,expression_transform,0.653888888888889,0.3,0,2
+qwen3.6-sqlbench:latest,Qwen3.6,expression_transform,0.6497222222222223,0.34074074074074073,0,2
+llama3-70b-sqlbench:latest,Llama 3 70B,expression_transform,0.6372222222222221,0.2777777777777778,0,2
+command-r-plus-sqlbench:latest,Command R+,expression_transform,0.6091737891737892,0.25356125356125353,0,2
+phi4-mini-sqlbench:latest,Phi-4 Mini,expression_transform,0.5890740740740741,0.2067901234567901,0,2
+mixtral-8x22b-sqlbench:latest,Mixtral 8x22B,expression_transform,0.5863888888888888,0.28148148148148144,0,2
+qwen2.5-coder-32b-sqlbench:latest,Qwen 2.5 Coder 32B,expression_transform,0.48333333333333334,0.24444444444444444,0,2
+codellama-70b-sqlbench:latest,CodeLlama 70B,expression_transform,0.46685185185185185,0.21975308641975308,0,2
+deepseek-coder-33b-sqlbench:latest,DeepSeek Coder 33B,expression_transform,0.44166666666666665,0.17569444444444443,0,2
+gemma4-31b-sqlbench:latest,Gemma 4 31B,ranking_and_priority,0.675,0.5,0,1
+qwen3-coder-30b-sqlbench:latest,Qwen3 Coder 30B,ranking_and_priority,0.475,0.125,0,1
+qwen2.5-72b-sqlbench:latest,Qwen 2.5 72B,ranking_and_priority,0.455,0.15555555555555556,0,1
+gemma4-26b-sqlbench:latest,Gemma 4 26B,ranking_and_priority,0.3726190476190476,0.15873015873015872,0,1
+dbrx-sqlbench:latest,DBRX,ranking_and_priority,0.3194444444444445,0.10648148148148148,0,1
+deepseek-coder-33b-sqlbench:latest,DeepSeek Coder 33B,ranking_and_priority,0.30833333333333335,0.08333333333333333,0,1
+qwen3.6-sqlbench:latest,Qwen3.6,ranking_and_priority,0.26388888888888884,0.12962962962962962,0,1
+llama3-70b-sqlbench:latest,Llama 3 70B,ranking_and_priority,0.24999999999999997,0.1574074074074074,0,1
+mixtral-8x22b-sqlbench:latest,Mixtral 8x22B,ranking_and_priority,0.2333333333333333,0.07407407407407407,0,1
+codellama-70b-sqlbench:latest,CodeLlama 70B,ranking_and_priority,0.18888888888888888,0.2962962962962963,0,1
+command-r-plus-sqlbench:latest,Command R+,ranking_and_priority,0.15,0.14444444444444443,0,1
+qwen2.5-coder-32b-sqlbench:latest,Qwen 2.5 Coder 32B,ranking_and_priority,0.049999999999999996,0.2037037037037037,0,1
+phi4-mini-sqlbench:latest,Phi-4 Mini,ranking_and_priority,0.0,0.19444444444444445,0,1
+qwen3.6-sqlbench:latest,Qwen3.6,repeatability_probe,0.825,0.5333333333333333,0,1
+llama3-70b-sqlbench:latest,Llama 3 70B,repeatability_probe,0.8,0.4666666666666667,0,1
+mixtral-8x22b-sqlbench:latest,Mixtral 8x22B,repeatability_probe,0.8,0.4666666666666667,0,1
+qwen3-coder-30b-sqlbench:latest,Qwen3 Coder 30B,repeatability_probe,0.8,0.4666666666666667,0,1
+deepseek-coder-33b-sqlbench:latest,DeepSeek Coder 33B,repeatability_probe,0.7749999999999999,0.4,0,1
+gemma4-26b-sqlbench:latest,Gemma 4 26B,repeatability_probe,0.7749999999999999,0.4,0,1
+qwen2.5-72b-sqlbench:latest,Qwen 2.5 72B,repeatability_probe,0.7749999999999999,0.4,0,1
+codellama-70b-sqlbench:latest,CodeLlama 70B,repeatability_probe,0.7666666666666667,0.37777777777777777,0,1
+gemma4-31b-sqlbench:latest,Gemma 4 31B,repeatability_probe,0.75,0.3333333333333333,0,1
+command-r-plus-sqlbench:latest,Command R+,repeatability_probe,0.7333333333333333,0.28888888888888886,0,1
+qwen2.5-coder-32b-sqlbench:latest,Qwen 2.5 Coder 32B,repeatability_probe,0.5333333333333333,0.3111111111111111,0,1
+dbrx-sqlbench:latest,DBRX,repeatability_probe,0.525,0.23333333333333334,0,1
+phi4-mini-sqlbench:latest,Phi-4 Mini,repeatability_probe,0.3833333333333333,0.18333333333333335,0,1
+gemma4-31b-sqlbench:latest,Gemma 4 31B,statistical_summary,0.6659375,0.23750000000000002,0,4
+qwen3-coder-30b-sqlbench:latest,Qwen3 Coder 30B,statistical_summary,0.6265625,0.21333333333333335,0,4
+qwen3.6-sqlbench:latest,Qwen3.6,statistical_summary,0.6038541666666667,0.2050925925925926,0,4
+gemma4-26b-sqlbench:latest,Gemma 4 26B,statistical_summary,0.5984375,0.28375,0,4
+mixtral-8x22b-sqlbench:latest,Mixtral 8x22B,statistical_summary,0.5337152777777778,0.18503086419753087,0,4
+llama3-70b-sqlbench:latest,Llama 3 70B,statistical_summary,0.5314583333333334,0.188125,0,4
+qwen2.5-coder-32b-sqlbench:latest,Qwen 2.5 Coder 32B,statistical_summary,0.5276041666666667,0.21083333333333332,0,4
+qwen2.5-72b-sqlbench:latest,Qwen 2.5 72B,statistical_summary,0.5234375,0.2177777777777778,0,4
+deepseek-coder-33b-sqlbench:latest,DeepSeek Coder 33B,statistical_summary,0.5029166666666667,0.1537962962962963,0,4
+command-r-plus-sqlbench:latest,Command R+,statistical_summary,0.49541666666666667,0.2619444444444444,0,4
+phi4-mini-sqlbench:latest,Phi-4 Mini,statistical_summary,0.4938541666666667,0.18305555555555555,0,4
+codellama-70b-sqlbench:latest,CodeLlama 70B,statistical_summary,0.47802083333333334,0.20750000000000002,0,4
+dbrx-sqlbench:latest,DBRX,statistical_summary,0.4467361111111111,0.12430555555555556,0,4

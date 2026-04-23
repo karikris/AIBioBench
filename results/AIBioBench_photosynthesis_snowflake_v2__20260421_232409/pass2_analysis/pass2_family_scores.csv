@@ -1,0 +1,53 @@
+model,display_model,family,mean_score,mean_exact_rate
+codellama-70b-sqlbench:latest,CodeLlama 70B,aggregation_numeric,0.337037037037037,0.0
+codellama-70b-sqlbench:latest,CodeLlama 70B,decision_support,0.5266666666666667,0.0
+codellama-70b-sqlbench:latest,CodeLlama 70B,outer_join_coverage,0.3777777777777778,0.0
+codellama-70b-sqlbench:latest,CodeLlama 70B,snowflake_traversal,0.47638888888888886,0.0
+command-r-plus-sqlbench:latest,Command R+,aggregation_numeric,0.24814814814814812,0.0
+command-r-plus-sqlbench:latest,Command R+,decision_support,0.5700000000000001,0.0
+command-r-plus-sqlbench:latest,Command R+,outer_join_coverage,0.89,0.0
+command-r-plus-sqlbench:latest,Command R+,snowflake_traversal,0.6847222222222222,0.0
+dbrx-sqlbench:latest,DBRX,aggregation_numeric,0.24621212121212122,0.0
+dbrx-sqlbench:latest,DBRX,decision_support,0.4651851851851852,0.0
+dbrx-sqlbench:latest,DBRX,outer_join_coverage,0.5606944444444445,0.0
+dbrx-sqlbench:latest,DBRX,snowflake_traversal,0.5279761904761904,0.0
+deepseek-coder-33b-sqlbench:latest,DeepSeek Coder 33B,aggregation_numeric,0.39915343915343915,0.0
+deepseek-coder-33b-sqlbench:latest,DeepSeek Coder 33B,decision_support,0.5577777777777777,0.0
+deepseek-coder-33b-sqlbench:latest,DeepSeek Coder 33B,outer_join_coverage,0.6696296296296297,0.0
+deepseek-coder-33b-sqlbench:latest,DeepSeek Coder 33B,snowflake_traversal,0.37222222222222223,0.0
+gemma4-26b-sqlbench:latest,Gemma 4 26B,aggregation_numeric,0.7202380952380952,0.0
+gemma4-26b-sqlbench:latest,Gemma 4 26B,decision_support,0.6252579365079365,0.0
+gemma4-26b-sqlbench:latest,Gemma 4 26B,outer_join_coverage,0.9733333333333334,0.6666666666666666
+gemma4-26b-sqlbench:latest,Gemma 4 26B,snowflake_traversal,0.7791666666666668,0.0
+gemma4-31b-sqlbench:latest,Gemma 4 31B,aggregation_numeric,0.8666666666666666,0.0
+gemma4-31b-sqlbench:latest,Gemma 4 31B,decision_support,0.9444444444444444,0.5
+gemma4-31b-sqlbench:latest,Gemma 4 31B,outer_join_coverage,0.96,0.6666666666666666
+gemma4-31b-sqlbench:latest,Gemma 4 31B,snowflake_traversal,0.9166666666666667,0.5
+llama3-70b-sqlbench:latest,Llama 3 70B,aggregation_numeric,0.5983333333333333,0.0
+llama3-70b-sqlbench:latest,Llama 3 70B,decision_support,0.5700000000000001,0.0
+llama3-70b-sqlbench:latest,Llama 3 70B,outer_join_coverage,0.7695286195286195,0.0
+llama3-70b-sqlbench:latest,Llama 3 70B,snowflake_traversal,0.6472222222222221,0.0
+mixtral-8x22b-sqlbench:latest,Mixtral 8x22B,aggregation_numeric,0.5461111111111111,0.0
+mixtral-8x22b-sqlbench:latest,Mixtral 8x22B,decision_support,0.550952380952381,0.0
+mixtral-8x22b-sqlbench:latest,Mixtral 8x22B,outer_join_coverage,0.8488888888888889,0.0
+mixtral-8x22b-sqlbench:latest,Mixtral 8x22B,snowflake_traversal,0.8597222222222223,0.3333333333333333
+phi4-mini-sqlbench:latest,Phi-4 Mini,aggregation_numeric,0.32357256778309407,0.0
+phi4-mini-sqlbench:latest,Phi-4 Mini,decision_support,0.43944444444444447,0.0
+phi4-mini-sqlbench:latest,Phi-4 Mini,outer_join_coverage,0.6977777777777778,0.0
+phi4-mini-sqlbench:latest,Phi-4 Mini,snowflake_traversal,0.6754629629629629,0.0
+qwen2.5-72b-sqlbench:latest,Qwen 2.5 72B,aggregation_numeric,0.8101851851851851,0.0
+qwen2.5-72b-sqlbench:latest,Qwen 2.5 72B,decision_support,0.6066666666666667,0.0
+qwen2.5-72b-sqlbench:latest,Qwen 2.5 72B,outer_join_coverage,0.9066666666666666,0.3333333333333333
+qwen2.5-72b-sqlbench:latest,Qwen 2.5 72B,snowflake_traversal,0.7222222222222222,0.0
+qwen2.5-coder-32b-sqlbench:latest,Qwen 2.5 Coder 32B,aggregation_numeric,0.6787037037037037,0.0
+qwen2.5-coder-32b-sqlbench:latest,Qwen 2.5 Coder 32B,decision_support,0.6333333333333333,0.0
+qwen2.5-coder-32b-sqlbench:latest,Qwen 2.5 Coder 32B,outer_join_coverage,0.7622222222222222,0.3333333333333333
+qwen2.5-coder-32b-sqlbench:latest,Qwen 2.5 Coder 32B,snowflake_traversal,0.37222222222222223,0.0
+qwen3-coder-30b-sqlbench:latest,Qwen3 Coder 30B,aggregation_numeric,0.5544444444444444,0.0
+qwen3-coder-30b-sqlbench:latest,Qwen3 Coder 30B,decision_support,0.6766666666666666,0.0
+qwen3-coder-30b-sqlbench:latest,Qwen3 Coder 30B,outer_join_coverage,0.5566666666666666,0.0
+qwen3-coder-30b-sqlbench:latest,Qwen3 Coder 30B,snowflake_traversal,0.6472222222222221,0.0
+qwen3.6-sqlbench:latest,Qwen3.6,aggregation_numeric,0.6125,0.0
+qwen3.6-sqlbench:latest,Qwen3.6,decision_support,0.6133333333333333,0.0
+qwen3.6-sqlbench:latest,Qwen3.6,outer_join_coverage,0.9333333333333333,0.6666666666666666
+qwen3.6-sqlbench:latest,Qwen3.6,snowflake_traversal,0.7222222222222222,0.0

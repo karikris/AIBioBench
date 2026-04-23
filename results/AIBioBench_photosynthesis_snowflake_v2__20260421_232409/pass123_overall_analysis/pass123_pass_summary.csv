@@ -1,0 +1,4 @@
+pass,pass_label,attempts,exact_attempts,exact_attempt_rate,queries_with_any_exact,exact_zero_queries,mean_score,mean_aligned_cell_accuracy,mean_row_set_correctness,mean_numeric_correctness,dominant_failure_mode,row_count_mismatch,same_count_wrong_values,exact,order_only,type_only,column_error
+1,Pass 1,390,51,0.13076923076923078,5,5,0.7607192205942206,0.6017857142857143,0.8637454212454212,0.639202787952788,same_count_wrong_values,151,173,51,6,9,0
+2,Pass 2,390,32,0.08205128205128205,4,6,0.6377677816822553,0.5020436560176628,0.7419353672643146,0.5563960113960114,row_count_mismatch,216,137,32,3,0,2
+3,Pass 3,390,16,0.041025641025641026,3,7,0.5918729454306377,0.48415588115588115,0.7025960364421903,0.5353205128205129,same_count_wrong_values,169,202,16,0,0,3

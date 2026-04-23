@@ -1,0 +1,92 @@
+model,display_model,family,mean_score,mean_exact_rate
+codellama-70b-sqlbench:latest,CodeLlama 70B,aggregation_numeric,0.23333333333333334,0.0
+codellama-70b-sqlbench:latest,CodeLlama 70B,audit_reconciliation,0.8500000000000001,0.0
+codellama-70b-sqlbench:latest,CodeLlama 70B,decision_support,0.5098611111111111,0.0
+codellama-70b-sqlbench:latest,CodeLlama 70B,expression_mapping,0.47600000000000003,0.0
+codellama-70b-sqlbench:latest,CodeLlama 70B,orphan_key_audit,0.0,0.0
+codellama-70b-sqlbench:latest,CodeLlama 70B,presentation_table,0.5369047619047619,0.0
+codellama-70b-sqlbench:latest,CodeLlama 70B,repairability_review,1.0,0.0
+command-r-plus-sqlbench:latest,Command R+,aggregation_numeric,0.29166666666666663,0.0
+command-r-plus-sqlbench:latest,Command R+,audit_reconciliation,0.875,0.0
+command-r-plus-sqlbench:latest,Command R+,decision_support,0.46881944444444446,0.0
+command-r-plus-sqlbench:latest,Command R+,expression_mapping,0.464,0.0
+command-r-plus-sqlbench:latest,Command R+,orphan_key_audit,0.0,0.0
+command-r-plus-sqlbench:latest,Command R+,presentation_table,0.501984126984127,0.0
+command-r-plus-sqlbench:latest,Command R+,repairability_review,1.0,0.0
+dbrx-sqlbench:latest,DBRX,aggregation_numeric,0.26111111111111107,0.0
+dbrx-sqlbench:latest,DBRX,audit_reconciliation,0.7749999999999999,0.0
+dbrx-sqlbench:latest,DBRX,decision_support,0.33569444444444446,0.0
+dbrx-sqlbench:latest,DBRX,expression_mapping,0.752,0.0
+dbrx-sqlbench:latest,DBRX,orphan_key_audit,0.0,0.0
+dbrx-sqlbench:latest,DBRX,presentation_table,0.5988095238095238,0.0
+dbrx-sqlbench:latest,DBRX,repairability_review,1.0,0.0
+deepseek-coder-33b-sqlbench:latest,DeepSeek Coder 33B,aggregation_numeric,0.7055555555555556,0.0
+deepseek-coder-33b-sqlbench:latest,DeepSeek Coder 33B,audit_reconciliation,0.8375,0.0
+deepseek-coder-33b-sqlbench:latest,DeepSeek Coder 33B,decision_support,0.4134027777777778,0.0
+deepseek-coder-33b-sqlbench:latest,DeepSeek Coder 33B,expression_mapping,0.6533333333333334,0.0
+deepseek-coder-33b-sqlbench:latest,DeepSeek Coder 33B,orphan_key_audit,0.0,0.0
+deepseek-coder-33b-sqlbench:latest,DeepSeek Coder 33B,presentation_table,0.16785714285714284,0.0
+deepseek-coder-33b-sqlbench:latest,DeepSeek Coder 33B,repairability_review,1.0,0.0
+gemma4-26b-sqlbench:latest,Gemma 4 26B,aggregation_numeric,0.42638888888888893,0.0
+gemma4-26b-sqlbench:latest,Gemma 4 26B,audit_reconciliation,0.8125,0.0
+gemma4-26b-sqlbench:latest,Gemma 4 26B,decision_support,0.5416666666666666,0.0
+gemma4-26b-sqlbench:latest,Gemma 4 26B,expression_mapping,0.6533333333333334,0.0
+gemma4-26b-sqlbench:latest,Gemma 4 26B,orphan_key_audit,0.0,0.0
+gemma4-26b-sqlbench:latest,Gemma 4 26B,presentation_table,0.5285714285714286,0.0
+gemma4-26b-sqlbench:latest,Gemma 4 26B,repairability_review,1.0,0.0
+gemma4-31b-sqlbench:latest,Gemma 4 31B,aggregation_numeric,0.625,0.0
+gemma4-31b-sqlbench:latest,Gemma 4 31B,audit_reconciliation,0.9624999999999999,0.0
+gemma4-31b-sqlbench:latest,Gemma 4 31B,decision_support,0.609375,0.0
+gemma4-31b-sqlbench:latest,Gemma 4 31B,expression_mapping,0.952,0.0
+gemma4-31b-sqlbench:latest,Gemma 4 31B,orphan_key_audit,0.0,0.0
+gemma4-31b-sqlbench:latest,Gemma 4 31B,presentation_table,0.625,0.0
+gemma4-31b-sqlbench:latest,Gemma 4 31B,repairability_review,1.0,1.0
+llama3-70b-sqlbench:latest,Llama 3 70B,aggregation_numeric,0.525,0.0
+llama3-70b-sqlbench:latest,Llama 3 70B,audit_reconciliation,0.8875,0.0
+llama3-70b-sqlbench:latest,Llama 3 70B,decision_support,0.34895833333333337,0.0
+llama3-70b-sqlbench:latest,Llama 3 70B,expression_mapping,0.688,0.0
+llama3-70b-sqlbench:latest,Llama 3 70B,orphan_key_audit,0.0,0.0
+llama3-70b-sqlbench:latest,Llama 3 70B,presentation_table,0.5476190476190476,0.0
+llama3-70b-sqlbench:latest,Llama 3 70B,repairability_review,1.0,0.0
+mixtral-8x22b-sqlbench:latest,Mixtral 8x22B,aggregation_numeric,0.32166666666666666,0.0
+mixtral-8x22b-sqlbench:latest,Mixtral 8x22B,audit_reconciliation,0.8250000000000001,0.0
+mixtral-8x22b-sqlbench:latest,Mixtral 8x22B,decision_support,0.450218253968254,0.0
+mixtral-8x22b-sqlbench:latest,Mixtral 8x22B,expression_mapping,0.5,0.0
+mixtral-8x22b-sqlbench:latest,Mixtral 8x22B,orphan_key_audit,0.0,0.0
+mixtral-8x22b-sqlbench:latest,Mixtral 8x22B,presentation_table,0.6535714285714286,0.0
+mixtral-8x22b-sqlbench:latest,Mixtral 8x22B,repairability_review,1.0,0.0
+phi4-mini-sqlbench:latest,Phi-4 Mini,aggregation_numeric,0.21666666666666665,0.0
+phi4-mini-sqlbench:latest,Phi-4 Mini,audit_reconciliation,0.8125,0.0
+phi4-mini-sqlbench:latest,Phi-4 Mini,decision_support,0.36026785714285714,0.0
+phi4-mini-sqlbench:latest,Phi-4 Mini,expression_mapping,0.6533333333333334,0.0
+phi4-mini-sqlbench:latest,Phi-4 Mini,orphan_key_audit,0.0,0.0
+phi4-mini-sqlbench:latest,Phi-4 Mini,presentation_table,0.0,0.0
+phi4-mini-sqlbench:latest,Phi-4 Mini,repairability_review,0.8518518518518519,0.0
+qwen2.5-72b-sqlbench:latest,Qwen 2.5 72B,aggregation_numeric,0.325,0.0
+qwen2.5-72b-sqlbench:latest,Qwen 2.5 72B,audit_reconciliation,0.8125,0.0
+qwen2.5-72b-sqlbench:latest,Qwen 2.5 72B,decision_support,0.41229166666666667,0.0
+qwen2.5-72b-sqlbench:latest,Qwen 2.5 72B,expression_mapping,0.6240000000000001,0.0
+qwen2.5-72b-sqlbench:latest,Qwen 2.5 72B,orphan_key_audit,0.0,0.0
+qwen2.5-72b-sqlbench:latest,Qwen 2.5 72B,presentation_table,0.5496825396825397,0.0
+qwen2.5-72b-sqlbench:latest,Qwen 2.5 72B,repairability_review,1.0,0.0
+qwen2.5-coder-32b-sqlbench:latest,Qwen 2.5 Coder 32B,aggregation_numeric,0.5166666666666666,0.0
+qwen2.5-coder-32b-sqlbench:latest,Qwen 2.5 Coder 32B,audit_reconciliation,0.8500000000000001,0.0
+qwen2.5-coder-32b-sqlbench:latest,Qwen 2.5 Coder 32B,decision_support,0.45729166666666665,0.0
+qwen2.5-coder-32b-sqlbench:latest,Qwen 2.5 Coder 32B,expression_mapping,0.47600000000000003,0.0
+qwen2.5-coder-32b-sqlbench:latest,Qwen 2.5 Coder 32B,orphan_key_audit,0.0,0.0
+qwen2.5-coder-32b-sqlbench:latest,Qwen 2.5 Coder 32B,presentation_table,0.4107142857142857,0.0
+qwen2.5-coder-32b-sqlbench:latest,Qwen 2.5 Coder 32B,repairability_review,1.0,0.0
+qwen3-coder-30b-sqlbench:latest,Qwen3 Coder 30B,aggregation_numeric,0.43999999999999995,0.0
+qwen3-coder-30b-sqlbench:latest,Qwen3 Coder 30B,audit_reconciliation,0.8875,0.0
+qwen3-coder-30b-sqlbench:latest,Qwen3 Coder 30B,decision_support,0.46270833333333333,0.0
+qwen3-coder-30b-sqlbench:latest,Qwen3 Coder 30B,expression_mapping,0.756,0.0
+qwen3-coder-30b-sqlbench:latest,Qwen3 Coder 30B,orphan_key_audit,0.0,0.0
+qwen3-coder-30b-sqlbench:latest,Qwen3 Coder 30B,presentation_table,0.5444444444444444,0.0
+qwen3-coder-30b-sqlbench:latest,Qwen3 Coder 30B,repairability_review,1.0,0.0
+qwen3.6-sqlbench:latest,Qwen3.6,aggregation_numeric,0.31500000000000006,0.0
+qwen3.6-sqlbench:latest,Qwen3.6,audit_reconciliation,0.8500000000000001,0.0
+qwen3.6-sqlbench:latest,Qwen3.6,decision_support,0.5258333333333334,0.0
+qwen3.6-sqlbench:latest,Qwen3.6,expression_mapping,0.6873333333333334,0.0
+qwen3.6-sqlbench:latest,Qwen3.6,orphan_key_audit,0.0,0.0
+qwen3.6-sqlbench:latest,Qwen3.6,presentation_table,0.4579365079365079,0.0
+qwen3.6-sqlbench:latest,Qwen3.6,repairability_review,1.0,0.0
