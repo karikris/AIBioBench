@@ -16,3 +16,4 @@ results/*/pass2_analysis/pass2_token_throughput_detail.csv
 
 # Local notes
 TOKENS.md
+.codex/
