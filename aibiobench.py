@@ -1438,10 +1438,160 @@ def resolve_default_models(args_models: Optional[List[str]], manifest: dict) -> 
     return list(DEFAULT_MODELS)
 
 
+def bundle_dir_basename(benchmark_id: str) -> str:
+    prefix = "AIBioBench_"
+    return benchmark_id[len(prefix):] if benchmark_id.startswith(prefix) else benchmark_id
+
+
+def discover_existing_bundle_dir(results_root: Path, benchmark_id: str, bundle_dir_name: Optional[str] = None) -> Optional[Path]:
+    base_name = bundle_dir_name or bundle_dir_basename(benchmark_id)
+    candidates = sorted(path for path in results_root.glob(f"{base_name}__*") if path.is_dir())
+    return candidates[-1] if candidates else None
+
+
+def resolve_output_dir(
+    requested_output_dir: Optional[Path],
+    repo_root: Path,
+    benchmark_id: str,
+    run_id: str,
+    append_output: bool,
+    bundle_dir_name: Optional[str],
+) -> Path:
+    if requested_output_dir is not None:
+        return requested_output_dir
+
+    results_root = repo_root / "results"
+    if append_output:
+        existing = discover_existing_bundle_dir(results_root, benchmark_id, bundle_dir_name)
+        if existing is not None:
+            return existing
+        bundle_base = bundle_dir_name or bundle_dir_basename(benchmark_id)
+        return results_root / f"{bundle_base}__{datetime.now().strftime('%Y%m%d_%H%M%S')}"
+
+    return results_root / run_id
+
+
+def load_jsonl(path: Path) -> List[dict]:
+    rows: List[dict] = []
+    if not path.exists():
+        return rows
+    with path.open(encoding="utf-8") as f:
+        for line in f:
+            text = line.strip()
+            if text:
+                rows.append(json.loads(text))
+    return rows
+
+
+def merge_by_key(target_rows: List[dict], source_rows: List[dict], key_fields: List[str]) -> Tuple[List[dict], int]:
+    merged: Dict[Tuple[Any, ...], dict] = {}
+    insertion_order: List[Tuple[Any, ...]] = []
+    duplicate_count = 0
+
+    for row in target_rows + source_rows:
+        key = tuple(row.get(field) for field in key_fields)
+        if key in merged:
+            duplicate_count += 1
+        else:
+            insertion_order.append(key)
+        merged[key] = row
+
+    return [merged[key] for key in insertion_order], duplicate_count
+
+
+def merge_ordered_unique(existing: List[Any], incoming: List[Any]) -> List[Any]:
+    out: List[Any] = []
+    seen = set()
+    for item in existing + incoming:
+        marker = json.dumps(item, sort_keys=True) if isinstance(item, (dict, list)) else item
+        if marker in seen:
+            continue
+        seen.add(marker)
+        out.append(item)
+    return out
+
+
+def case_sort_key(case_id: str) -> Tuple[int, int]:
+    left, right = case_id.split(".query")
+    return int(left.replace("pass", "")), int(right)
+
+
+def build_run_meta(
+    existing_meta: Optional[dict],
+    manifest: dict,
+    args: argparse.Namespace,
+    version: str,
+    models: List[str],
+    selected_cases: List[dict],
+    repeats: int,
+    options: dict,
+    repo_root: Path,
+    output_dir: Path,
+    run_id: str,
+    run_started_at_utc: str,
+    merged_rows: List[dict],
+) -> dict:
+    base_meta = dict(existing_meta or {})
+    bundle_run_id = base_meta.get("run_id") or run_id
+    merged_models = merge_ordered_unique(base_meta.get("models", []), models)
+    merged_cases = sorted({row["case_id"] for row in merged_rows}, key=case_sort_key)
+    merged_passes = sorted({int(row["pass"]) for row in merged_rows})
+    latest_case_ids = [c["case_id"] for c in selected_cases]
+    source_run_ids = base_meta.get("merged_source_run_ids", [])
+    if run_id != bundle_run_id:
+        source_run_ids = merge_ordered_unique(source_run_ids, [run_id])
+
+    return {
+        **base_meta,
+        "run_id": bundle_run_id,
+        "latest_run_id": run_id,
+        "benchmark_id": manifest["benchmark_id"],
+        "benchmark_version": manifest["version"],
+        "manifest_path": str(args.manifest),
+        "ollama_version": version,
+        "provider": args.provider,
+        "models": merged_models,
+        "passes": merged_passes,
+        "repeats": max(int(base_meta.get("repeats", 0) or 0), repeats),
+        "case_count": len(merged_cases),
+        "cases": merged_cases,
+        "options": options,
+        "keep_alive": args.keep_alive,
+        "prompt_cost_per_1m": args.prompt_cost_per_1m,
+        "completion_cost_per_1m": args.completion_cost_per_1m,
+        "run_started_at_utc": base_meta.get("run_started_at_utc") or run_started_at_utc,
+        "latest_run_started_at_utc": run_started_at_utc,
+        "latest_run_models": models,
+        "latest_run_case_count": len(latest_case_ids),
+        "latest_run_cases": latest_case_ids,
+        "latest_run_repeats": repeats,
+        "output_dir": str(output_dir),
+        "repo_root": str(repo_root),
+        "reporting_views": manifest.get("reporting_views", {}),
+        "repairable_near_miss_examples": manifest.get("repairable_near_miss_examples", []),
+        "append_output_enabled": args.append_output,
+        "bundle_dir_name": args.bundle_dir_name or bundle_dir_basename(manifest["benchmark_id"]),
+        "merged_model_count": len(merged_models),
+        "merged_attempt_count": len(merged_rows),
+        "merged_source_run_ids": source_run_ids,
+    }
+
+
 def parse_args() -> argparse.Namespace:
     p = argparse.ArgumentParser(description="Run AIBioBench benchmark cases from JSONL case/gold files.")
     p.add_argument("--manifest", type=Path, default=resolve_default_manifest())
     p.add_argument("--output-dir", type=Path, default=None)
+    p.add_argument(
+        "--no-append-output",
+        action="store_false",
+        dest="append_output",
+        help="Write a fresh timestamped results directory instead of merging into the shared benchmark bundle.",
+    )
+    p.add_argument(
+        "--bundle-dir-name",
+        default=None,
+        help="Override the shared results directory basename used when appending output.",
+    )
     p.add_argument("--provider", default="ollama")
     p.add_argument("--models", nargs="*", default=None)
     p.add_argument("--passes", nargs="*", type=int, default=[1, 2, 3, 4, 5])
@@ -1460,7 +1610,7 @@ def parse_args() -> argparse.Namespace:
     p.add_argument("--no-cold-first-case", action="store_false", dest="cold_first_case")
     p.add_argument("--no-stop-between-models", action="store_false", dest="stop_between_models")
     p.add_argument("--dry-run", action="store_true")
-    p.set_defaults(cold_first_case=True, stop_between_models=True)
+    p.set_defaults(cold_first_case=True, stop_between_models=True, append_output=True)
     return p.parse_args()
 
 
@@ -1509,11 +1659,19 @@ def main() -> None:
     run_started_at_utc = utc_now_iso()
     run_id = f"{manifest['benchmark_id']}__{datetime.now().strftime('%Y%m%d_%H%M%S')}"
     repo_root = args.manifest.resolve().parent
-    output_dir = args.output_dir or (repo_root / "results" / run_id)
+    output_dir = resolve_output_dir(
+        requested_output_dir=args.output_dir,
+        repo_root=repo_root,
+        benchmark_id=manifest["benchmark_id"],
+        run_id=run_id,
+        append_output=args.append_output,
+        bundle_dir_name=args.bundle_dir_name,
+    )
 
     log(f"Manifest: {args.manifest}")
     log(f"Benchmark: {manifest['benchmark_id']} v{manifest['version']}")
     log(f"Selected cases: {len(selected_cases)} | Repeats per case: {repeats} | Models: {len(models)}")
+    log(f"Output directory: {output_dir}")
     if args.dry_run:
         for case in selected_cases:
             log(f"DRY RUN case={case['case_id']} pass={case['pass']} lang={case['language']} difficulty={case['difficulty']}")
@@ -1595,7 +1753,34 @@ def main() -> None:
     print_model_summary(all_rows)
     print_summary_table(all_rows)
 
-    repeatability_rows = build_repeatability_summary(all_rows)
+    existing_all_rows: List[dict] = []
+    existing_result_rows: List[dict] = []
+    existing_meta: Optional[dict] = None
+    duplicate_raw_rows = 0
+    duplicate_result_rows = 0
+
+    if args.append_output:
+        detailed_jsonl = output_dir / "detailed_results.jsonl"
+        run_results_jsonl = output_dir / "run_results.jsonl"
+        run_meta_json = output_dir / "run_meta.json"
+        existing_all_rows = load_jsonl(detailed_jsonl)
+        existing_result_rows = load_jsonl(run_results_jsonl)
+        if run_meta_json.exists():
+            existing_meta = json.loads(run_meta_json.read_text(encoding="utf-8"))
+        if existing_all_rows or existing_result_rows:
+            log(
+                f"Appending into existing bundle: {len(existing_all_rows)} raw rows, "
+                f"{len(existing_result_rows)} result rows already present"
+            )
+
+    merged_all_rows, duplicate_raw_rows = merge_by_key(existing_all_rows, all_rows, ["model", "case_id", "attempt_index"])
+    merged_result_rows, duplicate_result_rows = merge_by_key(
+        existing_result_rows,
+        result_rows,
+        ["model_name", "case_id", "attempt_index"],
+    )
+
+    repeatability_rows = build_repeatability_summary(merged_all_rows)
     model_repeatability_rows = build_model_repeatability_summary(repeatability_rows)
 
     detailed_csv = output_dir / "detailed_results.csv"
@@ -1610,39 +1795,32 @@ def main() -> None:
     model_repeatability_csv = output_dir / "summary_repeatability_by_model.csv"
     run_meta_json = output_dir / "run_meta.json"
 
-    write_csv(detailed_csv, all_rows)
-    write_jsonl(detailed_jsonl, all_rows)
-    write_jsonl(run_results_jsonl, result_rows)
-    write_csv(model_summary_csv, aggregate_rows(all_rows, ["model"]))
-    write_csv(model_pass_summary_csv, aggregate_rows(all_rows, ["model", "pass", "language", "difficulty"]))
-    write_csv(failure_primary_summary_csv, aggregate_rows(all_rows, ["failure_family_primary_case"]))
-    write_csv(model_failure_primary_summary_csv, aggregate_rows(all_rows, ["model", "failure_family_primary_case"]))
-    write_csv(failure_exploded_summary_csv, aggregate_rows(explode_failure_family_rows(all_rows), ["failure_family"]))
+    write_csv(detailed_csv, merged_all_rows)
+    write_jsonl(detailed_jsonl, merged_all_rows)
+    write_jsonl(run_results_jsonl, merged_result_rows)
+    write_csv(model_summary_csv, aggregate_rows(merged_all_rows, ["model"]))
+    write_csv(model_pass_summary_csv, aggregate_rows(merged_all_rows, ["model", "pass", "language", "difficulty"]))
+    write_csv(failure_primary_summary_csv, aggregate_rows(merged_all_rows, ["failure_family_primary_case"]))
+    write_csv(model_failure_primary_summary_csv, aggregate_rows(merged_all_rows, ["model", "failure_family_primary_case"]))
+    write_csv(failure_exploded_summary_csv, aggregate_rows(explode_failure_family_rows(merged_all_rows), ["failure_family"]))
     write_csv(repeatability_csv, repeatability_rows)
     write_csv(model_repeatability_csv, model_repeatability_rows)
 
-    run_meta = {
-        "run_id": run_id,
-        "benchmark_id": manifest["benchmark_id"],
-        "benchmark_version": manifest["version"],
-        "manifest_path": str(args.manifest),
-        "ollama_version": version,
-        "provider": args.provider,
-        "models": models,
-        "passes": args.passes,
-        "repeats": repeats,
-        "case_count": len(selected_cases),
-        "cases": [c["case_id"] for c in selected_cases],
-        "options": options,
-        "keep_alive": args.keep_alive,
-        "prompt_cost_per_1m": args.prompt_cost_per_1m,
-        "completion_cost_per_1m": args.completion_cost_per_1m,
-        "run_started_at_utc": run_started_at_utc,
-        "output_dir": str(output_dir),
-        "repo_root": str(repo_root),
-        "reporting_views": manifest.get("reporting_views", {}),
-        "repairable_near_miss_examples": manifest.get("repairable_near_miss_examples", []),
-    }
+    run_meta = build_run_meta(
+        existing_meta=existing_meta,
+        manifest=manifest,
+        args=args,
+        version=version,
+        models=models,
+        selected_cases=selected_cases,
+        repeats=repeats,
+        options=options,
+        repo_root=repo_root,
+        output_dir=output_dir,
+        run_id=run_id,
+        run_started_at_utc=run_started_at_utc,
+        merged_rows=merged_all_rows,
+    )
     run_meta_json.write_text(json.dumps(run_meta, indent=2), encoding="utf-8")
 
     log(f"Detailed CSV written to: {detailed_csv}")
@@ -1655,6 +1833,11 @@ def main() -> None:
     log(f"Repeatability by model/case CSV written to: {repeatability_csv}")
     log(f"Repeatability by model CSV written to: {model_repeatability_csv}")
     log(f"Run metadata JSON written to: {run_meta_json}")
+    if args.append_output:
+        log(
+            f"Bundle totals after merge: attempts={len(merged_all_rows)} models={len(run_meta['models'])} "
+            f"overwritten_raw_rows={duplicate_raw_rows} overwritten_result_rows={duplicate_result_rows}"
+        )
 
 
 if __name__ == "__main__":

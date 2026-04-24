@@ -5,7 +5,14 @@ __pycache__/
 # Windows alternate data stream sidecars from uploaded files
 *:Zone.Identifier
 
+# Local benchmark outputs
+results/
+test results/
+
 # Generated pass-two token throughput exports
 results/*/pass2_analysis/pass2_generated_tokens_per_second.csv
 results/*/pass2_analysis/pass2_generated_tokens_per_second.md
 results/*/pass2_analysis/pass2_token_throughput_detail.csv
+
+# Local notes
+TOKENS.md

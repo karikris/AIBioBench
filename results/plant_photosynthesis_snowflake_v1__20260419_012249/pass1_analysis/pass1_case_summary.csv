@@ -1,9 +1,0 @@
-case_id,query,semantic_focus,exact_models,accuracy,mean_aligned_cell_accuracy,row_count_mismatch_models,same_count_but_wrong_models,order_only,type_only,dominant_failure_mode,note
-pass1.query1,QUERY1,Q1 sample inner,2,0.2222222222222222,0.8287037037037037,7,0,0,0,row_count_mismatch,Inner join on sample_dim; common failure was including orphan S999 or dropping call_id 9 because V999 has no variant row.
-pass1.query2,QUERY2,Q2 variant sort,0,0.0,0.3682098765432099,6,3,2,0,row_count_mismatch,"Inner join on variant_dim plus qual DESC sort; common failures were sorting by call_id, including V999, or treating unmatched V999 as a joined row."
-pass1.query3,QUERY3,Q3 sample left,7,0.7777777777777778,0.9407407407407408,1,1,0,1,exact,"Left join to sample_dim; mostly solved, except one type-only failure from string call_id values and one model that invented/misplaced rows."
-pass1.query4,QUERY4,Q4 sample right,4,0.4444444444444444,0.9018518518518519,1,4,0,0,exact,Right join / reversed left join; failures were aggregate arithmetic around S2 and zero-call sample handling.
-pass1.query5,QUERY5,Q5 3-table inner,0,0.0,0.5561067019400352,9,0,0,0,row_count_mismatch,Inner join fact_calls -> variant_dim -> gene_dim; common failure was leaking V5/G999 or V999 rows that should be removed by the second inner join.
-pass1.query6,QUERY6,Q6 impact agg,0,0.0,0.5888888888888889,3,6,0,0,same_count_wrong_values,Aggregate by impact after variant join; failures were mostly missed duplicate high-impact V2/V3 calls or bad averages.
-pass1.query7,QUERY7,Q7 tissue agg,0,0.0,0.06481481481481481,4,5,0,0,same_count_wrong_values,Aggregate by tissue after sample join; every model missed the weighted-by-call aggregate and/or included root/S5.
-pass1.query8,QUERY8,Q8 condition agg,0,0.0,0.4938271604938272,0,9,0,0,same_count_wrong_values,Aggregate by condition after sample join; every model missed fact-row weighting and often included S5/high_light leakage.

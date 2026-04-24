@@ -1,7 +1,0 @@
-variant_id,gene_id,chrom,pos,variant_class,impact
-V1,G1,cpDNA,11452,SNV,moderate
-V2,G1,cpDNA,11477,indel,high
-V3,G2,cpDNA,12345,SNV,high
-V4,G3,Chr2,987654,SNV,low
-V5,G999,cpDNA,12888,SNV,modifier
-V6,G4,cpDNA,13001,indel,moderate

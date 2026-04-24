@@ -67,6 +67,7 @@ MODEL_DISPLAY = {
     "qwen2.5-coder-32b-sqlbench:latest": "Qwen 2.5 Coder 32B",
     "qwen3-coder-30b-sqlbench:latest": "Qwen3 Coder 30B",
     "qwen3.6-sqlbench:latest": "Qwen3.6",
+    "qwen3.6-27b-sqlbench:latest": "Qwen3.6 27B",
 }
 
 MODEL_GROUP_COLORS = {

@@ -1,3 +1,0 @@
-pass,pass_label,attempts,exact_attempts,exact_attempt_rate,queries_with_any_exact,exact_zero_queries,mean_score,mean_aligned_cell_accuracy,mean_row_set_correctness,mean_numeric_correctness,mean_sort_correctness,dominant_failure_mode,row_count_mismatch,same_count_wrong_values,exact,order_only,type_only,column_error
-4,Pass 4,390,3,0.007692307692307693,1,9,0.516433781033781,0.3411050061050061,0.6315313390313391,0.49025783475783474,0.41795380545380545,row_count_mismatch,222,165,3,0,0,0
-5,Pass 5,390,0,0,0,10,0.547939842991766,0.26404284983772164,0.7568478601170909,0.19138675213675213,0.5604994364609749,row_count_mismatch,207,183,0,0,0,0
