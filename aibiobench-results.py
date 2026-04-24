@@ -9,7 +9,7 @@ import sys
 import tempfile
 from datetime import datetime, timezone
 from pathlib import Path
-from typing import Iterable, List
+from typing import Iterable, List, Sequence, Tuple
 
 
 DEFAULT_DATASET_URL = "https://www.kaggle.com/datasets/kristofferkari/aiobiobench-results"
@@ -24,7 +24,7 @@ def utc_now_iso() -> str:
 def parse_args() -> argparse.Namespace:
     p = argparse.ArgumentParser(
         description=(
-            "Stage the current AIBioBench v2 results bundle and publish its top-level files "
+            "Stage the current AIBioBench v2 results bundle and publish its full contents "
             "to Kaggle as a dataset."
         )
     )
@@ -33,12 +33,12 @@ def parse_args() -> argparse.Namespace:
     p.add_argument("--results-glob", default=DEFAULT_RESULTS_GLOB, help="Glob used to auto-discover the latest v2 bundle.")
     p.add_argument("--tokens-path", type=Path, default=Path(__file__).resolve().parent / "TOKENS.md")
     p.add_argument("--dataset-id", default=DEFAULT_DATASET_ID, help="Kaggle dataset id in owner/slug form.")
-    p.add_argument("--dataset-title", default="AIBioBench v2 Root Results")
-    p.add_argument("--dataset-subtitle", default="Merged top-level result exports for AIBioBench v2")
+    p.add_argument("--dataset-title", default="AIBioBench v2 Results Bundle")
+    p.add_argument("--dataset-subtitle", default="Merged root files and analysis subfolders for AIBioBench v2")
     p.add_argument("--dataset-url", default=DEFAULT_DATASET_URL)
     p.add_argument("--staging-dir", type=Path, default=None, help="Optional persistent staging directory.")
     p.add_argument("--version-message", default=None, help="Optional Kaggle dataset version message.")
-    p.add_argument("--include-subdirs", action="store_true", help="Also stage nested files from the results bundle.")
+    p.add_argument("--root-only", action="store_true", help="Stage only top-level files from the results bundle.")
     p.add_argument("--private", action="store_true", help="Create a private dataset if it does not already exist.")
     p.add_argument("--dry-run", action="store_true", help="Prepare the staging bundle and print the planned Kaggle action.")
     return p.parse_args()
@@ -75,8 +75,9 @@ def iter_selected_files(results_dir: Path, include_subdirs: bool) -> Iterable[Pa
             yield path
 
 
-def file_description(path: Path) -> str:
-    name = path.name
+def file_description(path: Path, rel_path: Path) -> str:
+    name = rel_path.name
+    rel_text = rel_path.as_posix()
     if name == "detailed_results.csv":
         return "Detailed benchmark attempt rows in CSV format."
     if name == "detailed_results.jsonl":
@@ -86,22 +87,29 @@ def file_description(path: Path) -> str:
     if name == "run_meta.json":
         return "Benchmark run metadata for the merged local v2 bundle."
     if name.startswith("summary_") and name.endswith(".csv"):
-        return f"Summary table exported from the merged local v2 bundle: {name}."
-    return f"Top-level file from the AIBioBench v2 local results bundle: {name}."
+        return f"Summary table exported from the merged local v2 bundle: {rel_text}."
+    return f"File from the AIBioBench v2 local results bundle: {rel_text}."
 
 
-def build_dataset_metadata(dataset_id: str, title: str, subtitle: str, dataset_url: str, source_dir: Path, files: List[Path]) -> dict:
+def build_dataset_metadata(
+    dataset_id: str,
+    title: str,
+    subtitle: str,
+    dataset_url: str,
+    source_dir: Path,
+    files: Sequence[Tuple[Path, Path]],
+) -> dict:
     description_lines = [
-        "Top-level AIBioBench v2 result files published from the local merged results bundle.",
+        "Full AIBioBench v2 results bundle published from the local merged results directory.",
         "",
         f"Kaggle dataset page: {dataset_url}",
         f"Local source bundle: `{source_dir}`",
-        "Scope of this first upload pass: only files at the root of the v2 bundle. Analysis subfolders are intentionally excluded.",
+        "Scope of this upload: root result files plus analysis subfolders from the merged v2 bundle.",
         "",
         "Included files:",
     ]
-    for path in files:
-        description_lines.append(f"- `{path.name}`")
+    for _path, rel_path in files:
+        description_lines.append(f"- `{rel_path.as_posix()}`")
 
     return {
         "title": title,
@@ -112,7 +120,10 @@ def build_dataset_metadata(dataset_id: str, title: str, subtitle: str, dataset_u
         "keywords": ["benchmark", "llm", "bioinformatics"],
         "expectedUpdateFrequency": "weekly",
         "userSpecifiedSources": f"AIBioBench local results bundle and Kaggle dataset page {dataset_url}",
-        "resources": [{"path": path.name, "description": file_description(path)} for path in files],
+        "resources": [
+            {"path": rel_path.as_posix(), "description": file_description(path, rel_path)}
+            for path, rel_path in files
+        ],
     }
 
 
@@ -121,26 +132,29 @@ def stage_files(source_dir: Path, staging_dir: Path, dataset_id: str, title: str
         shutil.rmtree(staging_dir)
     staging_dir.mkdir(parents=True, exist_ok=True)
 
-    selected: List[Path] = []
+    selected: List[Tuple[Path, Path]] = []
     for path in iter_selected_files(source_dir, include_subdirs=include_subdirs):
         rel = path.relative_to(source_dir)
         destination = staging_dir / rel
         destination.parent.mkdir(parents=True, exist_ok=True)
         shutil.copy2(path, destination)
-        selected.append(path)
+        selected.append((path, rel))
 
     if not selected:
         raise SystemExit(f"No files selected from {source_dir}")
 
     metadata = build_dataset_metadata(dataset_id, title, subtitle, dataset_url, source_dir, selected)
     (staging_dir / "dataset-metadata.json").write_text(json.dumps(metadata, indent=2), encoding="utf-8")
-    return selected
+    return [path for path, _rel in selected]
 
 
 def resolve_kaggle_command() -> List[str]:
     kaggle_bin = shutil.which("kaggle")
     if kaggle_bin:
         return [kaggle_bin]
+    sibling_kaggle = Path(sys.executable).with_name("kaggle")
+    if sibling_kaggle.exists():
+        return [str(sibling_kaggle)]
     try:
         import kaggle  # type: ignore  # noqa: F401
     except ImportError as exc:
@@ -215,7 +229,7 @@ def main() -> None:
     token = extract_kaggle_token(args.tokens_path.resolve())
 
     dataset_id = args.dataset_id
-    version_message = args.version_message or f"Update v2 root results from {results_dir.name} at {utc_now_iso()}"
+    version_message = args.version_message or f"Update full v2 results bundle from {results_dir.name} at {utc_now_iso()}"
 
     with tempfile.TemporaryDirectory(prefix="aibiobench-kaggle-") as tmp_dir:
         staging_dir = args.staging_dir.resolve() if args.staging_dir else Path(tmp_dir) / dataset_id.split("/", 1)[1]
@@ -226,7 +240,7 @@ def main() -> None:
             title=args.dataset_title,
             subtitle=args.dataset_subtitle,
             dataset_url=args.dataset_url,
-            include_subdirs=args.include_subdirs,
+            include_subdirs=not args.root_only,
         )
 
         summary = {
@@ -234,7 +248,7 @@ def main() -> None:
             "staging_dir": str(staging_dir),
             "dataset_id": dataset_id,
             "target_dataset_url": args.dataset_url,
-            "include_subdirs": args.include_subdirs,
+            "include_subdirs": not args.root_only,
             "selected_files": [str(path.relative_to(results_dir)) for path in selected_files],
             "version_message": version_message,
             "dry_run": args.dry_run,
@@ -247,6 +261,9 @@ def main() -> None:
         kaggle_cmd = resolve_kaggle_command()
         env = os.environ.copy()
         env["KAGGLE_API_TOKEN"] = token
+        kaggle_config_dir = Path(tmp_dir) / ".kaggle"
+        kaggle_config_dir.mkdir(parents=True, exist_ok=True)
+        env.setdefault("KAGGLE_CONFIG_DIR", str(kaggle_config_dir))
         dataset_url = publish_dataset(
             kaggle_cmd=kaggle_cmd,
             staging_dir=staging_dir,

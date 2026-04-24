@@ -271,6 +271,8 @@ def render_overall_visual(pass_summary, model_summary, query_summary, model_pass
     models = [m["model"] for m in model_summary]
     model_labels = [base.wrap_display_name(m["display_model"]) for m in model_summary]
     passes = ["1", "2", "3"]
+    pass_attempts = {p["pass"]: p["attempts"] for p in pass_summary}
+    query_attempts = max(q["attempts"] for q in query_summary)
     mp = {(r["model"], r["pass"]): r for r in model_pass_rows}
     score_matrix = [[mp[(model, pass_no)]["mean_score"] for pass_no in passes] for model in models]
 
@@ -284,11 +286,11 @@ def render_overall_visual(pass_summary, model_summary, query_summary, model_pass
     scores = [p["mean_score"] for p in pass_summary]
     ax1.bar(x, exacts, color=[base.BLUE_PALE, base.BLUE_LIGHT, base.BLUE_MID], edgecolor=base.PANEL_BG)
     ax1.set_xticks(x, [PASS_LABELS[p] for p in passes])
-    ax1.set_ylabel("Exact attempts out of 390")
+    ax1.set_ylabel(f"Exact attempts out of {max(pass_attempts.values())}")
     ax1.set_ylim(0, 65)
     ax1.set_title("Exact Conversion Drops with Difficulty", fontweight="bold")
     for idx, val in enumerate(exacts):
-        ax1.text(idx, val + 1.2, f"{val}/390", ha="center", color=base.TEXT, fontsize=11, fontweight="bold")
+        ax1.text(idx, val + 1.2, f"{val}/{pass_summary[idx]['attempts']}", ha="center", color=base.TEXT, fontsize=11, fontweight="bold")
     ax1b = ax1.twinx()
     ax1b.plot(x, scores, color=base.BLUE, linewidth=3, marker="o", markersize=9)
     ax1b.set_ylim(0.45, 0.82)
@@ -337,7 +339,7 @@ def render_overall_visual(pass_summary, model_summary, query_summary, model_pass
     q_colors = [base.BLUE_PALE if v >= 10 else base.BLUE_LIGHT if v > 0 else base.BLUE_DARK for v in q_exact]
     ax4.bar(range(len(query_summary)), q_exact, color=q_colors, edgecolor=base.PANEL_BG)
     ax4.set_xticks(range(len(query_summary)), q_labels, rotation=70, ha="right", fontsize=8)
-    ax4.set_ylabel("Exact attempts out of 39")
+    ax4.set_ylabel(f"Exact attempts out of {query_attempts}")
     ax4.set_ylim(0, 24)
     ax4.set_title("Query-Level Exact Conversion Across 30 SQL Tasks", fontweight="bold")
     ax4.grid(axis="y", color=base.GRID, linewidth=0.8, alpha=0.75)
@@ -358,7 +360,7 @@ def render_overall_visual(pass_summary, model_summary, query_summary, model_pass
         ax5.bar(range(len(passes)), vals, bottom=bottoms, color=color, label=label, edgecolor=base.PANEL_BG)
         bottoms = [b + v for b, v in zip(bottoms, vals)]
     ax5.set_xticks(range(len(passes)), [PASS_SHORT[p] for p in passes])
-    ax5.set_ylim(0, 390)
+    ax5.set_ylim(0, max(pass_attempts.values()))
     ax5.set_ylabel("Attempts")
     ax5.set_title("Failure Mode Mix by Pass", fontweight="bold")
     ax5.legend(frameon=False, loc="upper center", bbox_to_anchor=(0.5, -0.12), ncol=2, labelcolor=base.TEXT)
@@ -427,31 +429,34 @@ def render_model_groups(model_groups, out_base: Path) -> None:
     plt.close(fig)
 
 
-def top_failure_text(query_failures: list[dict], case_id: str) -> str:
+def top_failure_text(query_failures: list[dict], case_id: str, total_attempts: int) -> str:
     rows = [r for r in query_failures if r["case_id"] == case_id][:3]
     if not rows:
         return ""
-    return "; ".join(f"{r['attempts_with_issue']}/39: {r['issue_label']}" for r in rows)
+    return "; ".join(f"{r['attempts_with_issue']}/{total_attempts}: {r['issue_label']}" for r in rows)
 
 
 def write_notes(path: Path, results_dir: Path, pass_summary, model_summary, query_summary, query_failures, model_groups) -> None:
     total_exact = sum(p["exact_attempts"] for p in pass_summary)
+    total_attempts = sum(p["attempts"] for p in pass_summary)
     zero_queries = sum(1 for q in query_summary if q["exact_attempts"] == 0)
     best_queries = sorted(query_summary, key=lambda r: (-r["exact_attempts"], -r["mean_score"]))[:5]
     hardest_queries = sorted(query_summary, key=lambda r: (r["exact_attempts"], r["mean_score"]))[:5]
+    model_count = len(model_summary)
+    queries_per_pass = {p["pass"]: p["queries_with_any_exact"] + p["exact_zero_queries"] for p in pass_summary}
 
     lines = [
         "# AIBioBench Passes 1-3 Overall Analysis",
         "",
         f"Run analyzed: `{results_dir.name}`",
         "",
-        "Scope: passes 1, 2, and 3 only. This covers 30 SQL queries, 13 models, and 3 repeated attempts per model-query pair.",
+        f"Scope: passes 1, 2, and 3 only. This covers 30 SQL queries, {model_count} models, and 3 repeated attempts per model-query pair.",
         "",
         "## Headline Findings",
         "",
-        f"- Overall exact conversion was {total_exact}/1170 attempts ({100 * total_exact / 1170:.1f}%).",
-        f"- Exact matches dropped monotonically by pass: {pass_summary[0]['exact_attempts']}/390 in pass 1, {pass_summary[1]['exact_attempts']}/390 in pass 2, and {pass_summary[2]['exact_attempts']}/390 in pass 3.",
-        f"- {zero_queries}/30 queries had zero exact attempts. Exact-zero queries increased from {pass_summary[0]['exact_zero_queries']}/10 in pass 1 to {pass_summary[1]['exact_zero_queries']}/10 in pass 2 and {pass_summary[2]['exact_zero_queries']}/10 in pass 3.",
+        f"- Overall exact conversion was {total_exact}/{total_attempts} attempts ({100 * total_exact / total_attempts:.1f}%).",
+        f"- Exact matches dropped monotonically by pass: {pass_summary[0]['exact_attempts']}/{pass_summary[0]['attempts']} in pass 1, {pass_summary[1]['exact_attempts']}/{pass_summary[1]['attempts']} in pass 2, and {pass_summary[2]['exact_attempts']}/{pass_summary[2]['attempts']} in pass 3.",
+        f"- {zero_queries}/30 queries had zero exact attempts. Exact-zero queries increased from {pass_summary[0]['exact_zero_queries']}/{queries_per_pass[pass_summary[0]['pass']]} in pass 1 to {pass_summary[1]['exact_zero_queries']}/{queries_per_pass[pass_summary[1]['pass']]} in pass 2 and {pass_summary[2]['exact_zero_queries']}/{queries_per_pass[pass_summary[2]['pass']]} in pass 3.",
         f"- {model_summary[0]['display_model']} was the clear cross-pass leader with {model_summary[0]['exact_attempts']}/90 exact attempts and exact matches in all three passes.",
         "- The primary degradation was not invalid output. Models usually returned plausible tables but failed on row-set boundaries, join preservation, aggregation grain, or exact sort/type semantics.",
         "",
@@ -505,11 +510,11 @@ def write_notes(path: Path, results_dir: Path, pass_summary, model_summary, quer
         ]
     )
     for q in best_queries:
-        lines.append(f"- {q['query']} `{q['case_id']}`: {q['exact_attempts']}/39 exact, mean score {q['mean_score']:.3f}, family `{q['primary_failure_family']}`.")
+        lines.append(f"- {q['query']} `{q['case_id']}`: {q['exact_attempts']}/{q['attempts']} exact, mean score {q['mean_score']:.3f}, family `{q['primary_failure_family']}`.")
 
     lines.extend(["", "**Hardest exact-conversion queries:**", ""])
     for q in hardest_queries:
-        lines.append(f"- {q['query']} `{q['case_id']}`: {q['exact_attempts']}/39 exact, mean score {q['mean_score']:.3f}, family `{q['primary_failure_family']}`.")
+        lines.append(f"- {q['query']} `{q['case_id']}`: {q['exact_attempts']}/{q['attempts']} exact, mean score {q['mean_score']:.3f}, family `{q['primary_failure_family']}`.")
 
     lines.extend(
         [
@@ -522,7 +527,7 @@ def write_notes(path: Path, results_dir: Path, pass_summary, model_summary, quer
     )
     for q in query_summary:
         lines.append(
-            f"| {q['query']} | {q['primary_failure_family']} | {q['exact_attempts']}/39 | {q['mean_score']:.3f} | {top_failure_text(query_failures, q['case_id'])} |"
+            f"| {q['query']} | {q['primary_failure_family']} | {q['exact_attempts']}/{q['attempts']} | {q['mean_score']:.3f} | {top_failure_text(query_failures, q['case_id'], q['attempts'])} |"
         )
 
     lines.extend(

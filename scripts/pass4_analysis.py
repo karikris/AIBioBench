@@ -534,6 +534,7 @@ def build_summaries(rows: list[dict], case_meta: dict):
                 "short_name": QUERY_SHORT_NAMES[case_id],
                 "prompt": case_meta[case_id]["prompt"],
                 "primary_failure_family": case_meta[case_id]["metadata"]["failure_family_primary"],
+                "total_attempts": len(items),
                 "exact_attempts": exact_attempts,
                 "exact_attempt_rate": exact_attempts / len(items),
                 "exact_models_any": exact_models_any,
@@ -758,7 +759,15 @@ def render_visual_report(model_summary, case_summary, model_query_rows, family_s
     ax6.set_title("Which Pass-4 Questions Broke the Models", fontweight="bold")
     ax6.grid(axis="y", color=GRID, linewidth=1)
     for idx, case in enumerate(case_summary):
-        ax6.text(idx, min(case["mean_score"] + 0.04, 1.02), f"{case['exact_attempts']}/39 exact", ha="center", va="bottom", color=TEXT, fontsize=8)
+        ax6.text(
+            idx,
+            min(case["mean_score"] + 0.04, 1.02),
+            f"{case['exact_attempts']}/{case['total_attempts']} exact",
+            ha="center",
+            va="bottom",
+            color=TEXT,
+            fontsize=8,
+        )
     leg = ax6.legend(frameon=False, fontsize=9, loc="lower left")
     for text in leg.get_texts():
         text.set_color(TEXT)
@@ -831,17 +840,19 @@ def build_failure_point_rows(case_summary: list[dict]) -> list[dict]:
 def write_notes(path: Path, model_summary: list[dict], case_summary: list[dict], groups: list[dict], results_dir: Path) -> None:
     exact_zero = [case["query"] for case in case_summary if case["exact_attempts"] == 0]
     total_exact = sum(case["exact_attempts"] for case in case_summary)
+    model_count = len(model_summary)
+    total_attempts = sum(case["total_attempts"] for case in case_summary)
     lines = [
         "# AIBioBench Pass 4 Analysis",
         "",
         f"Run analyzed: `{results_dir.name}`",
         "",
-        "Pass 4 contains ten extra-hard Python/pandas tasks, each repeated three times across thirteen models. The pressure shifts to reconciliation metrics, expression mapping, orphan-key union reports, presentation tables, and repairability review.",
+        f"Pass 4 contains ten extra-hard Python/pandas tasks, each repeated three times across {model_count} models. The pressure shifts to reconciliation metrics, expression mapping, orphan-key union reports, presentation tables, and repairability review.",
         "",
         "## Headline Findings",
         "",
         f"- **{model_summary[0]['display_model']}** led pass 4 with {model_summary[0]['exact_attempts']}/30 exact attempts and exact coverage on {model_summary[0]['exact_query_coverage_any']}/10 questions.",
-        f"- Exact matches nearly disappeared: only {total_exact}/390 attempts were exact, and {', '.join(exact_zero)} had zero exact attempts.",
+        f"- Exact matches nearly disappeared: only {total_exact}/{total_attempts} attempts were exact, and {', '.join(exact_zero)} had zero exact attempts.",
         "- Q10 repairability was the only query with any exact conversion; all analytical, presentation, and orphan-key tasks were exact-zero.",
         "- The largest recurring failures were expression mapping, exact orphan-key labels, complete-chain filtering, and Python table presentation order.",
         "",
@@ -865,14 +876,23 @@ def write_notes(path: Path, model_summary: list[dict], case_summary: list[dict],
 
     lines.extend(["", "## Query-by-Query Failure Points", "", "| Query | Focus | Exact Attempts | Mean Score | Top failure points |", "|---|---|---:|---:|---|"])
     for case in case_summary:
-        issue_text = "; ".join(f"{issue['attempts_with_issue']}/39: {issue['issue_label']}" for issue in case["top_issues"])
-        lines.append(f"| {case['query']} | {case['short_name']} | {case['exact_attempts']}/39 | {case['mean_score']:.3f} | {issue_text} |")
+        issue_text = "; ".join(
+            f"{issue['attempts_with_issue']}/{case['total_attempts']}: {issue['issue_label']}"
+            for issue in case["top_issues"]
+        )
+        lines.append(
+            f"| {case['query']} | {case['short_name']} | {case['exact_attempts']}/{case['total_attempts']} | {case['mean_score']:.3f} | {issue_text} |"
+        )
 
     lines.extend(["", "## Short Notes", ""])
     for case in case_summary:
-        lines.append(f"- **{case['query']} {case['short_name']}**: {case['exact_attempts']}/39 exact, dominant failure mode `{case['dominant_failure_mode']}`. Primary family: `{case['primary_failure_family']}`.")
+        lines.append(
+            f"- **{case['query']} {case['short_name']}**: {case['exact_attempts']}/{case['total_attempts']} exact, dominant failure mode `{case['dominant_failure_mode']}`. Primary family: `{case['primary_failure_family']}`."
+        )
         for issue in case["top_issues"]:
-            lines.append(f"Issue: {issue['attempts_with_issue']}/39 attempts. {issue['issue_label']} Example models: {issue['example_models']}.")
+            lines.append(
+                f"Issue: {issue['attempts_with_issue']}/{case['total_attempts']} attempts. {issue['issue_label']} Example models: {issue['example_models']}."
+            )
     path.write_text("\n".join(lines) + "\n", encoding="utf-8")
 
 
@@ -899,7 +919,7 @@ def main() -> int:
     failure_point_rows = build_failure_point_rows(case_summary)
 
     write_csv(out_dir / "pass4_model_summary.csv", model_summary, ["model", "display_model", "attempts", "exact_attempts", "exact_attempt_rate", "exact_query_coverage_any", "stable_exact_queries", "partial_exact_queries", "stable_fail_queries", "mean_score", "mean_aligned_cell_accuracy", "mean_row_set_correctness", "mean_numeric_correctness", "mean_sort_correctness", "row_count_mismatch_rate", "mean_wall_s", "mean_gen_tps", "exact", "order_only", "type_only", "same_count_wrong_values", "row_count_mismatch", "column_error", "dominant_failure_mode"])
-    write_csv(out_dir / "pass4_case_summary.csv", [{key: value for key, value in row.items() if key not in {"top_issues"}} for row in case_summary], ["case_id", "query", "short_name", "prompt", "primary_failure_family", "exact_attempts", "exact_attempt_rate", "exact_models_any", "exact_models_stable", "mean_score", "mean_aligned_cell_accuracy", "row_count_mismatch_attempts", "same_count_wrong_attempts", "order_only_attempts", "type_only_attempts", "column_error_attempts", "dominant_failure_mode"])
+    write_csv(out_dir / "pass4_case_summary.csv", [{key: value for key, value in row.items() if key not in {"top_issues"}} for row in case_summary], ["case_id", "query", "short_name", "prompt", "primary_failure_family", "total_attempts", "exact_attempts", "exact_attempt_rate", "exact_models_any", "exact_models_stable", "mean_score", "mean_aligned_cell_accuracy", "row_count_mismatch_attempts", "same_count_wrong_attempts", "order_only_attempts", "type_only_attempts", "column_error_attempts", "dominant_failure_mode"])
     write_csv(out_dir / "pass4_model_query_matrix.csv", model_query_rows, ["model", "display_model", "case_id", "query", "short_name", "exact_attempts", "exact_rate", "mean_score", "mean_aligned_cell_accuracy", "dominant_failure_mode", "stable_outcome"])
     write_csv(out_dir / "pass4_family_scores.csv", family_scores, ["model", "display_model", "family", "mean_score", "mean_exact_rate"])
     write_csv(out_dir / "pass4_model_groups.csv", model_groups, ["model", "display_model", "group", "group_reason", "audit_score", "analytical_score", "exact_attempts", "stable_exact_queries", "partial_exact_queries", "stable_fail_queries", "mean_score"])

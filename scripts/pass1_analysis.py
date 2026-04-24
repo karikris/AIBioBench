@@ -496,6 +496,7 @@ def build_summaries(rows: list[dict], case_meta: dict):
                 "short_name": QUERY_SHORT_NAMES.get(case_id, case_id),
                 "prompt": case_meta[case_id]["prompt"],
                 "primary_failure_family": case_meta[case_id]["metadata"]["failure_family_primary"],
+                "total_attempts": len(items),
                 "exact_attempts": exact_attempts,
                 "exact_attempt_rate": exact_attempts / len(items),
                 "exact_models_any": exact_models_any,
@@ -817,7 +818,7 @@ def render_visual_report(model_summary, case_summary, model_query_rows, family_s
         ax6.text(
             idx,
             min(case["mean_score"] + 0.04, 1.02),
-            f"{case['exact_attempts']}/39 exact",
+            f"{case['exact_attempts']}/{case['total_attempts']} exact",
             ha="center",
             va="bottom",
             color=TEXT,
@@ -924,12 +925,13 @@ def build_failure_point_rows(case_summary: list[dict]) -> list[dict]:
 
 
 def write_notes(path: Path, model_summary: list[dict], case_summary: list[dict], groups: list[dict], results_dir: Path) -> None:
+    model_count = len(model_summary)
     lines = [
         "# AIBioBench Pass 1 Analysis",
         "",
         f"Run analyzed: `{results_dir.name}`",
         "",
-        "Pass 1 in the latest run contains ten easy SQL tasks, each repeated three times across thirteen models. The charts in this folder focus on exact-match conversion, partial-credit behavior, repeatability, and the recurring failure points that kept models from converting high partial scores into exact answers.",
+        f"Pass 1 in the latest run contains ten easy SQL tasks, each repeated three times across {model_count} models. The charts in this folder focus on exact-match conversion, partial-credit behavior, repeatability, and the recurring failure points that kept models from converting high partial scores into exact answers.",
         "",
         "## Headline Findings",
         "",
@@ -986,23 +988,23 @@ def write_notes(path: Path, model_summary: list[dict], case_summary: list[dict],
     )
     for case in case_summary:
         issue_text = "; ".join(
-            f"{issue['attempts_with_issue']}/39: {issue['issue_label']}"
+            f"{issue['attempts_with_issue']}/{case['total_attempts']}: {issue['issue_label']}"
             for issue in case["top_issues"]
         )
         lines.append(
-            f"| {case['query']} | {case['short_name']} | {case['exact_attempts']}/39 | {case['mean_score']:.3f} | {issue_text} |"
+            f"| {case['query']} | {case['short_name']} | {case['exact_attempts']}/{case['total_attempts']} | {case['mean_score']:.3f} | {issue_text} |"
         )
 
     lines.extend(["", "## Short Notes", ""])
     for case in case_summary:
         lines.append(
-            f"- **{case['query']} {case['short_name']}**: {case['exact_attempts']}/39 exact, "
+            f"- **{case['query']} {case['short_name']}**: {case['exact_attempts']}/{case['total_attempts']} exact, "
             f"dominant failure mode `{case['dominant_failure_mode']}`. "
             f"Primary family: `{case['primary_failure_family']}`."
         )
         for issue in case["top_issues"]:
             lines.append(
-                f"Issue: {issue['attempts_with_issue']}/39 attempts. {issue['issue_label']} "
+                f"Issue: {issue['attempts_with_issue']}/{case['total_attempts']} attempts. {issue['issue_label']} "
                 f"Example models: {issue['example_models']}."
             )
 
@@ -1079,6 +1081,7 @@ def main() -> int:
             "short_name",
             "prompt",
             "primary_failure_family",
+            "total_attempts",
             "exact_attempts",
             "exact_attempt_rate",
             "exact_models_any",

@@ -313,6 +313,9 @@ def render_overview_visual(pass_summary, model_summary, query_summary, family_su
     passes = ["1", "2", "3", "4", "5"]
     models = [m["model"] for m in model_summary]
     model_labels = [base.wrap_display_name(m["display_model"]) for m in model_summary]
+    pass_attempts = {p["pass"]: p["attempts"] for p in pass_summary}
+    max_pass_attempts = max(pass_attempts.values())
+    per_model_attempts = max(m["attempts"] for m in model_summary)
     mp = {(r["model"], r["pass"]): r for r in model_pass_rows}
     score_matrix = [[mp[(model, pass_no)]["mean_score"] for pass_no in passes] for model in models]
 
@@ -326,11 +329,11 @@ def render_overview_visual(pass_summary, model_summary, query_summary, family_su
     scores = [p["mean_score"] for p in pass_summary]
     ax1.bar(x, exacts, color=[base.BLUE_PALE, base.BLUE_LIGHT, base.BLUE_MID, base.BLUE, base.BLUE_DARK], edgecolor=base.PANEL_BG)
     ax1.set_xticks(x, [PASS_LABELS[p] for p in passes])
-    ax1.set_ylabel("Exact attempts out of 390")
+    ax1.set_ylabel(f"Exact attempts out of {max_pass_attempts}")
     ax1.set_ylim(0, 60)
     ax1.set_title("Exact Conversion Collapses with Difficulty", fontweight="bold")
     for idx, val in enumerate(exacts):
-        ax1.text(idx, val + 1.0, f"{val}/390", ha="center", color=base.TEXT, fontsize=10, fontweight="bold")
+        ax1.text(idx, val + 1.0, f"{val}/{pass_summary[idx]['attempts']}", ha="center", color=base.TEXT, fontsize=10, fontweight="bold")
     ax1b = ax1.twinx()
     ax1b.plot(x, scores, color=base.BLUE_PALE, linewidth=3, marker="o", markersize=9)
     ax1b.set_ylim(0.45, 0.80)
@@ -365,7 +368,7 @@ def render_overview_visual(pass_summary, model_summary, query_summary, family_su
         left = [l + v for l, v in zip(left, vals)]
     ax2.set_yticks(y, model_labels)
     ax2.invert_yaxis()
-    ax2.set_xlabel("Exact attempts across 150 model attempts")
+    ax2.set_xlabel(f"Exact attempts across {per_model_attempts} model attempts")
     ax2.set_title("Exact Attempts by Model and Pass", fontweight="bold")
     ax2.legend(frameon=False, loc="lower right", labelcolor=base.TEXT)
     ax2.grid(axis="x", color=base.GRID, linewidth=0.8, alpha=0.75)
@@ -413,7 +416,7 @@ def render_overview_visual(pass_summary, model_summary, query_summary, family_su
         ax5.bar(range(len(passes)), vals, bottom=bottoms, color=color, label=label, edgecolor=base.PANEL_BG)
         bottoms = [b + v for b, v in zip(bottoms, vals)]
     ax5.set_xticks(range(len(passes)), [PASS_SHORT[p] for p in passes])
-    ax5.set_ylim(0, 390)
+    ax5.set_ylim(0, max_pass_attempts)
     ax5.set_ylabel("Attempts")
     ax5.set_title("Failure Mode Mix by Pass", fontweight="bold")
     ax5.legend(frameon=False, loc="upper center", bbox_to_anchor=(0.5, -0.12), ncol=2, labelcolor=base.TEXT)
@@ -455,7 +458,7 @@ def render_model_groups(model_groups, out_base: Path) -> None:
     ax1.set_yticks(y, [base.wrap_display_name(r["display_model"]) for r in ordered])
     ax1.invert_yaxis()
     ax1.set_xlim(0, 42)
-    ax1.set_xlabel("Exact attempts out of 150")
+    ax1.set_xlabel("Overall exact attempts")
     ax1.set_title("Overall Exact Conversion", fontweight="bold")
     for idx, row in enumerate(ordered):
         ax1.text(row["exact_attempts"] + 0.55, idx, f"{row['group']} ({row['mean_score']:.3f})", va="center", color=base.TEXT, fontsize=9)
@@ -484,11 +487,11 @@ def render_model_groups(model_groups, out_base: Path) -> None:
     plt.close(fig)
 
 
-def top_failure_text(query_failures: list[dict], case_id: str) -> str:
+def top_failure_text(query_failures: list[dict], case_id: str, total_attempts: int) -> str:
     rows = [r for r in query_failures if r["case_id"] == case_id][:3]
     if not rows:
         return ""
-    return "; ".join(f"{r['attempts_with_issue']}/39: {r['issue_label']}" for r in rows)
+    return "; ".join(f"{r['attempts_with_issue']}/{total_attempts}: {r['issue_label']}" for r in rows)
 
 
 def write_notes(path: Path, results_dir: Path, run_meta: dict, pass_summary, model_summary, query_summary, family_summary, query_failures, model_groups) -> None:
@@ -500,6 +503,10 @@ def write_notes(path: Path, results_dir: Path, run_meta: dict, pass_summary, mod
     models = run_meta.get("models", [])
     version = run_meta.get("benchmark_version", "unknown")
     provider = run_meta.get("provider", "unknown")
+    query_count = len(query_summary)
+    model_count = len(model_summary)
+    queries_per_pass = {p["pass"]: p["queries_with_any_exact"] + p["exact_zero_queries"] for p in pass_summary}
+    best_model = model_summary[0]
 
     lines = [
         "# AIBioBench Full Study Overview",
@@ -508,15 +515,15 @@ def write_notes(path: Path, results_dir: Path, run_meta: dict, pass_summary, mod
         f"Benchmark version: `{version}`",
         f"Provider: `{provider}`",
         "",
-        "Scope: all five passes, 50 queries, 13 models, and 3 repeated attempts per model-query pair.",
-        f"Models evaluated: {len(models) if models else len(model_summary)}.",
+        f"Scope: all five passes, {query_count} queries, {model_count} models, and 3 repeated attempts per model-query pair.",
+        f"Models evaluated: {model_count}.",
         "",
         "## Executive Summary",
         "",
         f"- Overall exact conversion was {total_exact}/{total_attempts} attempts ({100 * total_exact / total_attempts:.1f}%).",
-        f"- {zero_queries}/50 queries had zero exact answers. Exact-zero queries increased by pass: " + ", ".join(f"P{p['pass']}={p['exact_zero_queries']}/10" for p in pass_summary) + ".",
-        f"- Exact attempts fell from {pass_summary[0]['exact_attempts']}/390 in pass 1 to {pass_summary[-1]['exact_attempts']}/390 in pass 5.",
-        f"- {model_summary[0]['display_model']} was the clear study-wide leader with {model_summary[0]['exact_attempts']}/150 exact attempts and mean score {model_summary[0]['mean_score']:.3f}.",
+        f"- {zero_queries}/{query_count} queries had zero exact answers. Exact-zero queries increased by pass: " + ", ".join(f"P{p['pass']}={p['exact_zero_queries']}/{queries_per_pass[p['pass']]}" for p in pass_summary) + ".",
+        f"- Exact attempts fell from {pass_summary[0]['exact_attempts']}/{pass_summary[0]['attempts']} in pass 1 to {pass_summary[-1]['exact_attempts']}/{pass_summary[-1]['attempts']} in pass 5.",
+        f"- {best_model['display_model']} was the clear study-wide leader with {best_model['exact_attempts']}/{best_model['attempts']} exact attempts and mean score {best_model['mean_score']:.3f}.",
         "- The benchmark mostly exposed semantic execution failures, not formatting failures: row-count mismatch and same-count-wrong-values dominated all passes.",
         "- SQL tasks showed measurable exact conversion on join-preservation and audit queries; Python/pandas tasks largely eliminated exact conversion, especially once expression transforms and population statistics were required.",
         "",
@@ -527,7 +534,7 @@ def write_notes(path: Path, results_dir: Path, run_meta: dict, pass_summary, mod
     ]
     for p in pass_summary:
         lines.append(
-            f"| {p['pass_label']} | {p['exact_attempts']}/{p['attempts']} | {p['queries_with_any_exact']}/10 | {p['exact_zero_queries']}/10 | {p['mean_score']:.3f} | {p['mean_row_set_correctness']:.3f} | {p['mean_numeric_correctness']:.3f} | {p['mean_aligned_cell_accuracy']:.3f} | {p['dominant_failure_mode']} |"
+            f"| {p['pass_label']} | {p['exact_attempts']}/{p['attempts']} | {p['queries_with_any_exact']}/{queries_per_pass[p['pass']]} | {p['exact_zero_queries']}/{queries_per_pass[p['pass']]} | {p['mean_score']:.3f} | {p['mean_row_set_correctness']:.3f} | {p['mean_numeric_correctness']:.3f} | {p['mean_aligned_cell_accuracy']:.3f} | {p['dominant_failure_mode']} |"
         )
 
     lines.extend(["", "## Model Groups", "", "| Group | Models | Interpretation |", "|---|---|---|"])
@@ -549,7 +556,7 @@ def write_notes(path: Path, results_dir: Path, run_meta: dict, pass_summary, mod
     )
     for m in model_summary:
         lines.append(
-            f"| {m['display_model']} | {m['exact_attempts']}/150 | {m['pass1_exact']} | {m['pass2_exact']} | {m['pass3_exact']} | {m['pass4_exact']} | {m['pass5_exact']} | {m['mean_score']:.3f} | {m['mean_row_set_correctness']:.3f} | {m['mean_numeric_correctness']:.3f} | {m['dominant_failure_mode']} |"
+            f"| {m['display_model']} | {m['exact_attempts']}/{m['attempts']} | {m['pass1_exact']} | {m['pass2_exact']} | {m['pass3_exact']} | {m['pass4_exact']} | {m['pass5_exact']} | {m['mean_score']:.3f} | {m['mean_row_set_correctness']:.3f} | {m['mean_numeric_correctness']:.3f} | {m['dominant_failure_mode']} |"
         )
 
     lines.extend(
@@ -568,11 +575,11 @@ def write_notes(path: Path, results_dir: Path, run_meta: dict, pass_summary, mod
 
     lines.extend(["", "## Query-Level Takeaways", "", "**Most solvable queries by exact conversion:**", ""])
     for q in best_queries:
-        lines.append(f"- {q['query']} `{q['case_id']}`: {q['exact_attempts']}/39 exact, mean score {q['mean_score']:.3f}, family `{q['primary_failure_family']}`.")
+        lines.append(f"- {q['query']} `{q['case_id']}`: {q['exact_attempts']}/{q['attempts']} exact, mean score {q['mean_score']:.3f}, family `{q['primary_failure_family']}`.")
 
     lines.extend(["", "**Hardest queries by exact conversion and partial score:**", ""])
     for q in hardest_queries:
-        lines.append(f"- {q['query']} `{q['case_id']}`: {q['exact_attempts']}/39 exact, mean score {q['mean_score']:.3f}, family `{q['primary_failure_family']}`.")
+        lines.append(f"- {q['query']} `{q['case_id']}`: {q['exact_attempts']}/{q['attempts']} exact, mean score {q['mean_score']:.3f}, family `{q['primary_failure_family']}`.")
 
     lines.extend(
         [
@@ -585,7 +592,7 @@ def write_notes(path: Path, results_dir: Path, run_meta: dict, pass_summary, mod
     )
     for q in query_summary:
         lines.append(
-            f"| {q['query']} | {q['primary_failure_family']} | {q['exact_attempts']}/39 | {q['mean_score']:.3f} | {top_failure_text(query_failures, q['case_id'])} |"
+            f"| {q['query']} | {q['primary_failure_family']} | {q['exact_attempts']}/{q['attempts']} | {q['mean_score']:.3f} | {top_failure_text(query_failures, q['case_id'], q['attempts'])} |"
         )
 
     lines.extend(
@@ -595,7 +602,7 @@ def write_notes(path: Path, results_dir: Path, run_meta: dict, pass_summary, mod
             "",
             "### 1. Exact correctness remains the bottleneck",
             "",
-            "The best model achieved only 37/150 exact attempts, and the field as a whole achieved 102/1950. Many attempts earned partial credit, but exact reproducibility was rare. This matters because benchmark tasks were deterministic table-returning tasks; a near miss can still be operationally wrong when rows, sort order, or aggregate values must be exact.",
+            f"The best model achieved only {best_model['exact_attempts']}/{best_model['attempts']} exact attempts, and the field as a whole achieved {total_exact}/{total_attempts}. Many attempts earned partial credit, but exact reproducibility was rare. This matters because benchmark tasks were deterministic table-returning tasks; a near miss can still be operationally wrong when rows, sort order, or aggregate values must be exact.",
             "",
             "### 2. Difficulty exposes different failure regimes",
             "",

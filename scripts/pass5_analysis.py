@@ -523,6 +523,7 @@ def build_summaries(rows: list[dict], case_meta: dict):
                 "short_name": QUERY_SHORT_NAMES[case_id],
                 "prompt": case_meta[case_id]["prompt"],
                 "primary_failure_family": case_meta[case_id]["metadata"]["failure_family_primary"],
+                "total_attempts": len(items),
                 "exact_attempts": sum(base.as_bool(r["exact_match"]) for r in items),
                 "exact_attempt_rate": mean(base.as_bool(r["exact_match"]) for r in items),
                 "exact_models_any": sum(any(base.as_bool(r["exact_match"]) for r in by_model_case[(model, case_id)]) for model in by_model),
@@ -670,6 +671,7 @@ def render_visual_report(model_summary, case_summary, model_query_rows, rows, ou
     model_labels = [base.wrap_display_name(m["display_model"]) for m in model_summary]
     cases = [c["case_id"] for c in case_summary]
     case_labels = [QUERY_LABELS[c] for c in cases]
+    total_attempts_per_query = max(c["total_attempts"] for c in case_summary)
     mq = {(r["model"], r["case_id"]): r for r in model_query_rows}
     score_matrix = [[mq[(model, case)]["mean_score"] for case in cases] for model in models]
     cell_matrix = [[mq[(model, case)]["mean_aligned_cell_accuracy"] for case in cases] for model in models]
@@ -760,9 +762,9 @@ def render_visual_report(model_summary, case_summary, model_query_rows, rows, ou
         ax5.bar(range(len(cases)), vals, bottom=bottoms, label=label, color=color, edgecolor=base.PANEL_BG)
         bottoms = [b + v for b, v in zip(bottoms, vals)]
     ax5.set_xticks(range(len(cases)), [query_name(c) for c in cases])
-    ax5.set_ylim(0, 39)
+    ax5.set_ylim(0, total_attempts_per_query)
     ax5.set_ylabel("Attempts")
-    ax5.set_title("Failure Mode by Query (39 Attempts Each)", fontweight="bold")
+    ax5.set_title(f"Failure Mode by Query ({total_attempts_per_query} Attempts Each)", fontweight="bold")
     ax5.legend(loc="upper center", bbox_to_anchor=(0.5, -0.12), ncol=2, frameon=False, fontsize=9, labelcolor=base.TEXT)
     ax5.grid(axis="y", color=base.GRID, linewidth=0.8, alpha=0.75)
     style_dark_axis(ax5)
@@ -773,8 +775,8 @@ def render_visual_report(model_summary, case_summary, model_query_rows, rows, ou
     ax6.plot(range(len(cases)), query_scores, color=base.BLUE_PALE, linewidth=2.8, marker="o", markersize=8, label="Mean score")
     ax6.plot(range(len(cases)), query_cells, color=base.BLUE_MID, linewidth=2.2, marker="s", markersize=7, label="Mean cell accuracy")
     ax6.fill_between(range(len(cases)), query_scores, color=base.BLUE_LIGHT, alpha=0.18)
-    for idx, exact in enumerate(c["exact_attempts"] for c in case_summary):
-        ax6.text(idx, min(query_scores[idx] + 0.04, 1.02), f"{exact}/39", ha="center", color=base.TEXT, fontsize=9)
+    for idx, case in enumerate(case_summary):
+        ax6.text(idx, min(query_scores[idx] + 0.04, 1.02), f"{case['exact_attempts']}/{case['total_attempts']}", ha="center", color=base.TEXT, fontsize=9)
     ax6.set_xticks(range(len(cases)), [query_name(c) for c in cases])
     ax6.set_ylim(0, 1.05)
     ax6.set_ylabel("Score")
@@ -831,16 +833,19 @@ def render_model_groups(model_groups, out_base: Path) -> None:
 
 
 def write_notes(path: Path, results_dir: Path, model_summary, case_summary, query_failure_rows, model_groups) -> None:
+    model_count = len(model_summary)
+    total_exact = sum(c["exact_attempts"] for c in case_summary)
+    total_attempts = sum(c["total_attempts"] for c in case_summary)
     lines = [
         "# AIBioBench Pass 5 Analysis",
         "",
         f"Run analyzed: `{results_dir.name}`",
         "",
-        "Pass 5 contains ten extreme-hard Python/pandas tasks, each repeated three times across thirteen models. The pass stresses expression transforms, complete-chain matched-expression mapping, population statistics, z-scores, coefficients of variation, signal ranking, and sample-level burden scores.",
+        f"Pass 5 contains ten extreme-hard Python/pandas tasks, each repeated three times across {model_count} models. The pass stresses expression transforms, complete-chain matched-expression mapping, population statistics, z-scores, coefficients of variation, signal ranking, and sample-level burden scores.",
         "",
         "## Headline Findings",
         "",
-        "- No model produced an exact answer on pass 5: exact matches were 0/390.",
+        f"- No model produced an exact answer on pass 5: exact matches were {total_exact}/{total_attempts}.",
         f"- {model_summary[0]['display_model']} led on partial credit with mean score {model_summary[0]['mean_score']:.3f}, followed by {model_summary[1]['display_model']} at {model_summary[1]['mean_score']:.3f} and {model_summary[2]['display_model']} at {model_summary[2]['mean_score']:.3f}.",
         "- The strongest query-level scores came from sample-preserving transforms and condition summaries; the weakest were condition-gene signal ranking, pathway burden, and marker composition shares.",
         "- Recurring failure points were wrong numeric derivations after mostly plausible joins: log2 transforms, VAF weighting, population standard deviation, coefficient of variation, and ranking by derived metrics.",
@@ -884,15 +889,15 @@ def write_notes(path: Path, results_dir: Path, model_summary, case_summary, quer
         by_case[row["case_id"]].append(row)
     for c in case_summary:
         failures = by_case[c["case_id"]][:3]
-        failure_text = "; ".join(f"{f['attempts_with_issue']}/39: {f['issue_label']}" for f in failures)
-        lines.append(f"| {c['query']} | {c['short_name']} | {c['exact_attempts']}/39 | {c['mean_score']:.3f} | {failure_text} |")
+        failure_text = "; ".join(f"{f['attempts_with_issue']}/{c['total_attempts']}: {f['issue_label']}" for f in failures)
+        lines.append(f"| {c['query']} | {c['short_name']} | {c['exact_attempts']}/{c['total_attempts']} | {c['mean_score']:.3f} | {failure_text} |")
 
     lines.extend(["", "## Short Notes", ""])
     for c in case_summary:
         failures = by_case[c["case_id"]][:3]
-        lines.append(f"- **{c['query']} {c['short_name']}**: {c['exact_attempts']}/39 exact, dominant failure mode `{c['dominant_failure_mode']}`. Primary family: `{c['primary_failure_family']}`.")
+        lines.append(f"- **{c['query']} {c['short_name']}**: {c['exact_attempts']}/{c['total_attempts']} exact, dominant failure mode `{c['dominant_failure_mode']}`. Primary family: `{c['primary_failure_family']}`.")
         for failure in failures:
-            lines.append(f"Issue: {failure['attempts_with_issue']}/39 attempts. {failure['issue_label']} Example models: {failure['example_models']}.")
+            lines.append(f"Issue: {failure['attempts_with_issue']}/{c['total_attempts']} attempts. {failure['issue_label']} Example models: {failure['example_models']}.")
     path.write_text("\n".join(lines) + "\n", encoding="utf-8")
 
 
@@ -960,6 +965,7 @@ def main() -> int:
             "short_name",
             "prompt",
             "primary_failure_family",
+            "total_attempts",
             "exact_attempts",
             "exact_attempt_rate",
             "exact_models_any",

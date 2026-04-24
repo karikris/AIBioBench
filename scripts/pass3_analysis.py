@@ -521,6 +521,7 @@ def build_summaries(rows: list[dict], case_meta: dict):
                 "short_name": QUERY_SHORT_NAMES.get(case_id, case_id),
                 "prompt": case_meta[case_id]["prompt"],
                 "primary_failure_family": case_meta[case_id]["metadata"]["failure_family_primary"],
+                "total_attempts": len(items),
                 "exact_attempts": exact_attempts,
                 "exact_attempt_rate": exact_attempts / len(items),
                 "exact_models_any": exact_models_any,
@@ -780,7 +781,15 @@ def render_visual_report(model_summary, case_summary, model_query_rows, family_s
     ax6.set_title("Which Pass-3 Questions Broke the Models", fontweight="bold")
     ax6.grid(axis="y", color=GRID, linewidth=1)
     for idx, case in enumerate(case_summary):
-        ax6.text(idx, min(case["mean_score"] + 0.04, 1.02), f"{case['exact_attempts']}/39 exact", ha="center", va="bottom", color=TEXT, fontsize=8)
+        ax6.text(
+            idx,
+            min(case["mean_score"] + 0.04, 1.02),
+            f"{case['exact_attempts']}/{case['total_attempts']} exact",
+            ha="center",
+            va="bottom",
+            color=TEXT,
+            fontsize=8,
+        )
     leg = ax6.legend(frameon=False, fontsize=9, loc="lower left")
     for text in leg.get_texts():
         text.set_color(TEXT)
@@ -856,17 +865,19 @@ def build_failure_point_rows(case_summary: list[dict]) -> list[dict]:
 def write_notes(path: Path, model_summary: list[dict], case_summary: list[dict], groups: list[dict], results_dir: Path) -> None:
     exact_zero = [case["query"] for case in case_summary if case["exact_attempts"] == 0]
     total_exact = sum(case["exact_attempts"] for case in case_summary)
+    model_count = len(model_summary)
+    total_attempts = sum(case["total_attempts"] for case in case_summary)
     lines = [
         "# AIBioBench Pass 3 Analysis",
         "",
         f"Run analyzed: `{results_dir.name}`",
         "",
-        "Pass 3 contains ten hard SQL tasks, each repeated three times across thirteen models. The pressure shifts to join-status classification, orphan audits, dense ranking, complete-chain non-reference filters, and decision-score arithmetic.",
+        f"Pass 3 contains ten hard SQL tasks, each repeated three times across {model_count} models. The pressure shifts to join-status classification, orphan audits, dense ranking, complete-chain non-reference filters, and decision-score arithmetic.",
         "",
         "## Headline Findings",
         "",
         f"- **{model_summary[0]['display_model']}** led pass 3 with {model_summary[0]['exact_attempts']}/30 exact attempts and exact coverage on {model_summary[0]['exact_query_coverage_any']}/10 questions.",
-        f"- Exact matches were very sparse: only {total_exact}/390 attempts were exact, and {', '.join(exact_zero)} had zero exact attempts.",
+        f"- Exact matches were very sparse: only {total_exact}/{total_attempts} attempts were exact, and {', '.join(exact_zero)} had zero exact attempts.",
         "- Q1 had high mean score because most models could preserve the row set, but exactness depended on three edge-row status labels.",
         "- The hardest exactness failures were Q2/Q4/Q6/Q8/Q10 numeric-grain tasks and Q7 anti-join label/reason normalization.",
         "",
@@ -910,16 +921,23 @@ def write_notes(path: Path, model_summary: list[dict], case_summary: list[dict],
         ]
     )
     for case in case_summary:
-        issue_text = "; ".join(f"{issue['attempts_with_issue']}/39: {issue['issue_label']}" for issue in case["top_issues"])
-        lines.append(f"| {case['query']} | {case['short_name']} | {case['exact_attempts']}/39 | {case['mean_score']:.3f} | {issue_text} |")
+        issue_text = "; ".join(
+            f"{issue['attempts_with_issue']}/{case['total_attempts']}: {issue['issue_label']}"
+            for issue in case["top_issues"]
+        )
+        lines.append(
+            f"| {case['query']} | {case['short_name']} | {case['exact_attempts']}/{case['total_attempts']} | {case['mean_score']:.3f} | {issue_text} |"
+        )
 
     lines.extend(["", "## Short Notes", ""])
     for case in case_summary:
         lines.append(
-            f"- **{case['query']} {case['short_name']}**: {case['exact_attempts']}/39 exact, dominant failure mode `{case['dominant_failure_mode']}`. Primary family: `{case['primary_failure_family']}`."
+            f"- **{case['query']} {case['short_name']}**: {case['exact_attempts']}/{case['total_attempts']} exact, dominant failure mode `{case['dominant_failure_mode']}`. Primary family: `{case['primary_failure_family']}`."
         )
         for issue in case["top_issues"]:
-            lines.append(f"Issue: {issue['attempts_with_issue']}/39 attempts. {issue['issue_label']} Example models: {issue['example_models']}.")
+            lines.append(
+                f"Issue: {issue['attempts_with_issue']}/{case['total_attempts']} attempts. {issue['issue_label']} Example models: {issue['example_models']}."
+            )
 
     path.write_text("\n".join(lines) + "\n", encoding="utf-8")
 
@@ -988,6 +1006,7 @@ def main() -> int:
             "short_name",
             "prompt",
             "primary_failure_family",
+            "total_attempts",
             "exact_attempts",
             "exact_attempt_rate",
             "exact_models_any",
