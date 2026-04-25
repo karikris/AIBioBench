@@ -14,6 +14,7 @@ from typing import Iterable, List, Sequence, Tuple
 
 DEFAULT_DATASET_URL = "https://www.kaggle.com/datasets/kristofferkari/aiobiobench-results"
 DEFAULT_DATASET_ID = "kristofferkari/aiobiobench-results"
+DEFAULT_GITHUB_REPO_URL = "https://github.com/karikris/AIBioBench"
 DEFAULT_RESULTS_DIR_NAME = "photosynthesis_snowflake_v2"
 DEFAULT_RESULTS_GLOB = DEFAULT_RESULTS_DIR_NAME
 
@@ -37,6 +38,7 @@ def parse_args() -> argparse.Namespace:
     p.add_argument("--dataset-title", default="AIBioBench v2 Results Bundle")
     p.add_argument("--dataset-subtitle", default="Merged root files and analysis subfolders for AIBioBench v2")
     p.add_argument("--dataset-url", default=DEFAULT_DATASET_URL)
+    p.add_argument("--github-repo-url", default=DEFAULT_GITHUB_REPO_URL)
     p.add_argument("--staging-dir", type=Path, default=None, help="Optional persistent staging directory.")
     p.add_argument("--version-message", default=None, help="Optional Kaggle dataset version message.")
     p.add_argument("--root-only", action="store_true", help="Stage only top-level files from the results bundle.")
@@ -97,6 +99,7 @@ def build_dataset_metadata(
     title: str,
     subtitle: str,
     dataset_url: str,
+    github_repo_url: str,
     source_dir: Path,
     files: Sequence[Tuple[Path, Path]],
 ) -> dict:
@@ -105,6 +108,8 @@ def build_dataset_metadata(
         "",
         f"Kaggle dataset page: {dataset_url}",
         f"Local source bundle: `{source_dir}`",
+        f"GitHub repository for code, benchmark definitions, schemas, and publishing scripts: {github_repo_url}",
+        "This Kaggle dataset contains the published result bundle; the executable code lives in the GitHub repository.",
         "Scope of this upload: root result files plus analysis subfolders from the merged v2 bundle.",
         "",
         "Included files:",
@@ -120,7 +125,10 @@ def build_dataset_metadata(
         "licenses": [{"name": "other"}],
         "keywords": ["benchmark", "llm", "bioinformatics"],
         "expectedUpdateFrequency": "weekly",
-        "userSpecifiedSources": f"AIBioBench local results bundle and Kaggle dataset page {dataset_url}",
+        "userSpecifiedSources": (
+            f"AIBioBench local results bundle {source_dir}, "
+            f"GitHub repository {github_repo_url}, and Kaggle dataset page {dataset_url}"
+        ),
         "resources": [
             {"path": rel_path.as_posix(), "description": file_description(path, rel_path)}
             for path, rel_path in files
@@ -128,7 +136,16 @@ def build_dataset_metadata(
     }
 
 
-def stage_files(source_dir: Path, staging_dir: Path, dataset_id: str, title: str, subtitle: str, dataset_url: str, include_subdirs: bool) -> List[Path]:
+def stage_files(
+    source_dir: Path,
+    staging_dir: Path,
+    dataset_id: str,
+    title: str,
+    subtitle: str,
+    dataset_url: str,
+    github_repo_url: str,
+    include_subdirs: bool,
+) -> List[Path]:
     if staging_dir.exists():
         shutil.rmtree(staging_dir)
     staging_dir.mkdir(parents=True, exist_ok=True)
@@ -144,7 +161,7 @@ def stage_files(source_dir: Path, staging_dir: Path, dataset_id: str, title: str
     if not selected:
         raise SystemExit(f"No files selected from {source_dir}")
 
-    metadata = build_dataset_metadata(dataset_id, title, subtitle, dataset_url, source_dir, selected)
+    metadata = build_dataset_metadata(dataset_id, title, subtitle, dataset_url, github_repo_url, source_dir, selected)
     (staging_dir / "dataset-metadata.json").write_text(json.dumps(metadata, indent=2), encoding="utf-8")
     return [path for path, _rel in selected]
 
@@ -241,6 +258,7 @@ def main() -> None:
             title=args.dataset_title,
             subtitle=args.dataset_subtitle,
             dataset_url=args.dataset_url,
+            github_repo_url=args.github_repo_url,
             include_subdirs=not args.root_only,
         )
 
@@ -249,6 +267,7 @@ def main() -> None:
             "staging_dir": str(staging_dir),
             "dataset_id": dataset_id,
             "target_dataset_url": args.dataset_url,
+            "github_repo_url": args.github_repo_url,
             "include_subdirs": not args.root_only,
             "selected_files": [str(path.relative_to(results_dir)) for path in selected_files],
             "version_message": version_message,
