@@ -54,7 +54,7 @@ All 50 query texts are collected in [QUERIES.md](QUERIES.md).
   - Runs benchmark cases against local models.
   - Uses `benchmark_manifest.json` by default.
   - Writes raw result files and aggregate CSV summaries.
-  - By default, appends into the latest matching results bundle under `results/`.
+  - By default, appends into `results/photosynthesis_snowflake_v2`.
 
 - [aibiobench-results.py](aibiobench-results.py)
   - Stages and publishes the current v2 results bundle to Kaggle.
@@ -107,8 +107,8 @@ Useful runner flags:
 
 Current output behavior:
 
-- By default, `aibiobench.py` appends into the latest matching v2 bundle inside `results/`.
-- If no matching bundle exists, it creates a new timestamped bundle.
+- By default, `aibiobench.py` appends into `results/photosynthesis_snowflake_v2`.
+- If that bundle does not exist, it creates `results/photosynthesis_snowflake_v2`.
 - The root files written by the runner include:
   - `detailed_results.csv`
   - `detailed_results.jsonl`
@@ -125,7 +125,7 @@ The analysis scripts operate on an existing results bundle.
 Example:
 
 ```bash
-RESULTS_DIR=results/photosynthesis_snowflake_v2__<timestamp>
+RESULTS_DIR=results/photosynthesis_snowflake_v2
 
 python3 scripts/pass1_analysis.py "$RESULTS_DIR"
 python3 scripts/pass2_analysis.py "$RESULTS_DIR"

@@ -1443,10 +1443,9 @@ def bundle_dir_basename(benchmark_id: str) -> str:
     return benchmark_id[len(prefix):] if benchmark_id.startswith(prefix) else benchmark_id
 
 
-def discover_existing_bundle_dir(results_root: Path, benchmark_id: str, bundle_dir_name: Optional[str] = None) -> Optional[Path]:
+def resolve_shared_bundle_dir(results_root: Path, benchmark_id: str, bundle_dir_name: Optional[str] = None) -> Path:
     base_name = bundle_dir_name or bundle_dir_basename(benchmark_id)
-    candidates = sorted(path for path in results_root.glob(f"{base_name}__*") if path.is_dir())
-    return candidates[-1] if candidates else None
+    return results_root / base_name
 
 
 def resolve_output_dir(
@@ -1462,11 +1461,7 @@ def resolve_output_dir(
 
     results_root = repo_root / "results"
     if append_output:
-        existing = discover_existing_bundle_dir(results_root, benchmark_id, bundle_dir_name)
-        if existing is not None:
-            return existing
-        bundle_base = bundle_dir_name or bundle_dir_basename(benchmark_id)
-        return results_root / f"{bundle_base}__{datetime.now().strftime('%Y%m%d_%H%M%S')}"
+        return resolve_shared_bundle_dir(results_root, benchmark_id, bundle_dir_name)
 
     return results_root / run_id
 

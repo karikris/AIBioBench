@@ -14,7 +14,8 @@ from typing import Iterable, List, Sequence, Tuple
 
 DEFAULT_DATASET_URL = "https://www.kaggle.com/datasets/kristofferkari/aiobiobench-results"
 DEFAULT_DATASET_ID = "kristofferkari/aiobiobench-results"
-DEFAULT_RESULTS_GLOB = "photosynthesis_snowflake_v2__*"
+DEFAULT_RESULTS_DIR_NAME = "photosynthesis_snowflake_v2"
+DEFAULT_RESULTS_GLOB = DEFAULT_RESULTS_DIR_NAME
 
 
 def utc_now_iso() -> str:
@@ -30,7 +31,7 @@ def parse_args() -> argparse.Namespace:
     )
     p.add_argument("--repo-root", type=Path, default=Path(__file__).resolve().parent)
     p.add_argument("--results-dir", type=Path, default=None, help="Explicit results bundle to publish.")
-    p.add_argument("--results-glob", default=DEFAULT_RESULTS_GLOB, help="Glob used to auto-discover the latest v2 bundle.")
+    p.add_argument("--results-glob", default=DEFAULT_RESULTS_GLOB, help="Glob used to auto-discover the v2 bundle.")
     p.add_argument("--tokens-path", type=Path, default=Path(__file__).resolve().parent / "TOKENS.md")
     p.add_argument("--dataset-id", default=DEFAULT_DATASET_ID, help="Kaggle dataset id in owner/slug form.")
     p.add_argument("--dataset-title", default="AIBioBench v2 Results Bundle")
