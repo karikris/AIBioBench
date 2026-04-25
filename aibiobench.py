@@ -1594,7 +1594,7 @@ def parse_args() -> argparse.Namespace:
     p.add_argument("--case-ids", nargs="*", default=None)
     p.add_argument("--limit", type=int, default=None)
     p.add_argument("--repeats", type=int, default=None)
-    p.add_argument("--repeat-group-id", default="default_repeatability_v2")
+    p.add_argument("--repeat-group-id", default="default_repeatability_v3")
     p.add_argument("--no-validate", action="store_true")
     p.add_argument("--keep-alive", default=KEEP_ALIVE)
     p.add_argument("--temperature", type=float, default=DEFAULT_OPTIONS["temperature"])

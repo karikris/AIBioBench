@@ -65,8 +65,8 @@
     "standard_instructions_id": {
       "type": "string",
       "enum": [
-        "sql_v2",
-        "python_v2"
+        "sql_v3",
+        "python_v3"
       ]
     },
     "expected_result_id": {
@@ -279,7 +279,7 @@
             "const": "sql"
           },
           "standard_instructions_id": {
-            "const": "sql_v2"
+            "const": "sql_v3"
           }
         }
       }
@@ -301,7 +301,7 @@
             "const": "python"
           },
           "standard_instructions_id": {
-            "const": "python_v2"
+            "const": "python_v3"
           }
         }
       }

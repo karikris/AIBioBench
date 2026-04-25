@@ -15,8 +15,14 @@ from typing import Iterable, List, Sequence, Tuple
 DEFAULT_DATASET_URL = "https://www.kaggle.com/datasets/kristofferkari/aiobiobench-results"
 DEFAULT_DATASET_ID = "kristofferkari/aiobiobench-results"
 DEFAULT_GITHUB_REPO_URL = "https://github.com/karikris/AIBioBench"
-DEFAULT_RESULTS_DIR_NAME = "photosynthesis_snowflake_v2"
+DEFAULT_RESULTS_DIR_NAME = "photosynthesis_snowflake_v3"
 DEFAULT_RESULTS_GLOB = DEFAULT_RESULTS_DIR_NAME
+REQUIRED_RESULTS_FILES = (
+    "detailed_results.csv",
+    "detailed_results.jsonl",
+    "run_results.jsonl",
+    "run_meta.json",
+)
 
 
 def utc_now_iso() -> str:
@@ -26,17 +32,17 @@ def utc_now_iso() -> str:
 def parse_args() -> argparse.Namespace:
     p = argparse.ArgumentParser(
         description=(
-            "Stage the current AIBioBench v2 results bundle and publish its full contents "
+            "Stage the current AIBioBench v3 results bundle and publish its full contents "
             "to Kaggle as a dataset."
         )
     )
     p.add_argument("--repo-root", type=Path, default=Path(__file__).resolve().parent)
     p.add_argument("--results-dir", type=Path, default=None, help="Explicit results bundle to publish.")
-    p.add_argument("--results-glob", default=DEFAULT_RESULTS_GLOB, help="Glob used to auto-discover the v2 bundle.")
+    p.add_argument("--results-glob", default=DEFAULT_RESULTS_GLOB, help="Glob used to auto-discover the v3 bundle.")
     p.add_argument("--tokens-path", type=Path, default=Path(__file__).resolve().parent / "TOKENS.md")
     p.add_argument("--dataset-id", default=DEFAULT_DATASET_ID, help="Kaggle dataset id in owner/slug form.")
-    p.add_argument("--dataset-title", default="AIBioBench v2 Results Bundle")
-    p.add_argument("--dataset-subtitle", default="Merged root files and analysis subfolders for AIBioBench v2")
+    p.add_argument("--dataset-title", default="AIBioBench v3 Results Bundle")
+    p.add_argument("--dataset-subtitle", default="Merged root files and analysis subfolders for AIBioBench v3")
     p.add_argument("--dataset-url", default=DEFAULT_DATASET_URL)
     p.add_argument("--github-repo-url", default=DEFAULT_GITHUB_REPO_URL)
     p.add_argument("--staging-dir", type=Path, default=None, help="Optional persistent staging directory.")
@@ -52,6 +58,15 @@ def discover_results_dir(results_root: Path, glob_pattern: str) -> Path:
     if not candidates:
         raise SystemExit(f"No results directories matched {glob_pattern!r} under {results_root}")
     return candidates[-1]
+
+
+def validate_results_bundle(results_dir: Path) -> None:
+    missing = [name for name in REQUIRED_RESULTS_FILES if not (results_dir / name).is_file()]
+    if missing:
+        missing_text = ", ".join(missing)
+        raise SystemExit(
+            f"{results_dir} is not a complete results bundle yet. Missing required files: {missing_text}"
+        )
 
 
 def extract_kaggle_token(tokens_path: Path) -> str:
@@ -88,10 +103,10 @@ def file_description(path: Path, rel_path: Path) -> str:
     if name == "run_results.jsonl":
         return "Benchmark run results in schema-compatible JSONL format."
     if name == "run_meta.json":
-        return "Benchmark run metadata for the merged local v2 bundle."
+        return "Benchmark run metadata for the merged local v3 bundle."
     if name.startswith("summary_") and name.endswith(".csv"):
-        return f"Summary table exported from the merged local v2 bundle: {rel_text}."
-    return f"File from the AIBioBench v2 local results bundle: {rel_text}."
+        return f"Summary table exported from the merged local v3 bundle: {rel_text}."
+    return f"File from the AIBioBench v3 local results bundle: {rel_text}."
 
 
 def build_dataset_metadata(
@@ -104,13 +119,13 @@ def build_dataset_metadata(
     files: Sequence[Tuple[Path, Path]],
 ) -> dict:
     description_lines = [
-        "Full AIBioBench v2 results bundle published from the local merged results directory.",
+        "Full AIBioBench v3 results bundle published from the local merged results directory.",
         "",
         f"Kaggle dataset page: {dataset_url}",
         f"Local source bundle: `{source_dir}`",
         f"GitHub repository for code, benchmark definitions, schemas, and publishing scripts: {github_repo_url}",
         "This Kaggle dataset contains the published result bundle; the executable code lives in the GitHub repository.",
-        "Scope of this upload: root result files plus analysis subfolders from the merged v2 bundle.",
+        "Scope of this upload: root result files plus analysis subfolders from the merged v3 bundle.",
         "",
         "Included files:",
     ]
@@ -244,10 +259,11 @@ def main() -> None:
     repo_root = args.repo_root.resolve()
     results_root = repo_root / "results"
     results_dir = args.results_dir.resolve() if args.results_dir else discover_results_dir(results_root, args.results_glob)
+    validate_results_bundle(results_dir)
     token = extract_kaggle_token(args.tokens_path.resolve())
 
     dataset_id = args.dataset_id
-    version_message = args.version_message or f"Update full v2 results bundle from {results_dir.name} at {utc_now_iso()}"
+    version_message = args.version_message or f"Update full v3 results bundle from {results_dir.name} at {utc_now_iso()}"
 
     with tempfile.TemporaryDirectory(prefix="aibiobench-kaggle-") as tmp_dir:
         staging_dir = args.staging_dir.resolve() if args.staging_dir else Path(tmp_dir) / dataset_id.split("/", 1)[1]

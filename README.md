@@ -2,19 +2,19 @@
 
 AIBioBench is a local benchmark suite for comparing LLMs on deterministic table-returning tasks over a small bioinformatics-style snowflake dataset.
 
-The current repository is centered on the `photosynthesis_snowflake_v2` benchmark. It contains:
+The current repository is centered on the `photosynthesis_snowflake_v3` benchmark. It contains:
 
 - a benchmark runner for local Ollama models
 - 50 benchmark cases across SQL and Python/pandas passes
 - gold answers and schemas
 - per-pass and cross-pass analysis scripts
-- a Kaggle publishing script for syncing the merged v2 results bundle
+- a Kaggle publishing script for syncing the merged v3 results bundle
 
 ## Benchmark Structure
 
 The active benchmark manifest is [benchmark_manifest.json](benchmark_manifest.json).
 
-The current v2 benchmark has:
+The current v3 benchmark has:
 
 - `50` cases total
 - `5` passes
@@ -54,10 +54,10 @@ All 50 query texts are collected in [QUERIES.md](QUERIES.md).
   - Runs benchmark cases against local models.
   - Uses `benchmark_manifest.json` by default.
   - Writes raw result files and aggregate CSV summaries.
-  - By default, appends into `results/photosynthesis_snowflake_v2`.
+  - By default, appends into `results/photosynthesis_snowflake_v3`.
 
 - [aibiobench-results.py](aibiobench-results.py)
-  - Stages and publishes the current v2 results bundle to Kaggle.
+  - Stages and publishes the current v3 results bundle to Kaggle.
   - Defaults to uploading the full bundle, including analysis subfolders.
   - Reads `KAGGLE_API_TOKEN` from `TOKENS.md`.
 
@@ -107,8 +107,8 @@ Useful runner flags:
 
 Current output behavior:
 
-- By default, `aibiobench.py` appends into `results/photosynthesis_snowflake_v2`.
-- If that bundle does not exist, it creates `results/photosynthesis_snowflake_v2`.
+- By default, `aibiobench.py` appends into `results/photosynthesis_snowflake_v3`.
+- If that bundle does not exist, it creates `results/photosynthesis_snowflake_v3`.
 - The root files written by the runner include:
   - `detailed_results.csv`
   - `detailed_results.jsonl`
@@ -125,7 +125,7 @@ The analysis scripts operate on an existing results bundle.
 Example:
 
 ```bash
-RESULTS_DIR=results/photosynthesis_snowflake_v2
+RESULTS_DIR=results/photosynthesis_snowflake_v3
 
 python3 scripts/pass1_analysis.py "$RESULTS_DIR"
 python3 scripts/pass2_analysis.py "$RESULTS_DIR"
@@ -157,7 +157,7 @@ The current Kaggle dataset target is:
 
 - `https://www.kaggle.com/datasets/kristofferkari/aiobiobench-results`
 
-The publisher script defaults to the full v2 results bundle, including analysis subfolders.
+The publisher script defaults to the full v3 results bundle, including analysis subfolders.
 
 Examples:
 
@@ -187,11 +187,11 @@ That means the repository tracks the benchmark definitions and scripts, while re
 
 ## Current Repo State
 
-The repository now reflects the merged v2 workflow:
+The repository now reflects the merged v3 workflow:
 
-- benchmark runs append into a shared v2 results bundle by default
+- benchmark runs append into a shared v3 results bundle by default
 - per-pass and combined analysis scripts use dynamic model and attempt counts
-- the Kaggle publisher uploads the full v2 bundle, not just root files
+- the Kaggle publisher uploads the full v3 bundle, not just root files
 - `QUERIES.md` documents the full prompt set
 
 ## Acknowledgements
