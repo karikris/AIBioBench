@@ -36,6 +36,16 @@ GROUP_COLORS = {
     "Brittle / low-exactness operators": base.BLUE_DARK,
 }
 
+FAILURE_MODE_FIELDS = [
+    "exact",
+    "order_only",
+    "type_only",
+    "same_count_wrong_values",
+    "row_count_mismatch",
+    "column_error",
+    "invalid_json_or_error",
+]
+
 
 def case_sort_key(case_id: str) -> tuple[int, int]:
     left, right = case_id.split(".query")
@@ -114,12 +124,14 @@ def build_summaries(rows: list[dict], case_meta: dict):
                 "mean_row_set_correctness": mean(base.as_float(r["row_set_correctness_score"]) for r in items),
                 "mean_numeric_correctness": mean(base.as_float(r["numeric_correctness_score"]) for r in items),
                 "dominant_failure_mode": modes.most_common(1)[0][0],
+                "dominant_non_exact_failure_mode": base.dominant_non_exact_mode(modes),
                 "row_count_mismatch": modes["row_count_mismatch"],
                 "same_count_wrong_values": modes["same_count_wrong_values"],
                 "exact": modes["exact"],
                 "order_only": modes["order_only"],
                 "type_only": modes["type_only"],
                 "column_error": modes["column_error"],
+                "invalid_json_or_error": modes["invalid_json_or_error"],
             }
         )
 
@@ -157,12 +169,14 @@ def build_summaries(rows: list[dict], case_meta: dict):
                 "score_drop_pass1_to_pass3": pass_score["1"] - pass_score["3"],
                 "exact_drop_pass1_to_pass3": pass_exact["1"] - pass_exact["3"],
                 "dominant_failure_mode": modes.most_common(1)[0][0],
+                "dominant_non_exact_failure_mode": base.dominant_non_exact_mode(modes),
                 "row_count_mismatch": modes["row_count_mismatch"],
                 "same_count_wrong_values": modes["same_count_wrong_values"],
                 "exact": modes["exact"],
                 "order_only": modes["order_only"],
                 "type_only": modes["type_only"],
                 "column_error": modes["column_error"],
+                "invalid_json_or_error": modes["invalid_json_or_error"],
             }
         )
     model_summary.sort(key=lambda r: (-r["exact_attempts"], -r["mean_score"], r["display_model"]))
@@ -171,16 +185,24 @@ def build_summaries(rows: list[dict], case_meta: dict):
     for case_id in sorted(by_case, key=case_sort_key):
         items = by_case[case_id]
         modes = Counter(r["_failure_mode"] for r in items)
-        meta = case_meta[case_id]
+        first = items[0]
+        meta = case_meta.get(case_id, {})
+        repo_metadata = meta.get("metadata", {})
+        run_benchmark_id = first.get("benchmark_id", "")
+        repo_benchmark_id = meta.get("benchmark_id", "")
         query_summary.append(
             {
                 "case_id": case_id,
                 "query": query_label(case_id),
-                "pass": str(meta["pass"]),
-                "query_no": meta["query"],
-                "difficulty": meta["difficulty"],
-                "language": meta["language"],
-                "primary_failure_family": meta["metadata"]["failure_family_primary"],
+                "pass": first.get("pass", str(meta.get("pass", ""))),
+                "query_no": first.get("query", meta.get("query", "")),
+                "run_benchmark_id": run_benchmark_id,
+                "metadata_benchmark_id": repo_benchmark_id,
+                "metadata_matches_run": run_benchmark_id == repo_benchmark_id,
+                "difficulty": first.get("difficulty", meta.get("difficulty", "")),
+                "language": first.get("language", meta.get("language", "")),
+                "primary_failure_family": first.get("failure_family_primary_case")
+                or repo_metadata.get("failure_family_primary", ""),
                 "attempts": len(items),
                 "exact_attempts": sum(base.as_bool(r["exact_match"]) for r in items),
                 "exact_attempt_rate": mean(base.as_bool(r["exact_match"]) for r in items),
@@ -188,12 +210,14 @@ def build_summaries(rows: list[dict], case_meta: dict):
                 "mean_aligned_cell_accuracy": mean(base.as_float(r["aligned_cell_accuracy"]) for r in items),
                 "mean_row_set_correctness": mean(base.as_float(r["row_set_correctness_score"]) for r in items),
                 "dominant_failure_mode": modes.most_common(1)[0][0],
+                "dominant_non_exact_failure_mode": base.dominant_non_exact_mode(modes),
                 "row_count_mismatch": modes["row_count_mismatch"],
                 "same_count_wrong_values": modes["same_count_wrong_values"],
                 "exact": modes["exact"],
                 "order_only": modes["order_only"],
                 "type_only": modes["type_only"],
                 "column_error": modes["column_error"],
+                "invalid_json_or_error": modes["invalid_json_or_error"],
             }
         )
 
@@ -213,9 +237,14 @@ def build_summaries(rows: list[dict], case_meta: dict):
                     "mean_aligned_cell_accuracy": mean(base.as_float(r["aligned_cell_accuracy"]) for r in items),
                     "mean_row_set_correctness": mean(base.as_float(r["row_set_correctness_score"]) for r in items),
                     "dominant_failure_mode": modes.most_common(1)[0][0],
+                    "dominant_non_exact_failure_mode": base.dominant_non_exact_mode(modes),
                     "row_count_mismatch": modes["row_count_mismatch"],
                     "same_count_wrong_values": modes["same_count_wrong_values"],
                     "exact": modes["exact"],
+                    "order_only": modes["order_only"],
+                    "type_only": modes["type_only"],
+                    "column_error": modes["column_error"],
+                    "invalid_json_or_error": modes["invalid_json_or_error"],
                 }
             )
 
@@ -252,6 +281,7 @@ def group_models(model_summary: list[dict]) -> list[dict]:
                 "mean_score": row["mean_score"],
                 "score_drop_pass1_to_pass3": row["score_drop_pass1_to_pass3"],
                 "dominant_failure_mode": row["dominant_failure_mode"],
+                "dominant_non_exact_failure_mode": row["dominant_non_exact_failure_mode"],
             }
         )
     return out
@@ -352,7 +382,8 @@ def render_overall_visual(pass_summary, model_summary, query_summary, model_pass
         ("row_count_mismatch", "Wrong row count", base.BLUE_MID),
         ("order_only", "Order only", base.BLUE),
         ("type_only", "Type only", base.FAIL_LIGHT),
-        ("column_error", "Column error", "#365F86"),
+        ("column_error", "Column/schema error", base.FAIL_PALE),
+        ("invalid_json_or_error", "Invalid JSON/error", base.TEXT),
     ]
     bottoms = [0] * len(passes)
     for mode, label, color in modes:
@@ -439,11 +470,18 @@ def top_failure_text(query_failures: list[dict], case_id: str, total_attempts: i
 def write_notes(path: Path, results_dir: Path, pass_summary, model_summary, query_summary, query_failures, model_groups) -> None:
     total_exact = sum(p["exact_attempts"] for p in pass_summary)
     total_attempts = sum(p["attempts"] for p in pass_summary)
+    invalid_attempts = sum(p["invalid_json_or_error"] for p in pass_summary)
     zero_queries = sum(1 for q in query_summary if q["exact_attempts"] == 0)
     best_queries = sorted(query_summary, key=lambda r: (-r["exact_attempts"], -r["mean_score"]))[:5]
     hardest_queries = sorted(query_summary, key=lambda r: (r["exact_attempts"], r["mean_score"]))[:5]
     model_count = len(model_summary)
     queries_per_pass = {p["pass"]: p["queries_with_any_exact"] + p["exact_zero_queries"] for p in pass_summary}
+    leader = model_summary[0]
+    leader_pass_text = (
+        "and exact matches in all three passes"
+        if leader["pass1_exact"] > 0 and leader["pass2_exact"] > 0 and leader["pass3_exact"] > 0
+        else "with exact matches concentrated in the easier passes"
+    )
 
     lines = [
         "# AIBioBench Passes 1-3 Overall Analysis",
@@ -457,17 +495,17 @@ def write_notes(path: Path, results_dir: Path, pass_summary, model_summary, quer
         f"- Overall exact conversion was {total_exact}/{total_attempts} attempts ({100 * total_exact / total_attempts:.1f}%).",
         f"- Exact matches dropped monotonically by pass: {pass_summary[0]['exact_attempts']}/{pass_summary[0]['attempts']} in pass 1, {pass_summary[1]['exact_attempts']}/{pass_summary[1]['attempts']} in pass 2, and {pass_summary[2]['exact_attempts']}/{pass_summary[2]['attempts']} in pass 3.",
         f"- {zero_queries}/30 queries had zero exact attempts. Exact-zero queries increased from {pass_summary[0]['exact_zero_queries']}/{queries_per_pass[pass_summary[0]['pass']]} in pass 1 to {pass_summary[1]['exact_zero_queries']}/{queries_per_pass[pass_summary[1]['pass']]} in pass 2 and {pass_summary[2]['exact_zero_queries']}/{queries_per_pass[pass_summary[2]['pass']]} in pass 3.",
-        f"- {model_summary[0]['display_model']} was the clear cross-pass leader with {model_summary[0]['exact_attempts']}/90 exact attempts and exact matches in all three passes.",
-        "- The primary degradation was not invalid output. Models usually returned plausible tables but failed on row-set boundaries, join preservation, aggregation grain, or exact sort/type semantics.",
+        f"- {leader['display_model']} was the clear cross-pass leader with {leader['exact_attempts']}/90 exact attempts {leader_pass_text}.",
+        f"- Invalid/error outputs were rare ({invalid_attempts}/{total_attempts}). Models usually returned plausible tables but failed on row-set boundaries, join preservation, aggregation grain, or exact sort/type semantics.",
         "",
         "## Pass-Level Summary",
         "",
-        "| Pass | Exact Attempts | Queries With Any Exact | Exact-Zero Queries | Mean Score | Mean Cell Accuracy | Dominant Failure Mode |",
+        "| Pass | Exact Attempts | Queries With Any Exact | Exact-Zero Queries | Mean Score | Mean Cell Accuracy | Dominant Non-Exact Failure Mode |",
         "|---|---:|---:|---:|---:|---:|---|",
     ]
     for p in pass_summary:
         lines.append(
-            f"| {p['pass_label']} | {p['exact_attempts']}/{p['attempts']} | {p['queries_with_any_exact']}/10 | {p['exact_zero_queries']}/10 | {p['mean_score']:.3f} | {p['mean_aligned_cell_accuracy']:.3f} | {p['dominant_failure_mode']} |"
+            f"| {p['pass_label']} | {p['exact_attempts']}/{p['attempts']} | {p['queries_with_any_exact']}/10 | {p['exact_zero_queries']}/10 | {p['mean_score']:.3f} | {p['mean_aligned_cell_accuracy']:.3f} | {p['dominant_non_exact_failure_mode']} |"
         )
 
     lines.extend(
@@ -491,13 +529,13 @@ def write_notes(path: Path, results_dir: Path, pass_summary, model_summary, quer
             "",
             "## Model Ranking",
             "",
-            "| Model | Exact Attempts | Pass 1 | Pass 2 | Pass 3 | Mean Score | Score Drop P1 to P3 | Dominant Failure |",
+            "| Model | Exact Attempts | Pass 1 | Pass 2 | Pass 3 | Mean Score | Score Drop P1 to P3 | Dominant Non-Exact Failure |",
             "|---|---:|---:|---:|---:|---:|---:|---|",
         ]
     )
     for m in model_summary:
         lines.append(
-            f"| {m['display_model']} | {m['exact_attempts']}/90 | {m['pass1_exact']} | {m['pass2_exact']} | {m['pass3_exact']} | {m['mean_score']:.3f} | {m['score_drop_pass1_to_pass3']:.3f} | {m['dominant_failure_mode']} |"
+            f"| {m['display_model']} | {m['exact_attempts']}/90 | {m['pass1_exact']} | {m['pass2_exact']} | {m['pass3_exact']} | {m['mean_score']:.3f} | {m['score_drop_pass1_to_pass3']:.3f} | {m['dominant_non_exact_failure_mode']} |"
         )
 
     lines.extend(
@@ -535,7 +573,7 @@ def write_notes(path: Path, results_dir: Path, pass_summary, model_summary, quer
             "",
             "## Interpretation",
             "",
-            "- Pass 1 mainly separated models on basic join preservation and simple aggregation grain. Even easy tasks exposed exact-match brittleness: half the queries had zero exact attempts.",
+            f"- Pass 1 mainly separated models on basic join preservation and simple aggregation grain. Even easy tasks exposed exact-match brittleness: {pass_summary[0]['exact_zero_queries']}/{queries_per_pass[pass_summary[0]['pass']]} queries had zero exact attempts.",
             "- Pass 2 raised the cost of snowflake traversal and preserving-table logic. Exactness concentrated in a few join-coverage tasks, while decision-support aggregates stayed exact-zero.",
             "- Pass 3 moved failures toward hard join-status classification, anti-join/orphan logic, dense ranking, and decision-priority aggregation. Some models preserved high partial scores, but exact conversion largely collapsed.",
             "- Across all three passes, row-count mismatch and same-count-wrong-values dominate. That means the benchmark is mostly measuring semantic boundary errors rather than JSON validity or execution-format failures.",
@@ -579,12 +617,14 @@ def main() -> int:
             "mean_row_set_correctness",
             "mean_numeric_correctness",
             "dominant_failure_mode",
+            "dominant_non_exact_failure_mode",
             "row_count_mismatch",
             "same_count_wrong_values",
             "exact",
             "order_only",
             "type_only",
             "column_error",
+            "invalid_json_or_error",
         ],
     )
     base.write_csv(
@@ -611,12 +651,14 @@ def main() -> int:
             "score_drop_pass1_to_pass3",
             "exact_drop_pass1_to_pass3",
             "dominant_failure_mode",
+            "dominant_non_exact_failure_mode",
             "row_count_mismatch",
             "same_count_wrong_values",
             "exact",
             "order_only",
             "type_only",
             "column_error",
+            "invalid_json_or_error",
         ],
     )
     base.write_csv(
@@ -627,6 +669,9 @@ def main() -> int:
             "query",
             "pass",
             "query_no",
+            "run_benchmark_id",
+            "metadata_benchmark_id",
+            "metadata_matches_run",
             "difficulty",
             "language",
             "primary_failure_family",
@@ -637,12 +682,14 @@ def main() -> int:
             "mean_aligned_cell_accuracy",
             "mean_row_set_correctness",
             "dominant_failure_mode",
+            "dominant_non_exact_failure_mode",
             "row_count_mismatch",
             "same_count_wrong_values",
             "exact",
             "order_only",
             "type_only",
             "column_error",
+            "invalid_json_or_error",
         ],
     )
     base.write_csv(
@@ -657,9 +704,14 @@ def main() -> int:
             "mean_aligned_cell_accuracy",
             "mean_row_set_correctness",
             "dominant_failure_mode",
+            "dominant_non_exact_failure_mode",
             "row_count_mismatch",
             "same_count_wrong_values",
             "exact",
+            "order_only",
+            "type_only",
+            "column_error",
+            "invalid_json_or_error",
         ],
     )
     base.write_csv(
@@ -679,6 +731,7 @@ def main() -> int:
             "mean_score",
             "score_drop_pass1_to_pass3",
             "dominant_failure_mode",
+            "dominant_non_exact_failure_mode",
         ],
     )
     base.write_csv(
