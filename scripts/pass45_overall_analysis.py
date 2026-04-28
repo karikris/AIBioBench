@@ -28,7 +28,7 @@ PASS_SHORT = {
 }
 
 GROUP_COLORS = {
-    "Only exact converter": base.BLUE_PALE,
+    "Exact repairability converters": base.BLUE_PALE,
     "Top partial-credit operators": base.BLUE_LIGHT,
     "Upper-middle row-recovery operators": base.BLUE_MID,
     "Row/numeric fragile operators": base.BLUE,
@@ -235,8 +235,8 @@ def group_models(model_summary: list[dict]) -> list[dict]:
     out = []
     for row in model_summary:
         if row["exact_attempts"] > 0:
-            group = "Only exact converter"
-            reason = "Only model with any exact conversion across passes 4-5, limited to the pass-4 repairability audit."
+            group = "Exact repairability converters"
+            reason = "Models with any exact conversion across passes 4-5, limited to the pass-4 repairability audit."
         elif row["mean_score"] >= 0.58:
             group = "Top partial-credit operators"
             reason = "No exact answers, but strongest partial credit and relatively stable row recovery across both Python passes."
@@ -461,6 +461,33 @@ def write_notes(path: Path, results_dir: Path, pass_summary, model_summary, quer
     hardest_queries = sorted(query_summary, key=lambda r: (r["exact_attempts"], r["mean_score"]))[:5]
     model_count = len(model_summary)
     queries_per_pass = {p["pass"]: p["queries_with_any_exact"] + p["exact_zero_queries"] for p in pass_summary}
+    exact_converters = [m for m in model_summary if m["exact_attempts"] > 0]
+    exact_converter_names = ", ".join(m["display_model"] for m in exact_converters)
+    if exact_converters:
+        exact_counts = {m["exact_attempts"] for m in exact_converters}
+        if len(exact_counts) == 1:
+            exact_count = exact_counts.pop()
+            if len(exact_converters) == 1:
+                exact_converter_text = (
+                    f"- Exact conversion was limited to {exact_converter_names}, with {exact_count}/60 exact attempts; "
+                    "all other models had zero exact attempts across passes 4-5."
+                )
+            else:
+                exact_converter_text = (
+                    f"- Exact conversion was limited to {len(exact_converters)} models ({exact_converter_names}), "
+                    f"each with {exact_count}/60 exact attempts; all other models had zero exact attempts across passes 4-5."
+                )
+        else:
+            exact_converter_text = (
+                f"- Exact conversion was limited to {len(exact_converters)} models ({exact_converter_names}); "
+                "all other models had zero exact attempts across passes 4-5."
+            )
+    else:
+        exact_converter_text = "- No model produced an exact answer across passes 4-5."
+    if pass_summary[1]["mean_score"] >= pass_summary[0]["mean_score"]:
+        pass5_score_text = "higher"
+    else:
+        pass5_score_text = "lower"
 
     lines = [
         "# AIBioBench Passes 4-5 Overall Analysis",
@@ -474,8 +501,8 @@ def write_notes(path: Path, results_dir: Path, pass_summary, model_summary, quer
         f"- Overall exact conversion was {total_exact}/{total_attempts} attempts ({100 * total_exact / total_attempts:.1f}%).",
         f"- Pass 4 produced {pass_summary[0]['exact_attempts']}/{pass_summary[0]['attempts']} exact attempts, all from one query; pass 5 produced {pass_summary[1]['exact_attempts']}/{pass_summary[1]['attempts']} exact attempts.",
         f"- {zero_queries}/20 queries had zero exact attempts. The only query with any exact answer was P4 Q10 repairability audit.",
-        f"- {model_summary[0]['display_model']} was the only exact converter with {model_summary[0]['exact_attempts']}/60 exact attempts; every other model had zero exact attempts across passes 4-5.",
-        f"- Pass 5 had a higher mean score than pass 4 ({pass_summary[1]['mean_score']:.3f} vs {pass_summary[0]['mean_score']:.3f}) because row-set correctness improved ({pass_summary[1]['mean_row_set_correctness']:.3f} vs {pass_summary[0]['mean_row_set_correctness']:.3f}), but numeric correctness collapsed ({pass_summary[1]['mean_numeric_correctness']:.3f} vs {pass_summary[0]['mean_numeric_correctness']:.3f}).",
+        exact_converter_text,
+        f"- Pass 5 had a {pass5_score_text} mean score than pass 4 ({pass_summary[1]['mean_score']:.3f} vs {pass_summary[0]['mean_score']:.3f}); row-set correctness improved ({pass_summary[1]['mean_row_set_correctness']:.3f} vs {pass_summary[0]['mean_row_set_correctness']:.3f}), but numeric correctness collapsed ({pass_summary[1]['mean_numeric_correctness']:.3f} vs {pass_summary[0]['mean_numeric_correctness']:.3f}).",
         "- The dominant failure pattern moved from reconciliation/orphan/presentation row-set errors in pass 4 to expression-transform, z-score, coefficient-of-variation, and signal-ranking numeric errors in pass 5.",
         "",
         "## Pass-Level Summary",
@@ -529,10 +556,10 @@ def write_notes(path: Path, results_dir: Path, pass_summary, model_summary, quer
             "",
             "## Interpretation",
             "",
-            "- Pass 4 exposed failures in reconciliation, orphan-key reporting, final presentation tables, and repairability classification. Only the repairability audit yielded exact answers, and only from Gemma 4 31B.",
+            f"- Pass 4 exposed failures in reconciliation, orphan-key reporting, final presentation tables, and repairability classification. Only the repairability audit yielded exact answers, from {exact_converter_names}.",
             "- Pass 5 shifted from structural table construction to expression-derived statistics. Models often recovered the row identities better than in pass 4, but exact numeric derivations were consistently wrong.",
             "- The main capability gap across passes 4-5 is precise execution of multi-step pandas semantics: complete-chain filtering, expression mapping, log transforms, VAF weighting, population statistics, and derived ranking.",
-            "- Model grouping should be interpreted as partial-credit grouping, not exact-answer capability. Except for Gemma 4 31B on P4 Q10, exact conversion disappeared.",
+            "- Model grouping should be interpreted as partial-credit grouping, not broad exact-answer capability. Except for P4 Q10, exact conversion disappeared; pass 5 was exact-zero.",
         ]
     )
     path.write_text("\n".join(lines) + "\n", encoding="utf-8")

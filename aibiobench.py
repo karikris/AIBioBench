@@ -35,6 +35,7 @@ DEFAULT_MODELS = [
     "qwen2.5-coder-32b-sqlbench:latest",
     "qwen3-coder-30b-sqlbench:latest",
     "qwen3.6-sqlbench:latest",
+    "qwen3.6-27b-sqlbench:latest",
     "command-r-plus-sqlbench:latest",
 ]
 

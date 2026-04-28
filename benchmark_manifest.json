@@ -1,6 +1,6 @@
 {
-  "benchmark_id": "AIBioBench_photosynthesis_snowflake_v3",
-  "version": "3.0.0",
+  "benchmark_id": "AIBioBench_photosynthesis_snowflake_v4",
+  "version": "4.0.0",
   "repo": "github.com/karikris/AIBioBench",
   "dataset_file": "shared_dataset.json",
   "cases_file": "benchmark_cases.jsonl",
@@ -27,6 +27,7 @@
     "qwen2.5-coder-32b-sqlbench:latest",
     "qwen3-coder-30b-sqlbench:latest",
     "qwen3.6-sqlbench:latest",
+    "qwen3.6-27b-sqlbench:latest",
     "command-r-plus-sqlbench:latest"
   ],
   "passes": {
@@ -109,7 +110,7 @@
     "definition": "cost_per_correct_answer_usd = total_estimated_cost_usd / max(number_of_correct_answers, 1)"
   },
   "runner_notes": {
-    "repeatability": "Run each case at least three times per model to distinguish stable failures from prompt-sensitive failures.",
+    "repeatability": "Run each case at least three times per model to distinguish stable failures from prompt-sensitive failures. For v4, shared standards intentionally match the shorter v2 standard instructions while query prompts carry task-specific guardrails from v3 failure analysis.",
     "failure_family_reporting": "Aggregate by failure_family_primary and failure_families, not only by case_id.",
     "compatibility": "Designed for the flat-root GitHub AIBioBench layout."
   }
