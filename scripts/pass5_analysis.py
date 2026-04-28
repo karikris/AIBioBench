@@ -121,21 +121,16 @@ def query_name(case_id: str) -> str:
 def normalize_key(value):
     if isinstance(value, bool):
         return value
-    if isinstance(value, int):
-        return value
-    if isinstance(value, float) and value.is_integer():
-        return int(value)
-    if isinstance(value, str):
-        text = value.strip()
-        if text.isdigit():
-            return int(text)
-    return value
+    coerced = base.coerce_numeric_strings(value)
+    if isinstance(coerced, float) and coerced.is_integer():
+        return int(coerced)
+    return coerced
 
 
 def rows_by_norm_index(rows, index=0):
     out = {}
     for row in rows:
-        if len(row) > index:
+        if isinstance(row, list) and len(row) > index:
             out[normalize_key(row[index])] = row
     return out
 
@@ -143,17 +138,17 @@ def rows_by_norm_index(rows, index=0):
 def rows_by_pair(rows, first=0, second=1):
     out = {}
     for row in rows:
-        if len(row) > max(first, second):
+        if isinstance(row, list) and len(row) > max(first, second):
             out[(row[first], row[second])] = row
     return out
 
 
 def keys_in_order(rows, index=0):
-    return [normalize_key(row[index]) for row in rows if len(row) > index]
+    return [normalize_key(row[index]) for row in rows if isinstance(row, list) and len(row) > index]
 
 
 def pair_keys_in_order(rows, first=0, second=1):
-    return [(row[first], row[second]) for row in rows if len(row) > max(first, second)]
+    return [(row[first], row[second]) for row in rows if isinstance(row, list) and len(row) > max(first, second)]
 
 
 def load_metadata(repo_root: Path):
@@ -179,8 +174,14 @@ def load_rows(results_dir: Path) -> list[dict]:
             if row["pass"] != "5":
                 continue
             row["_failure_mode"] = base.classify_failure(row)
-            row["_pred_rows"] = json.loads(row["parsed_rows_json"])
-            row["_gold_rows"] = json.loads(row["gold_rows_json"])
+            try:
+                row["_pred_rows"] = json.loads(row["parsed_rows_json"])
+            except Exception:
+                row["_pred_rows"] = []
+            try:
+                row["_gold_rows"] = json.loads(row["gold_rows_json"])
+            except Exception:
+                row["_gold_rows"] = []
             rows.append(row)
     return rows
 
@@ -195,6 +196,8 @@ def pair_order_matches(rows, expected_keys, first=0, second=1) -> bool:
 
 def detect_issue_flags(case_id: str, pred_rows: list, gold_rows: list, row: dict) -> list[str]:
     flags = []
+    pred_rows = base.coerce_numeric_strings(pred_rows)
+    gold_rows = base.coerce_numeric_strings(gold_rows)
 
     if case_id == "pass5.query1":
         pred = rows_by_norm_index(pred_rows, 0)
@@ -507,7 +510,9 @@ def build_summaries(rows: list[dict], case_meta: dict):
                 "same_count_wrong_values": modes["same_count_wrong_values"],
                 "row_count_mismatch": modes["row_count_mismatch"],
                 "column_error": modes["column_error"],
+                "invalid_json_or_error": modes["invalid_json_or_error"],
                 "dominant_failure_mode": modes.most_common(1)[0][0],
+                "dominant_non_exact_failure_mode": base.dominant_non_exact_mode(modes),
             }
         )
     model_summary.sort(key=lambda r: (-r["mean_score"], -r["mean_aligned_cell_accuracy"], r["model"]))
@@ -522,6 +527,9 @@ def build_summaries(rows: list[dict], case_meta: dict):
                 "query": query_name(case_id),
                 "short_name": QUERY_SHORT_NAMES[case_id],
                 "prompt": case_meta[case_id]["prompt"],
+                "run_benchmark_id": items[0].get("benchmark_id", ""),
+                "metadata_benchmark_id": case_meta[case_id].get("benchmark_id", ""),
+                "metadata_matches_run": items[0].get("benchmark_id", "") == case_meta[case_id].get("benchmark_id", ""),
                 "primary_failure_family": case_meta[case_id]["metadata"]["failure_family_primary"],
                 "total_attempts": len(items),
                 "exact_attempts": sum(base.as_bool(r["exact_match"]) for r in items),
@@ -535,7 +543,9 @@ def build_summaries(rows: list[dict], case_meta: dict):
                 "order_only_attempts": modes["order_only"],
                 "type_only_attempts": modes["type_only"],
                 "column_error_attempts": modes["column_error"],
+                "invalid_json_or_error_attempts": modes["invalid_json_or_error"],
                 "dominant_failure_mode": modes.most_common(1)[0][0],
+                "dominant_non_exact_failure_mode": base.dominant_non_exact_mode(modes),
             }
         )
 
@@ -555,6 +565,7 @@ def build_summaries(rows: list[dict], case_meta: dict):
                     "mean_aligned_cell_accuracy": mean(base.as_float(r["aligned_cell_accuracy"]) for r in items),
                     "mean_row_set_correctness": mean(base.as_float(r["row_set_correctness_score"]) for r in items),
                     "dominant_failure_mode": Counter(r["_failure_mode"] for r in items).most_common(1)[0][0],
+                    "dominant_non_exact_failure_mode": base.dominant_non_exact_mode(Counter(r["_failure_mode"] for r in items)),
                     "top_issue": flag_counts.most_common(1)[0][0] if flag_counts else "",
                     "top_issue_count": flag_counts.most_common(1)[0][1] if flag_counts else 0,
                 }
@@ -675,6 +686,7 @@ def render_visual_report(model_summary, case_summary, model_query_rows, rows, ou
     mq = {(r["model"], r["case_id"]): r for r in model_query_rows}
     score_matrix = [[mq[(model, case)]["mean_score"] for case in cases] for model in models]
     cell_matrix = [[mq[(model, case)]["mean_aligned_cell_accuracy"] for case in cases] for model in models]
+    total_exact = sum(c["exact_attempts"] for c in case_summary)
 
     fig = plt.figure(figsize=(21, 16), facecolor=base.PAGE_BG, constrained_layout=True)
     gs = fig.add_gridspec(3, 2, height_ratios=[1.0, 1.35, 1.0])
@@ -694,7 +706,7 @@ def render_visual_report(model_summary, case_summary, model_query_rows, rows, ou
     ax1.invert_yaxis()
     ax1.set_xlim(0, 1.0)
     ax1.set_xlabel("Mean score across 30 attempts")
-    ax1.set_title("Model Partial-Credit Performance (0 Exact Attempts Overall)", fontweight="bold")
+    ax1.set_title(f"Model Partial-Credit Performance ({total_exact} Exact Attempts Overall)", fontweight="bold")
     ax1.grid(axis="x", color=base.GRID, linewidth=0.8, alpha=0.75)
     for bar, item in zip(bars, model_summary):
         ax1.text(bar.get_width() + 0.012, bar.get_y() + bar.get_height() / 2, f"{item['mean_score']:.3f}", va="center", color=base.TEXT, fontsize=10)
@@ -754,7 +766,8 @@ def render_visual_report(model_summary, case_summary, model_query_rows, rows, ou
         ("row_count_mismatch", "Wrong row count", base.BLUE_LIGHT),
         ("order_only", "Correct rows, wrong order", base.BLUE),
         ("type_only", "Type only", base.BLUE_MID),
-        ("column_error", "Column error", base.FAIL_LIGHT),
+        ("column_error", "Column/schema error", base.FAIL_PALE),
+        ("invalid_json_or_error", "Invalid JSON/error", base.TEXT),
     ]
     bottoms = [0] * len(cases)
     for mode, label, color in mode_order:
@@ -780,7 +793,7 @@ def render_visual_report(model_summary, case_summary, model_query_rows, rows, ou
     ax6.set_xticks(range(len(cases)), [query_name(c) for c in cases])
     ax6.set_ylim(0, 1.05)
     ax6.set_ylabel("Score")
-    ax6.set_title("Query Solvability: All Exact Counts Are Zero", fontweight="bold")
+    ax6.set_title("Query Solvability: Exact Counts vs Partial Credit", fontweight="bold")
     ax6.legend(frameon=False, loc="upper right", labelcolor=base.TEXT)
     ax6.grid(axis="y", color=base.GRID, linewidth=0.8, alpha=0.75)
     style_dark_axis(ax6)
@@ -791,6 +804,7 @@ def render_visual_report(model_summary, case_summary, model_query_rows, rows, ou
 
 
 def render_model_groups(model_groups, out_base: Path) -> None:
+    total_exact = sum(row["exact_attempts"] for row in model_groups)
     fig = plt.figure(figsize=(18, 10), facecolor=base.PAGE_BG, constrained_layout=True)
     gs = fig.add_gridspec(1, 2, width_ratios=[1.2, 1.0])
     fig.suptitle("Pass 5 Model Grouping by Failure Pattern and Partial-Credit Strength", fontsize=20, fontweight="bold", color=base.TEXT)
@@ -825,7 +839,12 @@ def render_model_groups(model_groups, out_base: Path) -> None:
         y_pos -= 0.10
         ax2.text(0.04, y_pos, ", ".join(members), transform=ax2.transAxes, color=base.BLUE_PALE, fontsize=10, va="top", wrap=True)
         y_pos -= 0.13
-    ax2.text(0.02, 0.08, "Grouping uses mean score because pass 5 had zero exact matches across all models.", transform=ax2.transAxes, color=base.BLUE_LIGHT, fontsize=10, va="bottom", wrap=True)
+    grouping_note = (
+        "Grouping uses mean score because pass 5 had zero exact matches across all models."
+        if total_exact == 0
+        else f"Grouping primarily uses mean score; exact matches across all models: {total_exact}."
+    )
+    ax2.text(0.02, 0.08, grouping_note, transform=ax2.transAxes, color=base.BLUE_LIGHT, fontsize=10, va="bottom", wrap=True)
 
     fig.savefig(out_base.with_suffix(".png"), dpi=220, facecolor=fig.get_facecolor())
     fig.savefig(out_base.with_suffix(".svg"), facecolor=fig.get_facecolor())
@@ -836,6 +855,13 @@ def write_notes(path: Path, results_dir: Path, model_summary, case_summary, quer
     model_count = len(model_summary)
     total_exact = sum(c["exact_attempts"] for c in case_summary)
     total_attempts = sum(c["total_attempts"] for c in case_summary)
+    exact_queries = [c["query"] for c in case_summary if c["exact_attempts"] > 0]
+    exact_query_text = ", ".join(exact_queries) if exact_queries else "none"
+    exact_finding = (
+        f"- No model produced an exact answer on pass 5: exact matches were {total_exact}/{total_attempts}."
+        if total_exact == 0
+        else f"- Exact matches remained sparse: {total_exact}/{total_attempts} attempts were exact. Exact answers appeared on **{exact_query_text}**."
+    )
     lines = [
         "# AIBioBench Pass 5 Analysis",
         "",
@@ -845,7 +871,7 @@ def write_notes(path: Path, results_dir: Path, model_summary, case_summary, quer
         "",
         "## Headline Findings",
         "",
-        f"- No model produced an exact answer on pass 5: exact matches were {total_exact}/{total_attempts}.",
+        exact_finding,
         f"- {model_summary[0]['display_model']} led on partial credit with mean score {model_summary[0]['mean_score']:.3f}, followed by {model_summary[1]['display_model']} at {model_summary[1]['mean_score']:.3f} and {model_summary[2]['display_model']} at {model_summary[2]['mean_score']:.3f}.",
         "- The strongest query-level scores came from sample-preserving transforms and condition summaries; the weakest were condition-gene signal ranking, pathway burden, and marker composition shares.",
         "- Recurring failure points were wrong numeric derivations after mostly plausible joins: log2 transforms, VAF weighting, population standard deviation, coefficient of variation, and ranking by derived metrics.",
@@ -866,13 +892,13 @@ def write_notes(path: Path, results_dir: Path, model_summary, case_summary, quer
             "",
             "## Model Summary",
             "",
-            "| Model | Exact Attempts | Queries With Any Exact | Mean Score | Mean Cell Accuracy | Mean Row-Set Correctness | Dominant Failure Mode |",
+            "| Model | Exact Attempts | Queries With Any Exact | Mean Score | Mean Cell Accuracy | Mean Row-Set Correctness | Dominant Non-Exact Failure Mode |",
             "|---|---:|---:|---:|---:|---:|---|",
         ]
     )
     for m in model_summary:
         lines.append(
-            f"| {m['display_model']} | {m['exact_attempts']}/{m['attempts']} | {m['exact_query_coverage_any']}/10 | {m['mean_score']:.3f} | {m['mean_aligned_cell_accuracy']:.3f} | {m['mean_row_set_correctness']:.3f} | {m['dominant_failure_mode']} |"
+            f"| {m['display_model']} | {m['exact_attempts']}/{m['attempts']} | {m['exact_query_coverage_any']}/10 | {m['mean_score']:.3f} | {m['mean_aligned_cell_accuracy']:.3f} | {m['mean_row_set_correctness']:.3f} | {m['dominant_non_exact_failure_mode']} |"
         )
 
     lines.extend(
@@ -895,7 +921,7 @@ def write_notes(path: Path, results_dir: Path, model_summary, case_summary, quer
     lines.extend(["", "## Short Notes", ""])
     for c in case_summary:
         failures = by_case[c["case_id"]][:3]
-        lines.append(f"- **{c['query']} {c['short_name']}**: {c['exact_attempts']}/{c['total_attempts']} exact, dominant failure mode `{c['dominant_failure_mode']}`. Primary family: `{c['primary_failure_family']}`.")
+        lines.append(f"- **{c['query']} {c['short_name']}**: {c['exact_attempts']}/{c['total_attempts']} exact, dominant non-exact failure mode `{c['dominant_non_exact_failure_mode']}`. Primary family: `{c['primary_failure_family']}`.")
         for failure in failures:
             lines.append(f"Issue: {failure['attempts_with_issue']}/{c['total_attempts']} attempts. {failure['issue_label']} Example models: {failure['example_models']}.")
     path.write_text("\n".join(lines) + "\n", encoding="utf-8")
@@ -953,7 +979,9 @@ def main() -> int:
             "same_count_wrong_values",
             "row_count_mismatch",
             "column_error",
+            "invalid_json_or_error",
             "dominant_failure_mode",
+            "dominant_non_exact_failure_mode",
         ],
     )
     base.write_csv(
@@ -964,6 +992,9 @@ def main() -> int:
             "query",
             "short_name",
             "prompt",
+            "run_benchmark_id",
+            "metadata_benchmark_id",
+            "metadata_matches_run",
             "primary_failure_family",
             "total_attempts",
             "exact_attempts",
@@ -977,7 +1008,9 @@ def main() -> int:
             "order_only_attempts",
             "type_only_attempts",
             "column_error_attempts",
+            "invalid_json_or_error_attempts",
             "dominant_failure_mode",
+            "dominant_non_exact_failure_mode",
         ],
     )
     base.write_csv(
@@ -993,6 +1026,7 @@ def main() -> int:
             "mean_aligned_cell_accuracy",
             "mean_row_set_correctness",
             "dominant_failure_mode",
+            "dominant_non_exact_failure_mode",
             "top_issue",
             "top_issue_count",
         ],
