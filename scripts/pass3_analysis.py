@@ -3,6 +3,7 @@ import csv
 import json
 import math
 import os
+import re
 import sys
 import warnings
 from collections import Counter, defaultdict
@@ -26,6 +27,7 @@ BLUE_LIGHT = "#89C8FF"
 BLUE_PALE = "#D9F0FF"
 BLUE_MID = "#4DA3FF"
 FAIL_LIGHT = "#5D8CB8"
+FAIL_PALE = "#B9D8F2"
 
 QUERY_LABELS = {
     "pass3.query1": "Q1\njoin-status\naudit",
@@ -154,13 +156,15 @@ def coerce_numeric_strings(value):
         return [coerce_numeric_strings(v) for v in value]
     if isinstance(value, str):
         text = value.strip()
-        if text.isdigit():
+        if re.fullmatch(r"[+-]?\d+", text):
             return int(text)
-        try:
-            if "." in text and text.replace(".", "", 1).isdigit():
-                return float(text)
-        except Exception:
-            return value
+        if re.fullmatch(r"[+-]?(?:(?:\d+\.\d*)|(?:\.\d+)|(?:\d+[eE][+-]?\d+)|(?:(?:\d+\.\d*)|(?:\.\d+))[eE][+-]?\d+)", text):
+            try:
+                number = float(text)
+                if math.isfinite(number):
+                    return number
+            except Exception:
+                return value
     return value
 
 
@@ -187,8 +191,11 @@ def classify_failure(row: dict) -> str:
     if as_bool(row["exact_match"]):
         return "exact"
 
-    gold_rows = json.loads(row["gold_rows_json"])
-    pred_rows = json.loads(row["parsed_rows_json"])
+    try:
+        gold_rows = json.loads(row["gold_rows_json"])
+        pred_rows = json.loads(row["parsed_rows_json"])
+    except Exception:
+        return "invalid_json_or_error"
     if coerce_numeric_strings(pred_rows) == coerce_numeric_strings(gold_rows):
         return "type_only"
 
@@ -199,6 +206,11 @@ def classify_failure(row: dict) -> str:
         return "order_only"
 
     return "same_count_wrong_values"
+
+
+def dominant_non_exact_mode(modes: Counter) -> str:
+    non_exact = Counter({mode: count for mode, count in modes.items() if mode != "exact"})
+    return non_exact.most_common(1)[0][0] if non_exact else "none"
 
 
 def load_metadata(repo_root: Path):
@@ -226,8 +238,14 @@ def load_rows(results_dir: Path) -> list[dict]:
             if row["pass"] != "3":
                 continue
             row["_failure_mode"] = classify_failure(row)
-            row["_pred_rows"] = json.loads(row["parsed_rows_json"])
-            row["_gold_rows"] = json.loads(row["gold_rows_json"])
+            try:
+                row["_pred_rows"] = json.loads(row["parsed_rows_json"])
+            except Exception:
+                row["_pred_rows"] = []
+            try:
+                row["_gold_rows"] = json.loads(row["gold_rows_json"])
+            except Exception:
+                row["_gold_rows"] = []
             rows.append(row)
     return rows
 
@@ -242,7 +260,7 @@ def write_csv(path: Path, rows: list[dict], fieldnames: list[str]) -> None:
 def rows_by_index(rows, index=0):
     out = {}
     for row in rows:
-        if len(row) > index:
+        if isinstance(row, list) and len(row) > index:
             out[row[index]] = row
     return out
 
@@ -250,13 +268,15 @@ def rows_by_index(rows, index=0):
 def rows_by_pair(rows, first=0, second=1):
     out = {}
     for row in rows:
-        if len(row) > max(first, second):
+        if isinstance(row, list) and len(row) > max(first, second):
             out[(row[first], row[second])] = row
     return out
 
 
 def detect_issue_flags(case_id: str, pred_rows: list, gold_rows: list, row: dict) -> list[str]:
     flags = []
+    pred_rows = coerce_numeric_strings(pred_rows)
+    gold_rows = coerce_numeric_strings(gold_rows)
 
     if case_id == "pass3.query1":
         pred = rows_by_index(pred_rows, 0)
@@ -365,13 +385,14 @@ def detect_issue_flags(case_id: str, pred_rows: list, gold_rows: list, row: dict
         flags = list(dict.fromkeys(flags))
 
     elif case_id == "pass3.query7":
-        pred_pairs = {(r[0], r[1]): r for r in pred_rows if len(r) >= 3}
+        valid_rows = [r for r in pred_rows if isinstance(r, list)]
+        pred_pairs = {(r[0], r[1]): r for r in valid_rows if len(r) >= 3}
         expected_pairs = {("gene", "G4"), ("gene", "G5"), ("sample", "S5"), ("variant", "V6")}
-        if any(str(r[0]).endswith("_dim") for r in pred_rows if r):
+        if any(str(r[0]).endswith("_dim") for r in valid_rows if r):
             flags.append("q7_object_type_labels_wrong")
         if not expected_pairs.issubset(set(pred_pairs)):
             flags.append("q7_missing_expected_object")
-        if any(r[1] not in {"G4", "G5", "S5", "V6"} for r in pred_rows if len(r) >= 2):
+        if any(r[1] not in {"G4", "G5", "S5", "V6"} for r in valid_rows if len(r) >= 2):
             flags.append("q7_extra_object")
         g4 = pred_pairs.get(("gene", "G4")) or pred_pairs.get(("gene_dim", "G4"))
         if g4 is None or g4[2] != "no_fact_calls_through_variants":
@@ -480,7 +501,9 @@ def build_summaries(rows: list[dict], case_meta: dict):
                 "same_count_wrong_values": modes["same_count_wrong_values"],
                 "row_count_mismatch": modes["row_count_mismatch"],
                 "column_error": modes["column_error"],
+                "invalid_json_or_error": modes["invalid_json_or_error"],
                 "dominant_failure_mode": modes.most_common(1)[0][0],
+                "dominant_non_exact_failure_mode": dominant_non_exact_mode(modes),
             }
         )
 
@@ -520,6 +543,9 @@ def build_summaries(rows: list[dict], case_meta: dict):
                 "query": f"Q{case_sort_key(case_id)}",
                 "short_name": QUERY_SHORT_NAMES.get(case_id, case_id),
                 "prompt": case_meta[case_id]["prompt"],
+                "run_benchmark_id": items[0].get("benchmark_id", ""),
+                "metadata_benchmark_id": case_meta[case_id].get("benchmark_id", ""),
+                "metadata_matches_run": items[0].get("benchmark_id", "") == case_meta[case_id].get("benchmark_id", ""),
                 "primary_failure_family": case_meta[case_id]["metadata"]["failure_family_primary"],
                 "total_attempts": len(items),
                 "exact_attempts": exact_attempts,
@@ -529,11 +555,13 @@ def build_summaries(rows: list[dict], case_meta: dict):
                 "mean_score": mean(as_float(r["score"]) for r in items),
                 "mean_aligned_cell_accuracy": mean(as_float(r["aligned_cell_accuracy"]) for r in items),
                 "row_count_mismatch_attempts": sum(not as_bool(r["row_count_match"]) for r in items),
-                "same_count_wrong_attempts": sum(as_bool(r["row_count_match"]) and not as_bool(r["exact_match"]) for r in items),
+                "same_count_wrong_attempts": modes["same_count_wrong_values"],
                 "order_only_attempts": modes["order_only"],
                 "type_only_attempts": modes["type_only"],
                 "column_error_attempts": modes["column_error"],
+                "invalid_json_or_error_attempts": modes["invalid_json_or_error"],
                 "dominant_failure_mode": modes.most_common(1)[0][0],
+                "dominant_non_exact_failure_mode": dominant_non_exact_mode(modes),
                 "top_issues": top_issues,
             }
         )
@@ -554,6 +582,7 @@ def build_summaries(rows: list[dict], case_meta: dict):
                 "mean_score": mean(as_float(r["score"]) for r in items),
                 "mean_aligned_cell_accuracy": mean(as_float(r["aligned_cell_accuracy"]) for r in items),
                 "dominant_failure_mode": modes.most_common(1)[0][0],
+                "dominant_non_exact_failure_mode": dominant_non_exact_mode(modes),
                 "stable_outcome": "stable_exact" if exact_attempts == 3 else ("partial_exact" if exact_attempts > 0 else "stable_fail"),
             }
         )
@@ -734,9 +763,10 @@ def render_visual_report(model_summary, case_summary, model_query_rows, family_s
         ("exact", "Exact", BLUE_PALE),
         ("order_only", "Right rows, wrong order", BLUE_LIGHT),
         ("type_only", "Type only", BLUE_MID),
-        ("column_error", "Column error", "#6EA8D7"),
+        ("column_error", "Column/schema error", FAIL_PALE),
         ("same_count_wrong_values", "Same count, wrong values", FAIL_LIGHT),
         ("row_count_mismatch", "Wrong row count", BLUE_DARK),
+        ("invalid_json_or_error", "Invalid JSON/error", TEXT),
     ]
     bottoms = [0] * len(cases)
     for mode, label, color in mode_order:
@@ -864,9 +894,12 @@ def build_failure_point_rows(case_summary: list[dict]) -> list[dict]:
 
 def write_notes(path: Path, model_summary: list[dict], case_summary: list[dict], groups: list[dict], results_dir: Path) -> None:
     exact_zero = [case["query"] for case in case_summary if case["exact_attempts"] == 0]
+    exact_queries = [case["query"] for case in case_summary if case["exact_attempts"] > 0]
     total_exact = sum(case["exact_attempts"] for case in case_summary)
     model_count = len(model_summary)
     total_attempts = sum(case["total_attempts"] for case in case_summary)
+    exact_zero_text = ", ".join(exact_zero) if exact_zero else "none"
+    exact_query_text = ", ".join(exact_queries) if exact_queries else "none"
     lines = [
         "# AIBioBench Pass 3 Analysis",
         "",
@@ -877,7 +910,7 @@ def write_notes(path: Path, model_summary: list[dict], case_summary: list[dict],
         "## Headline Findings",
         "",
         f"- **{model_summary[0]['display_model']}** led pass 3 with {model_summary[0]['exact_attempts']}/30 exact attempts and exact coverage on {model_summary[0]['exact_query_coverage_any']}/10 questions.",
-        f"- Exact matches were very sparse: only {total_exact}/{total_attempts} attempts were exact, and {', '.join(exact_zero)} had zero exact attempts.",
+        f"- Exact matches were very sparse: only {total_exact}/{total_attempts} attempts were exact. Exact answers appeared on **{exact_query_text}**; zero-exact questions were **{exact_zero_text}**.",
         "- Q1 had high mean score because most models could preserve the row set, but exactness depended on three edge-row status labels.",
         "- The hardest exactness failures were Q2/Q4/Q6/Q8/Q10 numeric-grain tasks and Q7 anti-join label/reason normalization.",
         "",
@@ -901,14 +934,14 @@ def write_notes(path: Path, model_summary: list[dict], case_summary: list[dict],
             "",
             "## Model Summary",
             "",
-            "| Model | Exact Attempts | Queries With Any Exact | Stable Exact Queries | Mean Score | Mean Cell Accuracy | Dominant Failure Mode |",
+            "| Model | Exact Attempts | Queries With Any Exact | Stable Exact Queries | Mean Score | Mean Cell Accuracy | Dominant Non-Exact Failure Mode |",
             "|---|---:|---:|---:|---:|---:|---|",
         ]
     )
     for item in model_summary:
         lines.append(
             f"| {item['display_model']} | {item['exact_attempts']}/30 | {item['exact_query_coverage_any']}/10 | {item['stable_exact_queries']}/10 | "
-            f"{item['mean_score']:.3f} | {item['mean_aligned_cell_accuracy']:.3f} | {item['dominant_failure_mode']} |"
+            f"{item['mean_score']:.3f} | {item['mean_aligned_cell_accuracy']:.3f} | {item['dominant_non_exact_failure_mode']} |"
         )
 
     lines.extend(
@@ -932,7 +965,7 @@ def write_notes(path: Path, model_summary: list[dict], case_summary: list[dict],
     lines.extend(["", "## Short Notes", ""])
     for case in case_summary:
         lines.append(
-            f"- **{case['query']} {case['short_name']}**: {case['exact_attempts']}/{case['total_attempts']} exact, dominant failure mode `{case['dominant_failure_mode']}`. Primary family: `{case['primary_failure_family']}`."
+            f"- **{case['query']} {case['short_name']}**: {case['exact_attempts']}/{case['total_attempts']} exact, dominant non-exact failure mode `{case['dominant_non_exact_failure_mode']}`. Primary family: `{case['primary_failure_family']}`."
         )
         for issue in case["top_issues"]:
             lines.append(
@@ -994,7 +1027,9 @@ def main() -> int:
             "same_count_wrong_values",
             "row_count_mismatch",
             "column_error",
+            "invalid_json_or_error",
             "dominant_failure_mode",
+            "dominant_non_exact_failure_mode",
         ],
     )
     write_csv(
@@ -1005,6 +1040,9 @@ def main() -> int:
             "query",
             "short_name",
             "prompt",
+            "run_benchmark_id",
+            "metadata_benchmark_id",
+            "metadata_matches_run",
             "primary_failure_family",
             "total_attempts",
             "exact_attempts",
@@ -1018,7 +1056,9 @@ def main() -> int:
             "order_only_attempts",
             "type_only_attempts",
             "column_error_attempts",
+            "invalid_json_or_error_attempts",
             "dominant_failure_mode",
+            "dominant_non_exact_failure_mode",
         ],
     )
     write_csv(
@@ -1035,6 +1075,7 @@ def main() -> int:
             "mean_score",
             "mean_aligned_cell_accuracy",
             "dominant_failure_mode",
+            "dominant_non_exact_failure_mode",
             "stable_outcome",
         ],
     )
