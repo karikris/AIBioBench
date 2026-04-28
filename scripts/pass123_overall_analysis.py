@@ -302,7 +302,7 @@ def render_overall_visual(pass_summary, model_summary, query_summary, model_pass
     ax1.grid(axis="y", color=base.GRID, linewidth=0.8, alpha=0.75)
     style_axis(ax1)
 
-    ax2 = fig.add_subplot(gs[0, 1])
+    ax2 = fig.add_subplot(gs[1, 1])
     y = list(range(len(model_summary)))
     left = [0] * len(model_summary)
     colors = {"pass1_exact": base.BLUE_PALE, "pass2_exact": base.BLUE_LIGHT, "pass3_exact": base.BLUE_MID}
@@ -333,7 +333,7 @@ def render_overall_visual(pass_summary, model_summary, query_summary, model_pass
     cbar.ax.tick_params(labelsize=8, colors=base.TEXT)
     style_axis(ax3)
 
-    ax4 = fig.add_subplot(gs[1, 1])
+    ax4 = fig.add_subplot(gs[0, 1])
     q_labels = [q["query"] for q in query_summary]
     q_exact = [q["exact_attempts"] for q in query_summary]
     q_colors = [base.BLUE_PALE if v >= 10 else base.BLUE_LIGHT if v > 0 else base.BLUE_DARK for v in q_exact]

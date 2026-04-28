@@ -14,10 +14,10 @@ import matplotlib.pyplot as plt
 from matplotlib.colors import LinearSegmentedColormap, ListedColormap
 
 
-PAGE_BG = "#071521"
-PANEL_BG = "#0D2438"
-GRID = "#24425F"
-TEXT = "#EAF4FF"
+PAGE_BG = "#102A43"
+PANEL_BG = "#173B59"
+GRID = "#3B6386"
+TEXT = "#F4FAFF"
 MUTED = "#9FC3E6"
 BLUE_DARK = "#0F4C81"
 BLUE = "#2F80ED"

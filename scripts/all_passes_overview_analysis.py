@@ -345,7 +345,7 @@ def render_overview_visual(pass_summary, model_summary, query_summary, family_su
     ax1.grid(axis="y", color=base.GRID, linewidth=0.8, alpha=0.75)
     style_axis(ax1)
 
-    ax2 = fig.add_subplot(gs[0, 1])
+    ax2 = fig.add_subplot(gs[1, 1])
     y = list(range(len(model_summary)))
     left = [0] * len(model_summary)
     colors = {
@@ -388,7 +388,7 @@ def render_overview_visual(pass_summary, model_summary, query_summary, family_su
     cbar.ax.tick_params(labelsize=8, colors=base.TEXT)
     style_axis(ax3)
 
-    ax4 = fig.add_subplot(gs[1, 1])
+    ax4 = fig.add_subplot(gs[0, 1])
     q_labels = [q["query"] for q in query_summary]
     q_scores = [q["mean_score"] for q in query_summary]
     q_exact = [q["exact_attempts"] for q in query_summary]
