@@ -1,13 +1,13 @@
 {
-  "benchmark_id": "AIBioBench_photosynthesis_snowflake_v5",
+  "benchmark_id": "AIBioBench_photosynthesis_snowflake_v2",
   "instructions": [
     {
-      "standard_instructions_id": "sql_v5",
+      "standard_instructions_id": "sql_v2",
       "language": "sql",
       "text": "You are given four CSV tables in a snowflake schema:\n\nfact_calls\n\u251c\u2500\u2500 sample_dim\n\u2514\u2500\u2500 variant_dim\n    \u2514\u2500\u2500 gene_dim\n\nRules:\n1. Use ANSI SQL.\n2. Show the SQL first, then show the final result table.\n3. Use NULL for missing values.\n4. Preserve the exact requested sort order.\n5. Round derived decimal values to 3 decimals.\n6. If your SQL dialect does not support RIGHT JOIN, use an equivalent reversed LEFT JOIN.\n7. If your SQL dialect does not support FULL OUTER JOIN, emulate it correctly.\n8. Do not invent rows or columns.\n9. Unless explicitly stated otherwise, summaries that follow a join should be computed over the joined rows, not over distinct source rows.\n10. Zero-count rows requested by a preserving join are mandatory.\n11. This benchmark scores row-set correctness, numeric correctness, and sort-order correctness separately, so preserve all requested rows and ordering."
     },
     {
-      "standard_instructions_id": "python_v5",
+      "standard_instructions_id": "python_v2",
       "language": "python",
       "text": "You are given four CSV tables in a snowflake schema:\n\nfact_calls\n\u251c\u2500\u2500 sample_dim\n\u2514\u2500\u2500 variant_dim\n    \u2514\u2500\u2500 gene_dim\n\nRules:\n1. Use Python with pandas and numpy only.\n2. Show the Python code first, then show the final result table.\n3. Use NaN/None in code, but present missing values as NULL in the final table.\n4. Preserve the exact requested sort order.\n5. Round derived decimal values to 3 decimals.\n6. Use numpy.log2(x + 1) for all requested log transforms.\n7. When a task requests matched expression by gene_symbol, use this mapping:\n   - NDHB -> expr_ndhb\n   - NDHK -> expr_ndhk\n   - PGR5 -> expr_pgr5\n   - all other genes -> NULL\n8. When a task requests standard deviation or coefficient of variation, use population standard deviation with ddof=0 unless the prompt says otherwise.\n9. Do not invent rows or columns.\n10. This benchmark scores row-set correctness, numeric correctness, and sort-order correctness separately, so preserve all requested rows and ordering."
     }

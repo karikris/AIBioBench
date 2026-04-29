@@ -2,19 +2,19 @@
 
 AIBioBench is a local benchmark suite for comparing LLMs on deterministic table-returning tasks over a small bioinformatics-style snowflake dataset.
 
-The current repository is prepared for the `photosynthesis_snowflake_v4` benchmark. It contains:
+The current repository is prepared for the `photosynthesis_snowflake_v5` benchmark. It contains:
 
 - a benchmark runner for local Ollama models
 - 50 benchmark cases across SQL and Python/pandas passes
 - gold answers and schemas
 - per-pass and cross-pass analysis scripts
-- a Kaggle publishing script for syncing the merged v4 results bundle
+- a Kaggle publishing script for syncing the merged v5 results bundle
 
 ## Benchmark Structure
 
 The active benchmark manifest is [benchmark_manifest.json](benchmark_manifest.json).
 
-The current v4 benchmark has:
+The current v5 benchmark has:
 
 - `50` cases total
 - `5` passes
@@ -54,10 +54,10 @@ All 50 query texts are collected in [QUERIES.md](QUERIES.md).
   - Runs benchmark cases against local models.
   - Uses `benchmark_manifest.json` by default.
   - Writes raw result files and aggregate CSV summaries.
-  - By default, appends into `results/photosynthesis_snowflake_v4`.
+  - By default, appends into `results/photosynthesis_snowflake_v5`.
 
 - [aibiobench-results.py](aibiobench-results.py)
-  - Stages and publishes the current v4 results bundle to Kaggle.
+  - Stages and publishes the current v5 results bundle to Kaggle.
   - Defaults to uploading the full bundle, including analysis subfolders.
   - Reads `KAGGLE_API_TOKEN` from `TOKENS.md`.
 
@@ -103,12 +103,15 @@ Useful runner flags:
 - `--output-dir`: force a specific output directory
 - `--no-append-output`: create a fresh timestamped results directory instead of merging into the shared bundle
 - `--bundle-dir-name`: override the shared bundle basename when appending
+- `--query-engineering-registry`: override the v5 model-specific addendum registry
+- `--no-query-engineering`: run only the shared base prompts without v5 addenda
 - `--dry-run`: print the selected cases without executing model calls
 
 Current output behavior:
 
-- By default, `aibiobench.py` appends into `results/photosynthesis_snowflake_v4`.
-- If that bundle does not exist, it creates `results/photosynthesis_snowflake_v4`.
+- By default, `aibiobench.py` appends into `results/photosynthesis_snowflake_v5`.
+- If that bundle does not exist, it creates `results/photosynthesis_snowflake_v5`.
+- v5 prompts are composed as shared v2/v3 base query text plus optional model-specific addenda from `query_engineering_registry/v5/model_query_guidance.json`.
 - The root files written by the runner include:
   - `detailed_results.csv`
   - `detailed_results.jsonl`
@@ -125,7 +128,7 @@ The analysis scripts operate on an existing results bundle.
 Example:
 
 ```bash
-RESULTS_DIR=results/photosynthesis_snowflake_v4
+RESULTS_DIR=results/photosynthesis_snowflake_v5
 
 python3 scripts/pass1_analysis.py "$RESULTS_DIR"
 python3 scripts/pass2_analysis.py "$RESULTS_DIR"
@@ -157,7 +160,7 @@ The current Kaggle dataset target is:
 
 - `https://www.kaggle.com/datasets/kristofferkari/aiobiobench-results`
 
-The publisher script defaults to the full v4 results bundle, including analysis subfolders.
+The publisher script defaults to the full v5 results bundle, including analysis subfolders.
 
 Examples:
 
@@ -187,12 +190,12 @@ That means the repository tracks the benchmark definitions and scripts, while re
 
 ## Current Repo State
 
-The repository now reflects the prepared v4 workflow:
+The repository now reflects the prepared v5 workflow:
 
-- benchmark runs append into a shared v4 results bundle by default
+- benchmark runs append into a shared v5 results bundle by default
 - per-pass and combined analysis scripts use dynamic model and attempt counts
-- the Kaggle publisher uploads the full v4 bundle, not just root files
-- `QUERIES.md` documents the full v4 prompt set with task-specific guardrails derived from v3 failure analyses
+- the Kaggle publisher uploads the full v5 bundle, not just root files
+- `QUERIES.md` documents the shared v5 base query text, while `query_engineering_registry/` stores run-by-run query snapshots and model-specific v5 addenda
 
 ## Acknowledgements
 

@@ -1,0 +1,701 @@
+model,display_model,model_family,case_id,source_exact_attempts,source_attempts,source_mean_score,dominant_non_exact_failure_mode,addendum_chars
+codellama-70b-sqlbench:latest,CodeLlama 70B,llama,pass1.query1,0,6,0.6666666666666666,row_count_mismatch,1156
+codellama-70b-sqlbench:latest,CodeLlama 70B,llama,pass1.query2,0,6,0.31250000000000006,row_count_mismatch,1180
+codellama-70b-sqlbench:latest,CodeLlama 70B,llama,pass1.query3,6,6,1.0,none,309
+codellama-70b-sqlbench:latest,CodeLlama 70B,llama,pass1.query4,0,6,0.465,same_count_wrong_values,1030
+codellama-70b-sqlbench:latest,CodeLlama 70B,llama,pass1.query5,0,6,0.4047619047619047,row_count_mismatch,1044
+codellama-70b-sqlbench:latest,CodeLlama 70B,llama,pass1.query6,0,6,0.49374999999999997,row_count_mismatch,905
+codellama-70b-sqlbench:latest,CodeLlama 70B,llama,pass1.query7,0,6,0.4166666666666667,same_count_wrong_values,1027
+codellama-70b-sqlbench:latest,CodeLlama 70B,llama,pass1.query8,0,6,0.775,same_count_wrong_values,1015
+codellama-70b-sqlbench:latest,CodeLlama 70B,llama,pass1.query9,0,6,0.6680555555555555,same_count_wrong_values,903
+codellama-70b-sqlbench:latest,CodeLlama 70B,llama,pass1.query10,0,6,0.6666666666666666,same_count_wrong_values,1158
+codellama-70b-sqlbench:latest,CodeLlama 70B,llama,pass2.query1,0,6,0.5746031746031747,row_count_mismatch,911
+codellama-70b-sqlbench:latest,CodeLlama 70B,llama,pass2.query2,0,6,0.5,same_count_wrong_values,1137
+codellama-70b-sqlbench:latest,CodeLlama 70B,llama,pass2.query3,0,6,0.4816666666666667,row_count_mismatch,1070
+codellama-70b-sqlbench:latest,CodeLlama 70B,llama,pass2.query4,0,6,0.2569444444444445,row_count_mismatch,1022
+codellama-70b-sqlbench:latest,CodeLlama 70B,llama,pass2.query5,0,6,0.27499999999999997,row_count_mismatch,1037
+codellama-70b-sqlbench:latest,CodeLlama 70B,llama,pass2.query6,0,6,0.5375,row_count_mismatch,902
+codellama-70b-sqlbench:latest,CodeLlama 70B,llama,pass2.query7,0,6,0.47500000000000003,row_count_mismatch,905
+codellama-70b-sqlbench:latest,CodeLlama 70B,llama,pass2.query8,0,6,0.4277777777777778,row_count_mismatch,1037
+codellama-70b-sqlbench:latest,CodeLlama 70B,llama,pass2.query9,0,6,0.2833333333333333,row_count_mismatch,1022
+codellama-70b-sqlbench:latest,CodeLlama 70B,llama,pass2.query10,0,6,0.7000000000000001,row_count_mismatch,794
+codellama-70b-sqlbench:latest,CodeLlama 70B,llama,pass3.query1,0,6,1.0,same_count_wrong_values,644
+codellama-70b-sqlbench:latest,CodeLlama 70B,llama,pass3.query2,0,6,0.2489583333333333,row_count_mismatch,1022
+codellama-70b-sqlbench:latest,CodeLlama 70B,llama,pass3.query3,0,6,0.4566666666666667,row_count_mismatch,1037
+codellama-70b-sqlbench:latest,CodeLlama 70B,llama,pass3.query4,0,6,0.4166666666666667,row_count_mismatch,896
+codellama-70b-sqlbench:latest,CodeLlama 70B,llama,pass3.query5,0,6,0.7600000000000001,same_count_wrong_values,918
+codellama-70b-sqlbench:latest,CodeLlama 70B,llama,pass3.query6,0,6,0.17499999999999996,row_count_mismatch,1022
+codellama-70b-sqlbench:latest,CodeLlama 70B,llama,pass3.query7,0,6,0.0,row_count_mismatch,763
+codellama-70b-sqlbench:latest,CodeLlama 70B,llama,pass3.query8,0,6,0.1638888888888889,row_count_mismatch,1134
+codellama-70b-sqlbench:latest,CodeLlama 70B,llama,pass3.query9,0,6,0.5589285714285714,same_count_wrong_values,1012
+codellama-70b-sqlbench:latest,CodeLlama 70B,llama,pass3.query10,0,6,0.4833333333333332,row_count_mismatch,905
+codellama-70b-sqlbench:latest,CodeLlama 70B,llama,pass4.query1,0,6,0.86875,same_count_wrong_values,786
+codellama-70b-sqlbench:latest,CodeLlama 70B,llama,pass4.query2,0,6,0.29583333333333334,row_count_mismatch,1017
+codellama-70b-sqlbench:latest,CodeLlama 70B,llama,pass4.query3,0,6,0.2333333333333333,row_count_mismatch,1008
+codellama-70b-sqlbench:latest,CodeLlama 70B,llama,pass4.query4,0,6,0.49999999999999994,row_count_mismatch,1154
+codellama-70b-sqlbench:latest,CodeLlama 70B,llama,pass4.query5,0,6,0.23800000000000002,row_count_mismatch,1017
+codellama-70b-sqlbench:latest,CodeLlama 70B,llama,pass4.query6,0,6,0.5983333333333334,row_count_mismatch,903
+codellama-70b-sqlbench:latest,CodeLlama 70B,llama,pass4.query7,0,6,0.0,row_count_mismatch,884
+codellama-70b-sqlbench:latest,CodeLlama 70B,llama,pass4.query8,0,6,0.4523809523809524,row_count_mismatch,1037
+codellama-70b-sqlbench:latest,CodeLlama 70B,llama,pass4.query9,0,6,0.5472222222222222,same_count_wrong_values,895
+codellama-70b-sqlbench:latest,CodeLlama 70B,llama,pass4.query10,0,6,1.0,same_count_wrong_values,644
+codellama-70b-sqlbench:latest,CodeLlama 70B,llama,pass5.query1,0,6,0.28,row_count_mismatch,937
+codellama-70b-sqlbench:latest,CodeLlama 70B,llama,pass5.query2,0,6,0.18685185185185182,row_count_mismatch,1063
+codellama-70b-sqlbench:latest,CodeLlama 70B,llama,pass5.query3,0,6,0.15604166666666666,invalid_json_or_error,1100
+codellama-70b-sqlbench:latest,CodeLlama 70B,llama,pass5.query4,0,6,0.6999999999999998,same_count_wrong_values,1061
+codellama-70b-sqlbench:latest,CodeLlama 70B,llama,pass5.query5,0,6,0.16944444444444443,row_count_mismatch,1022
+codellama-70b-sqlbench:latest,CodeLlama 70B,llama,pass5.query6,0,6,0.24000000000000002,row_count_mismatch,905
+codellama-70b-sqlbench:latest,CodeLlama 70B,llama,pass5.query7,0,6,0.7708333333333334,same_count_wrong_values,944
+codellama-70b-sqlbench:latest,CodeLlama 70B,llama,pass5.query8,0,6,0.7240000000000001,same_count_wrong_values,1053
+codellama-70b-sqlbench:latest,CodeLlama 70B,llama,pass5.query9,0,6,0.09444444444444444,invalid_json_or_error,1100
+codellama-70b-sqlbench:latest,CodeLlama 70B,llama,pass5.query10,0,6,0.43,row_count_mismatch,938
+command-r-plus-sqlbench:latest,Command R+,command-r,pass1.query1,0,6,0.9,row_count_mismatch,1000
+command-r-plus-sqlbench:latest,Command R+,command-r,pass1.query2,0,6,0.7732638888888888,row_count_mismatch,1024
+command-r-plus-sqlbench:latest,Command R+,command-r,pass1.query3,0,6,1.0,same_count_wrong_values,807
+command-r-plus-sqlbench:latest,Command R+,command-r,pass1.query4,0,6,0.9700000000000001,same_count_wrong_values,542
+command-r-plus-sqlbench:latest,Command R+,command-r,pass1.query5,0,6,0.8285714285714286,same_count_wrong_values,790
+command-r-plus-sqlbench:latest,Command R+,command-r,pass1.query6,0,6,0.6750000000000002,same_count_wrong_values,783
+command-r-plus-sqlbench:latest,Command R+,command-r,pass1.query7,0,6,0.44999999999999996,row_count_mismatch,1148
+command-r-plus-sqlbench:latest,Command R+,command-r,pass1.query8,0,6,0.8000000000000002,same_count_wrong_values,903
+command-r-plus-sqlbench:latest,Command R+,command-r,pass1.query9,0,6,0.861111111111111,same_count_wrong_values,791
+command-r-plus-sqlbench:latest,Command R+,command-r,pass1.query10,4,6,1.0,same_count_wrong_values,424
+command-r-plus-sqlbench:latest,Command R+,command-r,pass2.query1,0,6,0.7444444444444445,row_count_mismatch,890
+command-r-plus-sqlbench:latest,Command R+,command-r,pass2.query2,0,6,1.0,same_count_wrong_values,649
+command-r-plus-sqlbench:latest,Command R+,command-r,pass2.query3,0,6,0.7794444444444445,row_count_mismatch,914
+command-r-plus-sqlbench:latest,Command R+,command-r,pass2.query4,0,6,0.32870370370370366,row_count_mismatch,1133
+command-r-plus-sqlbench:latest,Command R+,command-r,pass2.query5,0,6,0.4583333333333333,same_count_wrong_values,915
+command-r-plus-sqlbench:latest,Command R+,command-r,pass2.query6,0,6,0.6375,row_count_mismatch,1016
+command-r-plus-sqlbench:latest,Command R+,command-r,pass2.query7,0,6,0.65,same_count_wrong_values,783
+command-r-plus-sqlbench:latest,Command R+,command-r,pass2.query8,0,6,0.2833333333333333,same_count_wrong_values,1050
+command-r-plus-sqlbench:latest,Command R+,command-r,pass2.query9,0,6,0.611111111111111,row_count_mismatch,998
+command-r-plus-sqlbench:latest,Command R+,command-r,pass2.query10,0,6,0.8666666666666667,same_count_wrong_values,807
+command-r-plus-sqlbench:latest,Command R+,command-r,pass3.query1,0,6,1.0,same_count_wrong_values,532
+command-r-plus-sqlbench:latest,Command R+,command-r,pass3.query2,0,6,0.42604166666666665,row_count_mismatch,1133
+command-r-plus-sqlbench:latest,Command R+,command-r,pass3.query3,0,6,0.605,row_count_mismatch,1013
+command-r-plus-sqlbench:latest,Command R+,command-r,pass3.query4,0,6,0.49999999999999994,row_count_mismatch,1007
+command-r-plus-sqlbench:latest,Command R+,command-r,pass3.query5,0,6,0.94,same_count_wrong_values,674
+command-r-plus-sqlbench:latest,Command R+,command-r,pass3.query6,0,6,0.5557692307692308,row_count_mismatch,1133
+command-r-plus-sqlbench:latest,Command R+,command-r,pass3.query7,0,6,0.0,row_count_mismatch,874
+command-r-plus-sqlbench:latest,Command R+,command-r,pass3.query8,0,6,0.5875,row_count_mismatch,1245
+command-r-plus-sqlbench:latest,Command R+,command-r,pass3.query9,0,6,0.69375,same_count_wrong_values,900
+command-r-plus-sqlbench:latest,Command R+,command-r,pass3.query10,0,6,0.525,row_count_mismatch,1016
+command-r-plus-sqlbench:latest,Command R+,command-r,pass4.query1,0,6,0.8625000000000002,same_count_wrong_values,674
+command-r-plus-sqlbench:latest,Command R+,command-r,pass4.query2,0,6,0.25,row_count_mismatch,1128
+command-r-plus-sqlbench:latest,Command R+,command-r,pass4.query3,0,6,0.3138888888888889,same_count_wrong_values,1021
+command-r-plus-sqlbench:latest,Command R+,command-r,pass4.query4,0,6,0.44166666666666665,row_count_mismatch,1265
+command-r-plus-sqlbench:latest,Command R+,command-r,pass4.query5,0,6,0.532,row_count_mismatch,1128
+command-r-plus-sqlbench:latest,Command R+,command-r,pass4.query6,0,6,0.5483333333333335,row_count_mismatch,1149
+command-r-plus-sqlbench:latest,Command R+,command-r,pass4.query7,0,6,0.0,row_count_mismatch,995
+command-r-plus-sqlbench:latest,Command R+,command-r,pass4.query8,0,6,0.535515873015873,row_count_mismatch,1148
+command-r-plus-sqlbench:latest,Command R+,command-r,pass4.query9,0,6,0.6458333333333334,same_count_wrong_values,783
+command-r-plus-sqlbench:latest,Command R+,command-r,pass4.query10,0,6,1.0,same_count_wrong_values,532
+command-r-plus-sqlbench:latest,Command R+,command-r,pass5.query1,0,6,0.6999999999999998,same_count_wrong_values,706
+command-r-plus-sqlbench:latest,Command R+,command-r,pass5.query2,0,6,0.4493882141250562,row_count_mismatch,1174
+command-r-plus-sqlbench:latest,Command R+,command-r,pass5.query3,0,6,0.33625,same_count_wrong_values,1035
+command-r-plus-sqlbench:latest,Command R+,command-r,pass5.query4,0,6,0.6999999999999998,same_count_wrong_values,949
+command-r-plus-sqlbench:latest,Command R+,command-r,pass5.query5,0,6,0.3541666666666667,row_count_mismatch,1133
+command-r-plus-sqlbench:latest,Command R+,command-r,pass5.query6,0,6,0.5666666666666667,same_count_wrong_values,783
+command-r-plus-sqlbench:latest,Command R+,command-r,pass5.query7,0,6,0.75,same_count_wrong_values,832
+command-r-plus-sqlbench:latest,Command R+,command-r,pass5.query8,0,6,0.8340000000000001,same_count_wrong_values,832
+command-r-plus-sqlbench:latest,Command R+,command-r,pass5.query9,0,6,0.125,row_count_mismatch,1133
+command-r-plus-sqlbench:latest,Command R+,command-r,pass5.query10,0,6,0.5333333333333333,same_count_wrong_values,951
+dbrx-sqlbench:latest,DBRX,dbrx,pass1.query1,0,6,0.775,row_count_mismatch,880
+dbrx-sqlbench:latest,DBRX,dbrx,pass1.query2,0,6,0.7069444444444444,row_count_mismatch,904
+dbrx-sqlbench:latest,DBRX,dbrx,pass1.query3,2,6,0.9500000000000001,same_count_wrong_values,418
+dbrx-sqlbench:latest,DBRX,dbrx,pass1.query4,0,6,0.866111111111111,same_count_wrong_values,777
+dbrx-sqlbench:latest,DBRX,dbrx,pass1.query5,0,6,0.41904761904761906,same_count_wrong_values,1160
+dbrx-sqlbench:latest,DBRX,dbrx,pass1.query6,0,6,0.81875,same_count_wrong_values,777
+dbrx-sqlbench:latest,DBRX,dbrx,pass1.query7,0,6,0.49166666666666664,row_count_mismatch,893
+dbrx-sqlbench:latest,DBRX,dbrx,pass1.query8,0,6,0.5941666666666666,row_count_mismatch,881
+dbrx-sqlbench:latest,DBRX,dbrx,pass1.query9,0,6,0.6513888888888889,row_count_mismatch,769
+dbrx-sqlbench:latest,DBRX,dbrx,pass1.query10,0,6,1.0,same_count_wrong_values,773
+dbrx-sqlbench:latest,DBRX,dbrx,pass2.query1,0,6,0.5904761904761905,same_count_wrong_values,1027
+dbrx-sqlbench:latest,DBRX,dbrx,pass2.query2,0,6,1.0,same_count_wrong_values,752
+dbrx-sqlbench:latest,DBRX,dbrx,pass2.query3,0,6,0.2810416666666667,column_error,1158
+dbrx-sqlbench:latest,DBRX,dbrx,pass2.query4,0,6,0.26515151515151514,row_count_mismatch,1013
+dbrx-sqlbench:latest,DBRX,dbrx,pass2.query5,0,6,0.4986111111111111,row_count_mismatch,893
+dbrx-sqlbench:latest,DBRX,dbrx,pass2.query6,0,6,0.3958333333333333,row_count_mismatch,1028
+dbrx-sqlbench:latest,DBRX,dbrx,pass2.query7,0,6,0.6216666666666667,same_count_wrong_values,886
+dbrx-sqlbench:latest,DBRX,dbrx,pass2.query8,0,6,0.0,row_count_mismatch,1028
+dbrx-sqlbench:latest,DBRX,dbrx,pass2.query9,0,6,0.26499999999999996,row_count_mismatch,1013
+dbrx-sqlbench:latest,DBRX,dbrx,pass2.query10,0,6,0.68,row_count_mismatch,785
+dbrx-sqlbench:latest,DBRX,dbrx,pass3.query1,0,6,1.0,same_count_wrong_values,635
+dbrx-sqlbench:latest,DBRX,dbrx,pass3.query2,0,6,0.534375,same_count_wrong_values,1003
+dbrx-sqlbench:latest,DBRX,dbrx,pass3.query3,0,6,0.5566666666666666,same_count_wrong_values,1018
+dbrx-sqlbench:latest,DBRX,dbrx,pass3.query4,0,6,0.39999999999999997,column_error,984
+dbrx-sqlbench:latest,DBRX,dbrx,pass3.query5,0,6,0.8166666666666668,same_count_wrong_values,909
+dbrx-sqlbench:latest,DBRX,dbrx,pass3.query6,0,6,0.7402777777777777,same_count_wrong_values,894
+dbrx-sqlbench:latest,DBRX,dbrx,pass3.query7,0,6,0.0,same_count_wrong_values,879
+dbrx-sqlbench:latest,DBRX,dbrx,pass3.query8,0,6,0.13333333333333333,row_count_mismatch,1125
+dbrx-sqlbench:latest,DBRX,dbrx,pass3.query9,0,6,0.6843750000000001,same_count_wrong_values,1003
+dbrx-sqlbench:latest,DBRX,dbrx,pass3.query10,0,6,0.6888888888888888,same_count_wrong_values,886
+dbrx-sqlbench:latest,DBRX,dbrx,pass4.query1,0,6,0.81875,same_count_wrong_values,777
+dbrx-sqlbench:latest,DBRX,dbrx,pass4.query2,0,6,0.2122222222222222,row_count_mismatch,1008
+dbrx-sqlbench:latest,DBRX,dbrx,pass4.query3,0,6,0.11583333333333334,row_count_mismatch,999
+dbrx-sqlbench:latest,DBRX,dbrx,pass4.query4,0,6,0.42166666666666663,row_count_mismatch,1145
+dbrx-sqlbench:latest,DBRX,dbrx,pass4.query5,0,6,0.49466666666666664,same_count_wrong_values,1133
+dbrx-sqlbench:latest,DBRX,dbrx,pass4.query6,0,6,0.54,same_count_wrong_values,1019
+dbrx-sqlbench:latest,DBRX,dbrx,pass4.query7,0,6,0.0,same_count_wrong_values,1000
+dbrx-sqlbench:latest,DBRX,dbrx,pass4.query8,0,6,0.6196428571428572,column_error,990
+dbrx-sqlbench:latest,DBRX,dbrx,pass4.query9,0,6,0.34791666666666665,row_count_mismatch,896
+dbrx-sqlbench:latest,DBRX,dbrx,pass4.query10,0,6,0.9883333333333333,same_count_wrong_values,635
+dbrx-sqlbench:latest,DBRX,dbrx,pass5.query1,0,6,0.6816666666666666,same_count_wrong_values,809
+dbrx-sqlbench:latest,DBRX,dbrx,pass5.query2,0,6,0.5074007936507937,row_count_mismatch,1054
+dbrx-sqlbench:latest,DBRX,dbrx,pass5.query3,0,6,0.24284722222222224,row_count_mismatch,1013
+dbrx-sqlbench:latest,DBRX,dbrx,pass5.query4,0,6,0.6999999999999998,same_count_wrong_values,1052
+dbrx-sqlbench:latest,DBRX,dbrx,pass5.query5,0,6,0.586111111111111,row_count_mismatch,878
+dbrx-sqlbench:latest,DBRX,dbrx,pass5.query6,0,6,0.43,row_count_mismatch,761
+dbrx-sqlbench:latest,DBRX,dbrx,pass5.query7,0,6,0.6124999999999999,row_count_mismatch,810
+dbrx-sqlbench:latest,DBRX,dbrx,pass5.query8,0,6,0.548,row_count_mismatch,919
+dbrx-sqlbench:latest,DBRX,dbrx,pass5.query9,0,6,0.26435185185185184,row_count_mismatch,1013
+dbrx-sqlbench:latest,DBRX,dbrx,pass5.query10,0,6,0.4566666666666667,row_count_mismatch,929
+deepseek-coder-33b-sqlbench:latest,DeepSeek Coder 33B,llama,pass1.query1,0,6,0.9,row_count_mismatch,894
+deepseek-coder-33b-sqlbench:latest,DeepSeek Coder 33B,llama,pass1.query2,0,6,0.7290509259259258,row_count_mismatch,918
+deepseek-coder-33b-sqlbench:latest,DeepSeek Coder 33B,llama,pass1.query3,0,6,1.0,same_count_wrong_values,924
+deepseek-coder-33b-sqlbench:latest,DeepSeek Coder 33B,llama,pass1.query4,0,6,0.8083333333333335,row_count_mismatch,534
+deepseek-coder-33b-sqlbench:latest,DeepSeek Coder 33B,llama,pass1.query5,0,6,0.8000000000000002,row_count_mismatch,782
+deepseek-coder-33b-sqlbench:latest,DeepSeek Coder 33B,llama,pass1.query6,0,6,0.6395833333333333,same_count_wrong_values,900
+deepseek-coder-33b-sqlbench:latest,DeepSeek Coder 33B,llama,pass1.query7,0,6,0.5249999999999999,row_count_mismatch,1042
+deepseek-coder-33b-sqlbench:latest,DeepSeek Coder 33B,llama,pass1.query8,0,6,0.7916666666666666,same_count_wrong_values,1020
+deepseek-coder-33b-sqlbench:latest,DeepSeek Coder 33B,llama,pass1.query9,0,6,0.7555555555555555,same_count_wrong_values,908
+deepseek-coder-33b-sqlbench:latest,DeepSeek Coder 33B,llama,pass1.query10,3,6,0.5,type_only,418
+deepseek-coder-33b-sqlbench:latest,DeepSeek Coder 33B,llama,pass2.query1,0,6,0.7444444444444445,row_count_mismatch,784
+deepseek-coder-33b-sqlbench:latest,DeepSeek Coder 33B,llama,pass2.query2,0,6,1.0,same_count_wrong_values,766
+deepseek-coder-33b-sqlbench:latest,DeepSeek Coder 33B,llama,pass2.query3,0,6,0.5294444444444445,row_count_mismatch,1075
+deepseek-coder-33b-sqlbench:latest,DeepSeek Coder 33B,llama,pass2.query4,0,6,0.31984126984126987,row_count_mismatch,1027
+deepseek-coder-33b-sqlbench:latest,DeepSeek Coder 33B,llama,pass2.query5,0,6,0.4955555555555555,row_count_mismatch,907
+deepseek-coder-33b-sqlbench:latest,DeepSeek Coder 33B,llama,pass2.query6,0,6,0.0,row_count_mismatch,1042
+deepseek-coder-33b-sqlbench:latest,DeepSeek Coder 33B,llama,pass2.query7,0,6,0.4750000000000001,row_count_mismatch,775
+deepseek-coder-33b-sqlbench:latest,DeepSeek Coder 33B,llama,pass2.query8,0,6,0.4372222222222222,row_count_mismatch,907
+deepseek-coder-33b-sqlbench:latest,DeepSeek Coder 33B,llama,pass2.query9,0,6,0.37888888888888883,row_count_mismatch,1027
+deepseek-coder-33b-sqlbench:latest,DeepSeek Coder 33B,llama,pass2.query10,0,6,0.8266666666666667,row_count_mismatch,799
+deepseek-coder-33b-sqlbench:latest,DeepSeek Coder 33B,llama,pass3.query1,0,6,1.0,same_count_wrong_values,649
+deepseek-coder-33b-sqlbench:latest,DeepSeek Coder 33B,llama,pass3.query2,0,6,0.2826190476190476,row_count_mismatch,1027
+deepseek-coder-33b-sqlbench:latest,DeepSeek Coder 33B,llama,pass3.query3,0,6,0.6849999999999999,same_count_wrong_values,1032
+deepseek-coder-33b-sqlbench:latest,DeepSeek Coder 33B,llama,pass3.query4,0,6,0.39999999999999997,row_count_mismatch,901
+deepseek-coder-33b-sqlbench:latest,DeepSeek Coder 33B,llama,pass3.query5,0,6,0.663888888888889,same_count_wrong_values,923
+deepseek-coder-33b-sqlbench:latest,DeepSeek Coder 33B,llama,pass3.query6,0,6,0.0,row_count_mismatch,1027
+deepseek-coder-33b-sqlbench:latest,DeepSeek Coder 33B,llama,pass3.query7,0,6,0.0,row_count_mismatch,768
+deepseek-coder-33b-sqlbench:latest,DeepSeek Coder 33B,llama,pass3.query8,0,6,0.0,row_count_mismatch,1139
+deepseek-coder-33b-sqlbench:latest,DeepSeek Coder 33B,llama,pass3.query9,0,6,0.8010416666666665,same_count_wrong_values,908
+deepseek-coder-33b-sqlbench:latest,DeepSeek Coder 33B,llama,pass3.query10,0,6,0.5513888888888889,same_count_wrong_values,900
+deepseek-coder-33b-sqlbench:latest,DeepSeek Coder 33B,llama,pass4.query1,0,6,0.84375,same_count_wrong_values,791
+deepseek-coder-33b-sqlbench:latest,DeepSeek Coder 33B,llama,pass4.query2,0,6,0.5652777777777778,same_count_wrong_values,1147
+deepseek-coder-33b-sqlbench:latest,DeepSeek Coder 33B,llama,pass4.query3,0,6,0.2354166666666667,row_count_mismatch,1013
+deepseek-coder-33b-sqlbench:latest,DeepSeek Coder 33B,llama,pass4.query4,0,6,0.44999999999999996,row_count_mismatch,1159
+deepseek-coder-33b-sqlbench:latest,DeepSeek Coder 33B,llama,pass4.query5,0,6,0.62,row_count_mismatch,887
+deepseek-coder-33b-sqlbench:latest,DeepSeek Coder 33B,llama,pass4.query6,0,6,0.7600000000000001,same_count_wrong_values,924
+deepseek-coder-33b-sqlbench:latest,DeepSeek Coder 33B,llama,pass4.query7,0,6,0.0,row_count_mismatch,889
+deepseek-coder-33b-sqlbench:latest,DeepSeek Coder 33B,llama,pass4.query8,0,6,0.28174603174603174,row_count_mismatch,1042
+deepseek-coder-33b-sqlbench:latest,DeepSeek Coder 33B,llama,pass4.query9,0,6,0.3277777777777778,row_count_mismatch,910
+deepseek-coder-33b-sqlbench:latest,DeepSeek Coder 33B,llama,pass4.query10,0,6,1.0,same_count_wrong_values,649
+deepseek-coder-33b-sqlbench:latest,DeepSeek Coder 33B,llama,pass5.query1,0,6,0.5833333333333334,row_count_mismatch,698
+deepseek-coder-33b-sqlbench:latest,DeepSeek Coder 33B,llama,pass5.query2,0,6,0.40888888888888886,row_count_mismatch,1068
+deepseek-coder-33b-sqlbench:latest,DeepSeek Coder 33B,llama,pass5.query3,0,6,0.30395833333333333,row_count_mismatch,1027
+deepseek-coder-33b-sqlbench:latest,DeepSeek Coder 33B,llama,pass5.query4,0,6,0.6999999999999998,same_count_wrong_values,1066
+deepseek-coder-33b-sqlbench:latest,DeepSeek Coder 33B,llama,pass5.query5,0,6,0.4333333333333333,row_count_mismatch,1027
+deepseek-coder-33b-sqlbench:latest,DeepSeek Coder 33B,llama,pass5.query6,0,6,0.46,row_count_mismatch,775
+deepseek-coder-33b-sqlbench:latest,DeepSeek Coder 33B,llama,pass5.query7,0,6,0.7791666666666667,same_count_wrong_values,949
+deepseek-coder-33b-sqlbench:latest,DeepSeek Coder 33B,llama,pass5.query8,0,6,0.5433333333333333,row_count_mismatch,933
+deepseek-coder-33b-sqlbench:latest,DeepSeek Coder 33B,llama,pass5.query9,0,6,0.41222222222222227,row_count_mismatch,1027
+deepseek-coder-33b-sqlbench:latest,DeepSeek Coder 33B,llama,pass5.query10,0,6,0.4400000000000001,row_count_mismatch,943
+gemma4-26b-sqlbench:latest,Gemma 4 26B,gemma4,pass1.query1,0,6,0.875,row_count_mismatch,892
+gemma4-26b-sqlbench:latest,Gemma 4 26B,gemma4,pass1.query2,0,6,0.6875,order_only,1007
+gemma4-26b-sqlbench:latest,Gemma 4 26B,gemma4,pass1.query3,6,6,1.0,none,307
+gemma4-26b-sqlbench:latest,Gemma 4 26B,gemma4,pass1.query4,3,6,0.985,same_count_wrong_values,425
+gemma4-26b-sqlbench:latest,Gemma 4 26B,gemma4,pass1.query5,0,6,0.6571428571428571,row_count_mismatch,1024
+gemma4-26b-sqlbench:latest,Gemma 4 26B,gemma4,pass1.query6,0,6,0.6000000000000001,row_count_mismatch,882
+gemma4-26b-sqlbench:latest,Gemma 4 26B,gemma4,pass1.query7,0,6,0.4888888888888889,row_count_mismatch,1014
+gemma4-26b-sqlbench:latest,Gemma 4 26B,gemma4,pass1.query8,0,6,0.8416666666666667,same_count_wrong_values,904
+gemma4-26b-sqlbench:latest,Gemma 4 26B,gemma4,pass1.query9,0,6,0.8666666666666667,same_count_wrong_values,792
+gemma4-26b-sqlbench:latest,Gemma 4 26B,gemma4,pass1.query10,6,6,1.0,none,307
+gemma4-26b-sqlbench:latest,Gemma 4 26B,gemma4,pass2.query1,0,6,0.7166666666666668,same_count_wrong_values,658
+gemma4-26b-sqlbench:latest,Gemma 4 26B,gemma4,pass2.query2,6,6,1.0,none,307
+gemma4-26b-sqlbench:latest,Gemma 4 26B,gemma4,pass2.query3,3,6,0.9461111111111111,same_count_wrong_values,425
+gemma4-26b-sqlbench:latest,Gemma 4 26B,gemma4,pass2.query4,0,6,0.7214285714285715,row_count_mismatch,867
+gemma4-26b-sqlbench:latest,Gemma 4 26B,gemma4,pass2.query5,0,6,0.5625,row_count_mismatch,1014
+gemma4-26b-sqlbench:latest,Gemma 4 26B,gemma4,pass2.query6,0,6,0.3833333333333333,row_count_mismatch,1149
+gemma4-26b-sqlbench:latest,Gemma 4 26B,gemma4,pass2.query7,0,6,0.89,order_only,732
+gemma4-26b-sqlbench:latest,Gemma 4 26B,gemma4,pass2.query8,0,6,0.8999999999999999,same_count_wrong_values,807
+gemma4-26b-sqlbench:latest,Gemma 4 26B,gemma4,pass2.query9,0,6,0.464702380952381,row_count_mismatch,1134
+gemma4-26b-sqlbench:latest,Gemma 4 26B,gemma4,pass2.query10,0,6,0.88,same_count_wrong_values,808
+gemma4-26b-sqlbench:latest,Gemma 4 26B,gemma4,pass3.query1,6,6,1.0,none,307
+gemma4-26b-sqlbench:latest,Gemma 4 26B,gemma4,pass3.query2,0,6,0.10818452380952381,row_count_mismatch,1134
+gemma4-26b-sqlbench:latest,Gemma 4 26B,gemma4,pass3.query3,0,6,0.8949999999999999,same_count_wrong_values,807
+gemma4-26b-sqlbench:latest,Gemma 4 26B,gemma4,pass3.query4,0,6,0.4972222222222222,row_count_mismatch,1008
+gemma4-26b-sqlbench:latest,Gemma 4 26B,gemma4,pass3.query5,0,6,0.96,same_count_wrong_values,675
+gemma4-26b-sqlbench:latest,Gemma 4 26B,gemma4,pass3.query6,0,6,0.0,row_count_mismatch,1134
+gemma4-26b-sqlbench:latest,Gemma 4 26B,gemma4,pass3.query7,0,6,0.0,same_count_wrong_values,777
+gemma4-26b-sqlbench:latest,Gemma 4 26B,gemma4,pass3.query8,0,6,0.47365079365079366,row_count_mismatch,1246
+gemma4-26b-sqlbench:latest,Gemma 4 26B,gemma4,pass3.query9,0,6,0.9125,same_count_wrong_values,792
+gemma4-26b-sqlbench:latest,Gemma 4 26B,gemma4,pass3.query10,0,6,0.8152777777777778,same_count_wrong_values,784
+gemma4-26b-sqlbench:latest,Gemma 4 26B,gemma4,pass4.query1,0,6,0.88125,same_count_wrong_values,675
+gemma4-26b-sqlbench:latest,Gemma 4 26B,gemma4,pass4.query2,0,6,0.6381944444444445,row_count_mismatch,1129
+gemma4-26b-sqlbench:latest,Gemma 4 26B,gemma4,pass4.query3,0,6,0.6333333333333333,same_count_wrong_values,887
+gemma4-26b-sqlbench:latest,Gemma 4 26B,gemma4,pass4.query4,0,6,0.3499999999999999,row_count_mismatch,1266
+gemma4-26b-sqlbench:latest,Gemma 4 26B,gemma4,pass4.query5,0,6,0.7786666666666666,same_count_wrong_values,896
+gemma4-26b-sqlbench:latest,Gemma 4 26B,gemma4,pass4.query6,0,6,0.6900000000000001,same_count_wrong_values,917
+gemma4-26b-sqlbench:latest,Gemma 4 26B,gemma4,pass4.query7,0,6,0.0,row_count_mismatch,996
+gemma4-26b-sqlbench:latest,Gemma 4 26B,gemma4,pass4.query8,0,6,0.6421428571428572,row_count_mismatch,1017
+gemma4-26b-sqlbench:latest,Gemma 4 26B,gemma4,pass4.query9,0,6,0.5083333333333333,same_count_wrong_values,784
+gemma4-26b-sqlbench:latest,Gemma 4 26B,gemma4,pass4.query10,0,6,1.0,same_count_wrong_values,533
+gemma4-26b-sqlbench:latest,Gemma 4 26B,gemma4,pass5.query1,0,6,0.7949999999999999,same_count_wrong_values,707
+gemma4-26b-sqlbench:latest,Gemma 4 26B,gemma4,pass5.query2,0,6,0.6022222222222222,row_count_mismatch,1175
+gemma4-26b-sqlbench:latest,Gemma 4 26B,gemma4,pass5.query3,0,6,0.5111111111111111,same_count_wrong_values,1036
+gemma4-26b-sqlbench:latest,Gemma 4 26B,gemma4,pass5.query4,0,6,0.6999999999999998,same_count_wrong_values,950
+gemma4-26b-sqlbench:latest,Gemma 4 26B,gemma4,pass5.query5,0,6,0.29027777777777775,row_count_mismatch,1134
+gemma4-26b-sqlbench:latest,Gemma 4 26B,gemma4,pass5.query6,0,6,0.63,same_count_wrong_values,675
+gemma4-26b-sqlbench:latest,Gemma 4 26B,gemma4,pass5.query7,0,6,0.7999999999999999,same_count_wrong_values,833
+gemma4-26b-sqlbench:latest,Gemma 4 26B,gemma4,pass5.query8,0,6,0.8039999999999999,same_count_wrong_values,942
+gemma4-26b-sqlbench:latest,Gemma 4 26B,gemma4,pass5.query9,0,6,0.3265873015873016,row_count_mismatch,1134
+gemma4-26b-sqlbench:latest,Gemma 4 26B,gemma4,pass5.query10,0,6,0.56,same_count_wrong_values,952
+gemma4-31b-sqlbench:latest,Gemma 4 31B,gemma4,pass1.query1,6,6,1.0,none,307
+gemma4-31b-sqlbench:latest,Gemma 4 31B,gemma4,pass1.query2,0,6,0.9259259259259259,order_only,1007
+gemma4-31b-sqlbench:latest,Gemma 4 31B,gemma4,pass1.query3,6,6,1.0,none,307
+gemma4-31b-sqlbench:latest,Gemma 4 31B,gemma4,pass1.query4,5,6,0.995,same_count_wrong_values,425
+gemma4-31b-sqlbench:latest,Gemma 4 31B,gemma4,pass1.query5,5,6,0.9770833333333333,row_count_mismatch,420
+gemma4-31b-sqlbench:latest,Gemma 4 31B,gemma4,pass1.query6,0,6,0.8875000000000001,same_count_wrong_values,675
+gemma4-31b-sqlbench:latest,Gemma 4 31B,gemma4,pass1.query7,0,6,0.7833333333333333,same_count_wrong_values,916
+gemma4-31b-sqlbench:latest,Gemma 4 31B,gemma4,pass1.query8,0,6,0.8250000000000001,same_count_wrong_values,904
+gemma4-31b-sqlbench:latest,Gemma 4 31B,gemma4,pass1.query9,0,6,0.9,same_count_wrong_values,792
+gemma4-31b-sqlbench:latest,Gemma 4 31B,gemma4,pass1.query10,6,6,1.0,none,307
+gemma4-31b-sqlbench:latest,Gemma 4 31B,gemma4,pass2.query1,0,6,0.8333333333333335,row_count_mismatch,647
+gemma4-31b-sqlbench:latest,Gemma 4 31B,gemma4,pass2.query2,6,6,1.0,none,307
+gemma4-31b-sqlbench:latest,Gemma 4 31B,gemma4,pass2.query3,6,6,1.0,none,307
+gemma4-31b-sqlbench:latest,Gemma 4 31B,gemma4,pass2.query4,0,6,0.8833333333333333,same_count_wrong_values,660
+gemma4-31b-sqlbench:latest,Gemma 4 31B,gemma4,pass2.query5,0,6,0.7916666666666666,same_count_wrong_values,784
+gemma4-31b-sqlbench:latest,Gemma 4 31B,gemma4,pass2.query6,6,6,1.0,none,307
+gemma4-31b-sqlbench:latest,Gemma 4 31B,gemma4,pass2.query7,0,6,0.8799999999999999,same_count_wrong_values,675
+gemma4-31b-sqlbench:latest,Gemma 4 31B,gemma4,pass2.query8,0,6,0.8722222222222221,same_count_wrong_values,784
+gemma4-31b-sqlbench:latest,Gemma 4 31B,gemma4,pass2.query9,0,6,0.8319444444444444,same_count_wrong_values,792
+gemma4-31b-sqlbench:latest,Gemma 4 31B,gemma4,pass2.query10,6,6,1.0,none,307
+gemma4-31b-sqlbench:latest,Gemma 4 31B,gemma4,pass3.query1,6,6,1.0,none,307
+gemma4-31b-sqlbench:latest,Gemma 4 31B,gemma4,pass3.query2,0,6,0.8150000000000001,row_count_mismatch,867
+gemma4-31b-sqlbench:latest,Gemma 4 31B,gemma4,pass3.query3,0,6,0.94,same_count_wrong_values,675
+gemma4-31b-sqlbench:latest,Gemma 4 31B,gemma4,pass3.query4,0,6,0.8500000000000001,same_count_wrong_values,666
+gemma4-31b-sqlbench:latest,Gemma 4 31B,gemma4,pass3.query5,6,6,1.0,none,307
+gemma4-31b-sqlbench:latest,Gemma 4 31B,gemma4,pass3.query6,0,6,0.9,same_count_wrong_values,792
+gemma4-31b-sqlbench:latest,Gemma 4 31B,gemma4,pass3.query7,6,6,1.0,none,307
+gemma4-31b-sqlbench:latest,Gemma 4 31B,gemma4,pass3.query8,0,6,0.7000000000000001,row_count_mismatch,979
+gemma4-31b-sqlbench:latest,Gemma 4 31B,gemma4,pass3.query9,0,6,0.725,same_count_wrong_values,769
+gemma4-31b-sqlbench:latest,Gemma 4 31B,gemma4,pass3.query10,0,6,0.8500000000000001,same_count_wrong_values,675
+gemma4-31b-sqlbench:latest,Gemma 4 31B,gemma4,pass4.query1,0,6,0.9624999999999999,same_count_wrong_values,543
+gemma4-31b-sqlbench:latest,Gemma 4 31B,gemma4,pass4.query2,0,6,0.625,row_count_mismatch,994
+gemma4-31b-sqlbench:latest,Gemma 4 31B,gemma4,pass4.query3,0,6,0.75,row_count_mismatch,985
+gemma4-31b-sqlbench:latest,Gemma 4 31B,gemma4,pass4.query4,0,6,0.6,row_count_mismatch,1134
+gemma4-31b-sqlbench:latest,Gemma 4 31B,gemma4,pass4.query5,0,6,0.9460000000000001,same_count_wrong_values,655
+gemma4-31b-sqlbench:latest,Gemma 4 31B,gemma4,pass4.query6,0,6,0.765,same_count_wrong_values,917
+gemma4-31b-sqlbench:latest,Gemma 4 31B,gemma4,pass4.query7,0,6,0.0,row_count_mismatch,996
+gemma4-31b-sqlbench:latest,Gemma 4 31B,gemma4,pass4.query8,0,6,0.7232142857142857,row_count_mismatch,882
+gemma4-31b-sqlbench:latest,Gemma 4 31B,gemma4,pass4.query9,0,6,0.5,same_count_wrong_values,784
+gemma4-31b-sqlbench:latest,Gemma 4 31B,gemma4,pass4.query10,6,6,1.0,none,307
+gemma4-31b-sqlbench:latest,Gemma 4 31B,gemma4,pass5.query1,0,6,0.7999999999999999,same_count_wrong_values,707
+gemma4-31b-sqlbench:latest,Gemma 4 31B,gemma4,pass5.query2,0,6,0.7388888888888889,row_count_mismatch,908
+gemma4-31b-sqlbench:latest,Gemma 4 31B,gemma4,pass5.query3,0,6,0.736875,row_count_mismatch,999
+gemma4-31b-sqlbench:latest,Gemma 4 31B,gemma4,pass5.query4,0,6,0.6999999999999998,same_count_wrong_values,950
+gemma4-31b-sqlbench:latest,Gemma 4 31B,gemma4,pass5.query5,0,6,0.6437499999999999,same_count_wrong_values,901
+gemma4-31b-sqlbench:latest,Gemma 4 31B,gemma4,pass5.query6,0,6,0.6999999999999998,same_count_wrong_values,675
+gemma4-31b-sqlbench:latest,Gemma 4 31B,gemma4,pass5.query7,0,6,0.8000000000000002,same_count_wrong_values,833
+gemma4-31b-sqlbench:latest,Gemma 4 31B,gemma4,pass5.query8,0,6,0.816,same_count_wrong_values,942
+gemma4-31b-sqlbench:latest,Gemma 4 31B,gemma4,pass5.query9,0,6,0.75,row_count_mismatch,890
+gemma4-31b-sqlbench:latest,Gemma 4 31B,gemma4,pass5.query10,0,6,0.5825,same_count_wrong_values,952
+llama3-70b-sqlbench:latest,Llama 3 70B,llama,pass1.query1,0,6,0.9,row_count_mismatch,887
+llama3-70b-sqlbench:latest,Llama 3 70B,llama,pass1.query2,0,6,0.7962962962962963,row_count_mismatch,911
+llama3-70b-sqlbench:latest,Llama 3 70B,llama,pass1.query3,0,6,0.9750000000000001,same_count_wrong_values,917
+llama3-70b-sqlbench:latest,Llama 3 70B,llama,pass1.query4,0,6,0.8322222222222223,row_count_mismatch,659
+llama3-70b-sqlbench:latest,Llama 3 70B,llama,pass1.query5,0,6,0.7928571428571428,row_count_mismatch,775
+llama3-70b-sqlbench:latest,Llama 3 70B,llama,pass1.query6,0,6,0.90625,same_count_wrong_values,784
+llama3-70b-sqlbench:latest,Llama 3 70B,llama,pass1.query7,0,6,0.45833333333333326,row_count_mismatch,1035
+llama3-70b-sqlbench:latest,Llama 3 70B,llama,pass1.query8,0,6,0.7000000000000001,same_count_wrong_values,1013
+llama3-70b-sqlbench:latest,Llama 3 70B,llama,pass1.query9,0,6,0.7833333333333333,same_count_wrong_values,901
+llama3-70b-sqlbench:latest,Llama 3 70B,llama,pass1.query10,6,6,1.0,none,307
+llama3-70b-sqlbench:latest,Llama 3 70B,llama,pass2.query1,0,6,0.7444444444444445,row_count_mismatch,777
+llama3-70b-sqlbench:latest,Llama 3 70B,llama,pass2.query2,0,6,1.0,same_count_wrong_values,759
+llama3-70b-sqlbench:latest,Llama 3 70B,llama,pass2.query3,0,6,0.3042929292929293,row_count_mismatch,1068
+llama3-70b-sqlbench:latest,Llama 3 70B,llama,pass2.query4,0,6,0.5416666666666666,same_count_wrong_values,1010
+llama3-70b-sqlbench:latest,Llama 3 70B,llama,pass2.query5,0,6,0.5944444444444444,same_count_wrong_values,1025
+llama3-70b-sqlbench:latest,Llama 3 70B,llama,pass2.query6,0,6,0.6097222222222222,row_count_mismatch,1035
+llama3-70b-sqlbench:latest,Llama 3 70B,llama,pass2.query7,0,6,0.735,same_count_wrong_values,893
+llama3-70b-sqlbench:latest,Llama 3 70B,llama,pass2.query8,0,6,0.7766666666666667,row_count_mismatch,900
+llama3-70b-sqlbench:latest,Llama 3 70B,llama,pass2.query9,0,6,0.425,row_count_mismatch,1020
+llama3-70b-sqlbench:latest,Llama 3 70B,llama,pass2.query10,0,6,0.7716666666666668,row_count_mismatch,792
+llama3-70b-sqlbench:latest,Llama 3 70B,llama,pass3.query1,0,6,1.0,same_count_wrong_values,642
+llama3-70b-sqlbench:latest,Llama 3 70B,llama,pass3.query2,0,6,0.5152083333333334,row_count_mismatch,1020
+llama3-70b-sqlbench:latest,Llama 3 70B,llama,pass3.query3,0,6,0.7783333333333334,row_count_mismatch,791
+llama3-70b-sqlbench:latest,Llama 3 70B,llama,pass3.query4,0,6,0.25555555555555554,row_count_mismatch,894
+llama3-70b-sqlbench:latest,Llama 3 70B,llama,pass3.query5,0,6,0.757936507936508,row_count_mismatch,768
+llama3-70b-sqlbench:latest,Llama 3 70B,llama,pass3.query6,0,6,0.7966666666666667,row_count_mismatch,776
+llama3-70b-sqlbench:latest,Llama 3 70B,llama,pass3.query7,0,6,0.0,same_count_wrong_values,886
+llama3-70b-sqlbench:latest,Llama 3 70B,llama,pass3.query8,0,6,0.525,row_count_mismatch,1132
+llama3-70b-sqlbench:latest,Llama 3 70B,llama,pass3.query9,0,6,0.7177083333333334,same_count_wrong_values,1010
+llama3-70b-sqlbench:latest,Llama 3 70B,llama,pass3.query10,0,6,0.8333333333333334,same_count_wrong_values,893
+llama3-70b-sqlbench:latest,Llama 3 70B,llama,pass4.query1,0,6,0.90625,same_count_wrong_values,784
+llama3-70b-sqlbench:latest,Llama 3 70B,llama,pass4.query2,0,6,0.41500000000000004,row_count_mismatch,1015
+llama3-70b-sqlbench:latest,Llama 3 70B,llama,pass4.query3,0,6,0.32125000000000004,row_count_mismatch,1006
+llama3-70b-sqlbench:latest,Llama 3 70B,llama,pass4.query4,0,6,0.35000000000000003,row_count_mismatch,1152
+llama3-70b-sqlbench:latest,Llama 3 70B,llama,pass4.query5,0,6,0.644,same_count_wrong_values,1005
+llama3-70b-sqlbench:latest,Llama 3 70B,llama,pass4.query6,0,6,0.5883333333333334,same_count_wrong_values,917
+llama3-70b-sqlbench:latest,Llama 3 70B,llama,pass4.query7,0,6,0.0,same_count_wrong_values,1007
+llama3-70b-sqlbench:latest,Llama 3 70B,llama,pass4.query8,0,6,0.5363095238095238,row_count_mismatch,1035
+llama3-70b-sqlbench:latest,Llama 3 70B,llama,pass4.query9,0,6,0.34375,row_count_mismatch,903
+llama3-70b-sqlbench:latest,Llama 3 70B,llama,pass4.query10,0,6,1.0,same_count_wrong_values,642
+llama3-70b-sqlbench:latest,Llama 3 70B,llama,pass5.query1,0,6,0.6999999999999998,same_count_wrong_values,816
+llama3-70b-sqlbench:latest,Llama 3 70B,llama,pass5.query2,0,6,0.6579365079365079,row_count_mismatch,926
+llama3-70b-sqlbench:latest,Llama 3 70B,llama,pass5.query3,0,6,0.4633333333333333,row_count_mismatch,1020
+llama3-70b-sqlbench:latest,Llama 3 70B,llama,pass5.query4,0,6,0.6708333333333333,same_count_wrong_values,1059
+llama3-70b-sqlbench:latest,Llama 3 70B,llama,pass5.query5,0,6,0.40625,row_count_mismatch,1020
+llama3-70b-sqlbench:latest,Llama 3 70B,llama,pass5.query6,0,6,0.5833333333333334,row_count_mismatch,659
+llama3-70b-sqlbench:latest,Llama 3 70B,llama,pass5.query7,0,6,0.6875,same_count_wrong_values,1051
+llama3-70b-sqlbench:latest,Llama 3 70B,llama,pass5.query8,0,6,0.6646666666666667,row_count_mismatch,926
+llama3-70b-sqlbench:latest,Llama 3 70B,llama,pass5.query9,0,6,0.345,row_count_mismatch,1020
+llama3-70b-sqlbench:latest,Llama 3 70B,llama,pass5.query10,0,6,0.47000000000000003,same_count_wrong_values,1061
+mixtral-8x22b-sqlbench:latest,Mixtral 8x22B,llama,pass1.query1,0,6,0.8875000000000001,same_count_wrong_values,905
+mixtral-8x22b-sqlbench:latest,Mixtral 8x22B,llama,pass1.query2,0,6,0.7416666666666667,same_count_wrong_values,1038
+mixtral-8x22b-sqlbench:latest,Mixtral 8x22B,llama,pass1.query3,5,6,1.0,same_count_wrong_values,427
+mixtral-8x22b-sqlbench:latest,Mixtral 8x22B,llama,pass1.query4,0,6,0.8422222222222223,row_count_mismatch,661
+mixtral-8x22b-sqlbench:latest,Mixtral 8x22B,llama,pass1.query5,0,6,0.6761904761904761,row_count_mismatch,912
+mixtral-8x22b-sqlbench:latest,Mixtral 8x22B,llama,pass1.query6,0,6,0.65625,row_count_mismatch,770
+mixtral-8x22b-sqlbench:latest,Mixtral 8x22B,llama,pass1.query7,0,6,0.5611111111111111,same_count_wrong_values,1027
+mixtral-8x22b-sqlbench:latest,Mixtral 8x22B,llama,pass1.query8,0,6,0.8250000000000001,same_count_wrong_values,1015
+mixtral-8x22b-sqlbench:latest,Mixtral 8x22B,llama,pass1.query9,0,6,0.7777777777777777,same_count_wrong_values,903
+mixtral-8x22b-sqlbench:latest,Mixtral 8x22B,llama,pass1.query10,0,6,1.0,same_count_wrong_values,782
+mixtral-8x22b-sqlbench:latest,Mixtral 8x22B,llama,pass2.query1,0,6,0.7462962962962963,row_count_mismatch,779
+mixtral-8x22b-sqlbench:latest,Mixtral 8x22B,llama,pass2.query2,0,6,1.0,same_count_wrong_values,761
+mixtral-8x22b-sqlbench:latest,Mixtral 8x22B,llama,pass2.query3,0,6,0.7016666666666667,same_count_wrong_values,1063
+mixtral-8x22b-sqlbench:latest,Mixtral 8x22B,llama,pass2.query4,0,6,0.4677777777777778,row_count_mismatch,1022
+mixtral-8x22b-sqlbench:latest,Mixtral 8x22B,llama,pass2.query5,0,6,0.525,same_count_wrong_values,1027
+mixtral-8x22b-sqlbench:latest,Mixtral 8x22B,llama,pass2.query6,2,6,0.9500000000000001,same_count_wrong_values,427
+mixtral-8x22b-sqlbench:latest,Mixtral 8x22B,llama,pass2.query7,0,6,0.6083333333333333,same_count_wrong_values,895
+mixtral-8x22b-sqlbench:latest,Mixtral 8x22B,llama,pass2.query8,0,6,0.7027777777777778,same_count_wrong_values,1027
+mixtral-8x22b-sqlbench:latest,Mixtral 8x22B,llama,pass2.query9,0,6,0.36817460317460315,row_count_mismatch,1022
+mixtral-8x22b-sqlbench:latest,Mixtral 8x22B,llama,pass2.query10,0,6,0.8272222222222223,same_count_wrong_values,919
+mixtral-8x22b-sqlbench:latest,Mixtral 8x22B,llama,pass3.query1,5,6,1.0,same_count_wrong_values,427
+mixtral-8x22b-sqlbench:latest,Mixtral 8x22B,llama,pass3.query2,0,6,0.6058333333333333,same_count_wrong_values,1012
+mixtral-8x22b-sqlbench:latest,Mixtral 8x22B,llama,pass3.query3,0,6,0.65,same_count_wrong_values,1027
+mixtral-8x22b-sqlbench:latest,Mixtral 8x22B,llama,pass3.query4,0,6,0.4333333333333333,row_count_mismatch,896
+mixtral-8x22b-sqlbench:latest,Mixtral 8x22B,llama,pass3.query5,0,6,0.8916666666666667,row_count_mismatch,661
+mixtral-8x22b-sqlbench:latest,Mixtral 8x22B,llama,pass3.query6,0,6,0.8033333333333333,same_count_wrong_values,903
+mixtral-8x22b-sqlbench:latest,Mixtral 8x22B,llama,pass3.query7,0,6,0.0,row_count_mismatch,763
+mixtral-8x22b-sqlbench:latest,Mixtral 8x22B,llama,pass3.query8,0,6,0.45166666666666666,row_count_mismatch,1134
+mixtral-8x22b-sqlbench:latest,Mixtral 8x22B,llama,pass3.query9,0,6,0.8125,same_count_wrong_values,1012
+mixtral-8x22b-sqlbench:latest,Mixtral 8x22B,llama,pass3.query10,0,6,0.6763888888888889,same_count_wrong_values,895
+mixtral-8x22b-sqlbench:latest,Mixtral 8x22B,llama,pass4.query1,0,6,0.86875,same_count_wrong_values,786
+mixtral-8x22b-sqlbench:latest,Mixtral 8x22B,llama,pass4.query2,0,6,0.5108333333333334,row_count_mismatch,1017
+mixtral-8x22b-sqlbench:latest,Mixtral 8x22B,llama,pass4.query3,0,6,0.3632142857142857,row_count_mismatch,1008
+mixtral-8x22b-sqlbench:latest,Mixtral 8x22B,llama,pass4.query4,0,6,0.48333333333333334,row_count_mismatch,1022
+mixtral-8x22b-sqlbench:latest,Mixtral 8x22B,llama,pass4.query5,0,6,0.5766666666666667,row_count_mismatch,1017
+mixtral-8x22b-sqlbench:latest,Mixtral 8x22B,llama,pass4.query6,0,6,0.5583333333333335,row_count_mismatch,903
+mixtral-8x22b-sqlbench:latest,Mixtral 8x22B,llama,pass4.query7,0,6,0.0,same_count_wrong_values,1009
+mixtral-8x22b-sqlbench:latest,Mixtral 8x22B,llama,pass4.query8,0,6,0.5946428571428571,row_count_mismatch,902
+mixtral-8x22b-sqlbench:latest,Mixtral 8x22B,llama,pass4.query9,0,6,0.49513888888888885,row_count_mismatch,770
+mixtral-8x22b-sqlbench:latest,Mixtral 8x22B,llama,pass4.query10,0,6,1.0,same_count_wrong_values,644
+mixtral-8x22b-sqlbench:latest,Mixtral 8x22B,llama,pass5.query1,0,6,0.6375000000000001,row_count_mismatch,693
+mixtral-8x22b-sqlbench:latest,Mixtral 8x22B,llama,pass5.query2,0,6,0.5588888888888889,row_count_mismatch,1063
+mixtral-8x22b-sqlbench:latest,Mixtral 8x22B,llama,pass5.query3,0,6,0.5826388888888889,row_count_mismatch,1022
+mixtral-8x22b-sqlbench:latest,Mixtral 8x22B,llama,pass5.query4,0,6,0.6999999999999998,same_count_wrong_values,1061
+mixtral-8x22b-sqlbench:latest,Mixtral 8x22B,llama,pass5.query5,0,6,0.2701388888888889,row_count_mismatch,1022
+mixtral-8x22b-sqlbench:latest,Mixtral 8x22B,llama,pass5.query6,0,6,0.5700000000000001,row_count_mismatch,770
+mixtral-8x22b-sqlbench:latest,Mixtral 8x22B,llama,pass5.query7,0,6,0.7833333333333333,same_count_wrong_values,944
+mixtral-8x22b-sqlbench:latest,Mixtral 8x22B,llama,pass5.query8,0,6,0.7280000000000001,same_count_wrong_values,944
+mixtral-8x22b-sqlbench:latest,Mixtral 8x22B,llama,pass5.query9,0,6,0.2611111111111111,row_count_mismatch,1022
+mixtral-8x22b-sqlbench:latest,Mixtral 8x22B,llama,pass5.query10,0,6,0.5100000000000001,row_count_mismatch,938
+phi4-mini-sqlbench:latest,Phi-4 Mini,phi3,pass1.query1,0,6,0.9,row_count_mismatch,886
+phi4-mini-sqlbench:latest,Phi-4 Mini,phi3,pass1.query2,0,6,0.5355324074074074,row_count_mismatch,1177
+phi4-mini-sqlbench:latest,Phi-4 Mini,phi3,pass1.query3,0,6,0.887037037037037,same_count_wrong_values,1048
+phi4-mini-sqlbench:latest,Phi-4 Mini,phi3,pass1.query4,0,6,0.6071428571428571,row_count_mismatch,902
+phi4-mini-sqlbench:latest,Phi-4 Mini,phi3,pass1.query5,0,6,0.7714285714285715,row_count_mismatch,774
+phi4-mini-sqlbench:latest,Phi-4 Mini,phi3,pass1.query6,0,6,0.2895833333333333,row_count_mismatch,902
+phi4-mini-sqlbench:latest,Phi-4 Mini,phi3,pass1.query7,0,6,0.5499999999999999,same_count_wrong_values,1024
+phi4-mini-sqlbench:latest,Phi-4 Mini,phi3,pass1.query8,0,6,0.41944444444444445,row_count_mismatch,1131
+phi4-mini-sqlbench:latest,Phi-4 Mini,phi3,pass1.query9,0,6,0.65,row_count_mismatch,775
+phi4-mini-sqlbench:latest,Phi-4 Mini,phi3,pass1.query10,0,6,0.9074074074074074,row_count_mismatch,654
+phi4-mini-sqlbench:latest,Phi-4 Mini,phi3,pass2.query1,0,6,0.7907407407407407,row_count_mismatch,776
+phi4-mini-sqlbench:latest,Phi-4 Mini,phi3,pass2.query2,0,6,0.9814814814814815,same_count_wrong_values,758
+phi4-mini-sqlbench:latest,Phi-4 Mini,phi3,pass2.query3,0,6,0.19166666666666665,row_count_mismatch,1067
+phi4-mini-sqlbench:latest,Phi-4 Mini,phi3,pass2.query4,0,6,0.2503588516746411,row_count_mismatch,1019
+phi4-mini-sqlbench:latest,Phi-4 Mini,phi3,pass2.query5,0,6,0.385,row_count_mismatch,1034
+phi4-mini-sqlbench:latest,Phi-4 Mini,phi3,pass2.query6,0,6,0.6222222222222221,same_count_wrong_values,1024
+phi4-mini-sqlbench:latest,Phi-4 Mini,phi3,pass2.query7,0,6,0.5,same_count_wrong_values,1027
+phi4-mini-sqlbench:latest,Phi-4 Mini,phi3,pass2.query8,0,6,0.4791666666666667,row_count_mismatch,1034
+phi4-mini-sqlbench:latest,Phi-4 Mini,phi3,pass2.query9,0,6,0.19444444444444442,row_count_mismatch,1019
+phi4-mini-sqlbench:latest,Phi-4 Mini,phi3,pass2.query10,0,6,0.7166666666666668,row_count_mismatch,791
+phi4-mini-sqlbench:latest,Phi-4 Mini,phi3,pass3.query1,0,6,1.0,same_count_wrong_values,641
+phi4-mini-sqlbench:latest,Phi-4 Mini,phi3,pass3.query2,0,6,0.40562499999999996,row_count_mismatch,1019
+phi4-mini-sqlbench:latest,Phi-4 Mini,phi3,pass3.query3,0,6,0.7200000000000001,same_count_wrong_values,1024
+phi4-mini-sqlbench:latest,Phi-4 Mini,phi3,pass3.query4,0,6,0.13,same_count_wrong_values,1018
+phi4-mini-sqlbench:latest,Phi-4 Mini,phi3,pass3.query5,0,6,0.7044444444444444,row_count_mismatch,899
+phi4-mini-sqlbench:latest,Phi-4 Mini,phi3,pass3.query6,0,6,0.48194444444444445,row_count_mismatch,1019
+phi4-mini-sqlbench:latest,Phi-4 Mini,phi3,pass3.query7,0,6,0.0,same_count_wrong_values,885
+phi4-mini-sqlbench:latest,Phi-4 Mini,phi3,pass3.query8,0,6,0.19305555555555554,row_count_mismatch,1131
+phi4-mini-sqlbench:latest,Phi-4 Mini,phi3,pass3.query9,0,6,0.4976190476190476,row_count_mismatch,1019
+phi4-mini-sqlbench:latest,Phi-4 Mini,phi3,pass3.query10,0,6,0.5616666666666666,row_count_mismatch,767
+phi4-mini-sqlbench:latest,Phi-4 Mini,phi3,pass4.query1,0,6,0.8624999999999999,same_count_wrong_values,783
+phi4-mini-sqlbench:latest,Phi-4 Mini,phi3,pass4.query2,0,6,0.20416666666666664,same_count_wrong_values,1139
+phi4-mini-sqlbench:latest,Phi-4 Mini,phi3,pass4.query3,0,6,0.06845238095238095,row_count_mismatch,1005
+phi4-mini-sqlbench:latest,Phi-4 Mini,phi3,pass4.query4,0,6,0.05833333333333333,row_count_mismatch,1151
+phi4-mini-sqlbench:latest,Phi-4 Mini,phi3,pass4.query5,0,6,0.7226666666666667,same_count_wrong_values,1004
+phi4-mini-sqlbench:latest,Phi-4 Mini,phi3,pass4.query6,0,6,0.6083333333333333,row_count_mismatch,791
+phi4-mini-sqlbench:latest,Phi-4 Mini,phi3,pass4.query7,0,6,0.0,same_count_wrong_values,1006
+phi4-mini-sqlbench:latest,Phi-4 Mini,phi3,pass4.query8,0,6,0.0,row_count_mismatch,1034
+phi4-mini-sqlbench:latest,Phi-4 Mini,phi3,pass4.query9,0,6,0.49583333333333335,same_count_wrong_values,892
+phi4-mini-sqlbench:latest,Phi-4 Mini,phi3,pass4.query10,0,6,0.8703703703703703,row_count_mismatch,516
+phi4-mini-sqlbench:latest,Phi-4 Mini,phi3,pass5.query1,0,6,0.6999999999999998,same_count_wrong_values,815
+phi4-mini-sqlbench:latest,Phi-4 Mini,phi3,pass5.query2,0,6,0.5674074074074075,row_count_mismatch,925
+phi4-mini-sqlbench:latest,Phi-4 Mini,phi3,pass5.query3,0,6,0.25125000000000003,row_count_mismatch,1019
+phi4-mini-sqlbench:latest,Phi-4 Mini,phi3,pass5.query4,0,6,0.6999999999999998,same_count_wrong_values,1058
+phi4-mini-sqlbench:latest,Phi-4 Mini,phi3,pass5.query5,0,6,0.34791666666666665,row_count_mismatch,1019
+phi4-mini-sqlbench:latest,Phi-4 Mini,phi3,pass5.query6,0,6,0.4833333333333334,row_count_mismatch,767
+phi4-mini-sqlbench:latest,Phi-4 Mini,phi3,pass5.query7,0,6,0.19166666666666665,row_count_mismatch,1060
+phi4-mini-sqlbench:latest,Phi-4 Mini,phi3,pass5.query8,0,6,0.6433333333333334,same_count_wrong_values,941
+phi4-mini-sqlbench:latest,Phi-4 Mini,phi3,pass5.query9,0,6,0.03611111111111111,row_count_mismatch,1019
+phi4-mini-sqlbench:latest,Phi-4 Mini,phi3,pass5.query10,0,6,0.4366666666666667,row_count_mismatch,935
+qwen2.5-72b-sqlbench:latest,Qwen 2.5 72B,qwen2,pass1.query1,0,6,0.8833333333333333,row_count_mismatch,893
+qwen2.5-72b-sqlbench:latest,Qwen 2.5 72B,qwen2,pass1.query2,0,6,0.6,row_count_mismatch,1026
+qwen2.5-72b-sqlbench:latest,Qwen 2.5 72B,qwen2,pass1.query3,6,6,1.0,none,308
+qwen2.5-72b-sqlbench:latest,Qwen 2.5 72B,qwen2,pass1.query4,4,6,0.9899999999999999,same_count_wrong_values,426
+qwen2.5-72b-sqlbench:latest,Qwen 2.5 72B,qwen2,pass1.query5,0,6,0.7455357142857143,row_count_mismatch,890
+qwen2.5-72b-sqlbench:latest,Qwen 2.5 72B,qwen2,pass1.query6,0,6,0.86875,same_count_wrong_values,676
+qwen2.5-72b-sqlbench:latest,Qwen 2.5 72B,qwen2,pass1.query7,0,6,0.425,row_count_mismatch,1150
+qwen2.5-72b-sqlbench:latest,Qwen 2.5 72B,qwen2,pass1.query8,0,6,0.8500000000000001,same_count_wrong_values,905
+qwen2.5-72b-sqlbench:latest,Qwen 2.5 72B,qwen2,pass1.query9,0,6,0.8666666666666666,same_count_wrong_values,793
+qwen2.5-72b-sqlbench:latest,Qwen 2.5 72B,qwen2,pass1.query10,6,6,1.0,none,308
+qwen2.5-72b-sqlbench:latest,Qwen 2.5 72B,qwen2,pass2.query1,0,6,0.6722222222222222,row_count_mismatch,892
+qwen2.5-72b-sqlbench:latest,Qwen 2.5 72B,qwen2,pass2.query2,6,6,1.0,none,308
+qwen2.5-72b-sqlbench:latest,Qwen 2.5 72B,qwen2,pass2.query3,0,6,0.9816666666666668,same_count_wrong_values,709
+qwen2.5-72b-sqlbench:latest,Qwen 2.5 72B,qwen2,pass2.query4,0,6,0.8069444444444444,row_count_mismatch,868
+qwen2.5-72b-sqlbench:latest,Qwen 2.5 72B,qwen2,pass2.query5,0,6,0.6333333333333333,same_count_wrong_values,917
+qwen2.5-72b-sqlbench:latest,Qwen 2.5 72B,qwen2,pass2.query6,0,6,0.6999999999999998,row_count_mismatch,1018
+qwen2.5-72b-sqlbench:latest,Qwen 2.5 72B,qwen2,pass2.query7,0,6,0.7399999999999999,same_count_wrong_values,785
+qwen2.5-72b-sqlbench:latest,Qwen 2.5 72B,qwen2,pass2.query8,0,6,0.8666666666666667,same_count_wrong_values,808
+qwen2.5-72b-sqlbench:latest,Qwen 2.5 72B,qwen2,pass2.query9,0,6,0.33666666666666667,row_count_mismatch,1135
+qwen2.5-72b-sqlbench:latest,Qwen 2.5 72B,qwen2,pass2.query10,0,6,0.9333333333333332,same_count_wrong_values,677
+qwen2.5-72b-sqlbench:latest,Qwen 2.5 72B,qwen2,pass3.query1,2,6,1.0,same_count_wrong_values,426
+qwen2.5-72b-sqlbench:latest,Qwen 2.5 72B,qwen2,pass3.query2,0,6,0.7062499999999999,same_count_wrong_values,902
+qwen2.5-72b-sqlbench:latest,Qwen 2.5 72B,qwen2,pass3.query3,0,6,0.9249999999999999,same_count_wrong_values,676
+qwen2.5-72b-sqlbench:latest,Qwen 2.5 72B,qwen2,pass3.query4,0,6,0.425,row_count_mismatch,1009
+qwen2.5-72b-sqlbench:latest,Qwen 2.5 72B,qwen2,pass3.query5,0,6,0.9766666666666666,same_count_wrong_values,676
+qwen2.5-72b-sqlbench:latest,Qwen 2.5 72B,qwen2,pass3.query6,0,6,0.735,row_count_mismatch,891
+qwen2.5-72b-sqlbench:latest,Qwen 2.5 72B,qwen2,pass3.query7,0,6,0.0,row_count_mismatch,876
+qwen2.5-72b-sqlbench:latest,Qwen 2.5 72B,qwen2,pass3.query8,0,6,0.43888888888888883,same_count_wrong_values,1149
+qwen2.5-72b-sqlbench:latest,Qwen 2.5 72B,qwen2,pass3.query9,0,6,0.9250000000000002,same_count_wrong_values,661
+qwen2.5-72b-sqlbench:latest,Qwen 2.5 72B,qwen2,pass3.query10,0,6,0.7986111111111112,same_count_wrong_values,785
+qwen2.5-72b-sqlbench:latest,Qwen 2.5 72B,qwen2,pass4.query1,0,6,0.85,same_count_wrong_values,676
+qwen2.5-72b-sqlbench:latest,Qwen 2.5 72B,qwen2,pass4.query2,0,6,0.33749999999999997,row_count_mismatch,1130
+qwen2.5-72b-sqlbench:latest,Qwen 2.5 72B,qwen2,pass4.query3,0,6,0.39375,row_count_mismatch,1121
+qwen2.5-72b-sqlbench:latest,Qwen 2.5 72B,qwen2,pass4.query4,0,6,0.3916666666666666,row_count_mismatch,1267
+qwen2.5-72b-sqlbench:latest,Qwen 2.5 72B,qwen2,pass4.query5,0,6,0.7080000000000001,row_count_mismatch,995
+qwen2.5-72b-sqlbench:latest,Qwen 2.5 72B,qwen2,pass4.query6,0,6,0.625,row_count_mismatch,1016
+qwen2.5-72b-sqlbench:latest,Qwen 2.5 72B,qwen2,pass4.query7,0,6,0.0,row_count_mismatch,997
+qwen2.5-72b-sqlbench:latest,Qwen 2.5 72B,qwen2,pass4.query8,0,6,0.5571031746031746,row_count_mismatch,1150
+qwen2.5-72b-sqlbench:latest,Qwen 2.5 72B,qwen2,pass4.query9,0,6,0.4458333333333333,row_count_mismatch,1018
+qwen2.5-72b-sqlbench:latest,Qwen 2.5 72B,qwen2,pass4.query10,3,6,1.0,same_count_wrong_values,426
+qwen2.5-72b-sqlbench:latest,Qwen 2.5 72B,qwen2,pass5.query1,0,6,0.7050000000000001,same_count_wrong_values,708
+qwen2.5-72b-sqlbench:latest,Qwen 2.5 72B,qwen2,pass5.query2,0,6,0.5922222222222223,row_count_mismatch,1176
+qwen2.5-72b-sqlbench:latest,Qwen 2.5 72B,qwen2,pass5.query3,0,6,0.345,same_count_wrong_values,1037
+qwen2.5-72b-sqlbench:latest,Qwen 2.5 72B,qwen2,pass5.query4,0,6,0.6999999999999998,same_count_wrong_values,951
+qwen2.5-72b-sqlbench:latest,Qwen 2.5 72B,qwen2,pass5.query5,0,6,0.4749999999999999,row_count_mismatch,1135
+qwen2.5-72b-sqlbench:latest,Qwen 2.5 72B,qwen2,pass5.query6,0,6,0.5700000000000001,row_count_mismatch,883
+qwen2.5-72b-sqlbench:latest,Qwen 2.5 72B,qwen2,pass5.query7,0,6,0.7791666666666667,same_count_wrong_values,834
+qwen2.5-72b-sqlbench:latest,Qwen 2.5 72B,qwen2,pass5.query8,0,6,0.7479999999999999,same_count_wrong_values,943
+qwen2.5-72b-sqlbench:latest,Qwen 2.5 72B,qwen2,pass5.query9,0,6,0.3925,row_count_mismatch,1135
+qwen2.5-72b-sqlbench:latest,Qwen 2.5 72B,qwen2,pass5.query10,0,6,0.5100000000000001,row_count_mismatch,1051
+qwen2.5-coder-32b-sqlbench:latest,Qwen 2.5 Coder 32B,qwen2,pass1.query1,0,6,0.8833333333333333,same_count_wrong_values,910
+qwen2.5-coder-32b-sqlbench:latest,Qwen 2.5 Coder 32B,qwen2,pass1.query2,0,6,0.6,row_count_mismatch,918
+qwen2.5-coder-32b-sqlbench:latest,Qwen 2.5 Coder 32B,qwen2,pass1.query3,6,6,1.0,none,314
+qwen2.5-coder-32b-sqlbench:latest,Qwen 2.5 Coder 32B,qwen2,pass1.query4,0,6,0.94,same_count_wrong_values,659
+qwen2.5-coder-32b-sqlbench:latest,Qwen 2.5 Coder 32B,qwen2,pass1.query5,0,6,0.7142857142857143,row_count_mismatch,917
+qwen2.5-coder-32b-sqlbench:latest,Qwen 2.5 Coder 32B,qwen2,pass1.query6,0,6,0.78125,same_count_wrong_values,791
+qwen2.5-coder-32b-sqlbench:latest,Qwen 2.5 Coder 32B,qwen2,pass1.query7,0,6,0.55,same_count_wrong_values,1032
+qwen2.5-coder-32b-sqlbench:latest,Qwen 2.5 Coder 32B,qwen2,pass1.query8,0,6,0.8666666666666667,same_count_wrong_values,1020
+qwen2.5-coder-32b-sqlbench:latest,Qwen 2.5 Coder 32B,qwen2,pass1.query9,0,6,0.7888888888888889,same_count_wrong_values,908
+qwen2.5-coder-32b-sqlbench:latest,Qwen 2.5 Coder 32B,qwen2,pass1.query10,6,6,1.0,none,314
+qwen2.5-coder-32b-sqlbench:latest,Qwen 2.5 Coder 32B,qwen2,pass2.query1,0,6,0.775,row_count_mismatch,784
+qwen2.5-coder-32b-sqlbench:latest,Qwen 2.5 Coder 32B,qwen2,pass2.query2,6,6,1.0,none,314
+qwen2.5-coder-32b-sqlbench:latest,Qwen 2.5 Coder 32B,qwen2,pass2.query3,0,6,0.81,row_count_mismatch,808
+qwen2.5-coder-32b-sqlbench:latest,Qwen 2.5 Coder 32B,qwen2,pass2.query4,0,6,0.6291666666666667,row_count_mismatch,892
+qwen2.5-coder-32b-sqlbench:latest,Qwen 2.5 Coder 32B,qwen2,pass2.query5,0,6,0.5750000000000001,same_count_wrong_values,1032
+qwen2.5-coder-32b-sqlbench:latest,Qwen 2.5 Coder 32B,qwen2,pass2.query6,0,6,0.1416666666666667,row_count_mismatch,1042
+qwen2.5-coder-32b-sqlbench:latest,Qwen 2.5 Coder 32B,qwen2,pass2.query7,0,6,0.7033333333333333,row_count_mismatch,775
+qwen2.5-coder-32b-sqlbench:latest,Qwen 2.5 Coder 32B,qwen2,pass2.query8,0,6,0.9055555555555554,same_count_wrong_values,923
+qwen2.5-coder-32b-sqlbench:latest,Qwen 2.5 Coder 32B,qwen2,pass2.query9,0,6,0.33666666666666667,row_count_mismatch,1027
+qwen2.5-coder-32b-sqlbench:latest,Qwen 2.5 Coder 32B,qwen2,pass2.query10,0,6,0.94,same_count_wrong_values,792
+qwen2.5-coder-32b-sqlbench:latest,Qwen 2.5 Coder 32B,qwen2,pass3.query1,1,6,1.0,same_count_wrong_values,432
+qwen2.5-coder-32b-sqlbench:latest,Qwen 2.5 Coder 32B,qwen2,pass3.query2,0,6,0.6687500000000001,row_count_mismatch,892
+qwen2.5-coder-32b-sqlbench:latest,Qwen 2.5 Coder 32B,qwen2,pass3.query3,0,6,0.81,same_count_wrong_values,1032
+qwen2.5-coder-32b-sqlbench:latest,Qwen 2.5 Coder 32B,qwen2,pass3.query4,0,6,0.5666666666666665,row_count_mismatch,901
+qwen2.5-coder-32b-sqlbench:latest,Qwen 2.5 Coder 32B,qwen2,pass3.query5,0,6,0.96,same_count_wrong_values,791
+qwen2.5-coder-32b-sqlbench:latest,Qwen 2.5 Coder 32B,qwen2,pass3.query6,0,6,0.4875,same_count_wrong_values,1152
+qwen2.5-coder-32b-sqlbench:latest,Qwen 2.5 Coder 32B,qwen2,pass3.query7,0,6,0.0,same_count_wrong_values,893
+qwen2.5-coder-32b-sqlbench:latest,Qwen 2.5 Coder 32B,qwen2,pass3.query8,0,6,0.25833333333333336,row_count_mismatch,1139
+qwen2.5-coder-32b-sqlbench:latest,Qwen 2.5 Coder 32B,qwen2,pass3.query9,0,6,0.6875,same_count_wrong_values,1017
+qwen2.5-coder-32b-sqlbench:latest,Qwen 2.5 Coder 32B,qwen2,pass3.query10,0,6,0.8041666666666667,same_count_wrong_values,791
+qwen2.5-coder-32b-sqlbench:latest,Qwen 2.5 Coder 32B,qwen2,pass4.query1,0,6,0.86875,same_count_wrong_values,791
+qwen2.5-coder-32b-sqlbench:latest,Qwen 2.5 Coder 32B,qwen2,pass4.query2,0,6,0.4527777777777777,same_count_wrong_values,1147
+qwen2.5-coder-32b-sqlbench:latest,Qwen 2.5 Coder 32B,qwen2,pass4.query3,0,6,0.225,row_count_mismatch,1013
+qwen2.5-coder-32b-sqlbench:latest,Qwen 2.5 Coder 32B,qwen2,pass4.query4,0,6,0.5333333333333333,row_count_mismatch,1159
+qwen2.5-coder-32b-sqlbench:latest,Qwen 2.5 Coder 32B,qwen2,pass4.query5,0,6,0.47200000000000003,row_count_mismatch,1022
+qwen2.5-coder-32b-sqlbench:latest,Qwen 2.5 Coder 32B,qwen2,pass4.query6,0,6,0.65,row_count_mismatch,799
+qwen2.5-coder-32b-sqlbench:latest,Qwen 2.5 Coder 32B,qwen2,pass4.query7,0,6,0.0,row_count_mismatch,889
+qwen2.5-coder-32b-sqlbench:latest,Qwen 2.5 Coder 32B,qwen2,pass4.query8,0,6,0.5285714285714286,row_count_mismatch,1042
+qwen2.5-coder-32b-sqlbench:latest,Qwen 2.5 Coder 32B,qwen2,pass4.query9,0,6,0.5875,same_count_wrong_values,900
+qwen2.5-coder-32b-sqlbench:latest,Qwen 2.5 Coder 32B,qwen2,pass4.query10,0,6,1.0,same_count_wrong_values,649
+qwen2.5-coder-32b-sqlbench:latest,Qwen 2.5 Coder 32B,qwen2,pass5.query1,0,6,0.56,row_count_mismatch,698
+qwen2.5-coder-32b-sqlbench:latest,Qwen 2.5 Coder 32B,qwen2,pass5.query2,0,6,0.4583333333333333,row_count_mismatch,1068
+qwen2.5-coder-32b-sqlbench:latest,Qwen 2.5 Coder 32B,qwen2,pass5.query3,0,6,0.4045833333333333,row_count_mismatch,1027
+qwen2.5-coder-32b-sqlbench:latest,Qwen 2.5 Coder 32B,qwen2,pass5.query4,0,6,0.6999999999999998,same_count_wrong_values,1066
+qwen2.5-coder-32b-sqlbench:latest,Qwen 2.5 Coder 32B,qwen2,pass5.query5,0,6,0.0,row_count_mismatch,1027
+qwen2.5-coder-32b-sqlbench:latest,Qwen 2.5 Coder 32B,qwen2,pass5.query6,0,6,0.52,row_count_mismatch,775
+qwen2.5-coder-32b-sqlbench:latest,Qwen 2.5 Coder 32B,qwen2,pass5.query7,0,6,0.6458333333333334,row_count_mismatch,824
+qwen2.5-coder-32b-sqlbench:latest,Qwen 2.5 Coder 32B,qwen2,pass5.query8,0,6,0.7120000000000001,same_count_wrong_values,1058
+qwen2.5-coder-32b-sqlbench:latest,Qwen 2.5 Coder 32B,qwen2,pass5.query9,0,6,0.1847222222222222,same_count_wrong_values,1152
+qwen2.5-coder-32b-sqlbench:latest,Qwen 2.5 Coder 32B,qwen2,pass5.query10,0,6,0.4625000000000001,row_count_mismatch,943
+qwen3-coder-30b-sqlbench:latest,Qwen3 Coder 30B,qwen3moe,pass1.query1,0,6,0.45,row_count_mismatch,1272
+qwen3-coder-30b-sqlbench:latest,Qwen3 Coder 30B,qwen3moe,pass1.query2,0,6,0.6625,row_count_mismatch,1029
+qwen3-coder-30b-sqlbench:latest,Qwen3 Coder 30B,qwen3moe,pass1.query3,3,6,0.5,type_only,415
+qwen3-coder-30b-sqlbench:latest,Qwen3 Coder 30B,qwen3moe,pass1.query4,0,6,0.955,same_count_wrong_values,547
+qwen3-coder-30b-sqlbench:latest,Qwen3 Coder 30B,qwen3moe,pass1.query5,0,6,0.3142857142857143,row_count_mismatch,1160
+qwen3-coder-30b-sqlbench:latest,Qwen3 Coder 30B,qwen3moe,pass1.query6,0,6,0.7062499999999999,same_count_wrong_values,788
+qwen3-coder-30b-sqlbench:latest,Qwen3 Coder 30B,qwen3moe,pass1.query7,0,6,0.3833333333333333,row_count_mismatch,1153
+qwen3-coder-30b-sqlbench:latest,Qwen3 Coder 30B,qwen3moe,pass1.query8,0,6,0.8000000000000002,same_count_wrong_values,908
+qwen3-coder-30b-sqlbench:latest,Qwen3 Coder 30B,qwen3moe,pass1.query9,0,6,0.8333333333333334,same_count_wrong_values,796
+qwen3-coder-30b-sqlbench:latest,Qwen3 Coder 30B,qwen3moe,pass1.query10,2,6,0.3333333333333333,type_only,415
+qwen3-coder-30b-sqlbench:latest,Qwen3 Coder 30B,qwen3moe,pass2.query1,0,6,0.7277777777777779,row_count_mismatch,895
+qwen3-coder-30b-sqlbench:latest,Qwen3 Coder 30B,qwen3moe,pass2.query2,1,6,0.5,same_count_wrong_values,429
+qwen3-coder-30b-sqlbench:latest,Qwen3 Coder 30B,qwen3moe,pass2.query3,0,6,0.7799999999999999,row_count_mismatch,919
+qwen3-coder-30b-sqlbench:latest,Qwen3 Coder 30B,qwen3moe,pass2.query4,0,6,0.6743055555555556,same_count_wrong_values,905
+qwen3-coder-30b-sqlbench:latest,Qwen3 Coder 30B,qwen3moe,pass2.query5,0,6,0.5083333333333333,row_count_mismatch,1018
+qwen3-coder-30b-sqlbench:latest,Qwen3 Coder 30B,qwen3moe,pass2.query6,0,6,0.5875,row_count_mismatch,1153
+qwen3-coder-30b-sqlbench:latest,Qwen3 Coder 30B,qwen3moe,pass2.query7,0,6,0.785,same_count_wrong_values,788
+qwen3-coder-30b-sqlbench:latest,Qwen3 Coder 30B,qwen3moe,pass2.query8,0,6,0.6927777777777777,row_count_mismatch,1018
+qwen3-coder-30b-sqlbench:latest,Qwen3 Coder 30B,qwen3moe,pass2.query9,0,6,0.49833333333333335,row_count_mismatch,1138
+qwen3-coder-30b-sqlbench:latest,Qwen3 Coder 30B,qwen3moe,pass2.query10,0,6,0.94,same_count_wrong_values,680
+qwen3-coder-30b-sqlbench:latest,Qwen3 Coder 30B,qwen3moe,pass3.query1,3,6,1.0,same_count_wrong_values,429
+qwen3-coder-30b-sqlbench:latest,Qwen3 Coder 30B,qwen3moe,pass3.query2,0,6,0.5260416666666666,row_count_mismatch,1138
+qwen3-coder-30b-sqlbench:latest,Qwen3 Coder 30B,qwen3moe,pass3.query3,0,6,0.7611111111111111,same_count_wrong_values,811
+qwen3-coder-30b-sqlbench:latest,Qwen3 Coder 30B,qwen3moe,pass3.query4,0,6,0.49999999999999994,row_count_mismatch,1012
+qwen3-coder-30b-sqlbench:latest,Qwen3 Coder 30B,qwen3moe,pass3.query5,0,6,0.94,same_count_wrong_values,679
+qwen3-coder-30b-sqlbench:latest,Qwen3 Coder 30B,qwen3moe,pass3.query6,0,6,0.6366666666666667,row_count_mismatch,1003
+qwen3-coder-30b-sqlbench:latest,Qwen3 Coder 30B,qwen3moe,pass3.query7,0,6,0.0,same_count_wrong_values,781
+qwen3-coder-30b-sqlbench:latest,Qwen3 Coder 30B,qwen3moe,pass3.query8,0,6,0.54,row_count_mismatch,1250
+qwen3-coder-30b-sqlbench:latest,Qwen3 Coder 30B,qwen3moe,pass3.query9,0,6,0.9093749999999999,same_count_wrong_values,796
+qwen3-coder-30b-sqlbench:latest,Qwen3 Coder 30B,qwen3moe,pass3.query10,0,6,0.7416666666666667,same_count_wrong_values,788
+qwen3-coder-30b-sqlbench:latest,Qwen3 Coder 30B,qwen3moe,pass4.query1,0,6,0.8937499999999999,same_count_wrong_values,679
+qwen3-coder-30b-sqlbench:latest,Qwen3 Coder 30B,qwen3moe,pass4.query2,0,6,0.4666666666666666,row_count_mismatch,1133
+qwen3-coder-30b-sqlbench:latest,Qwen3 Coder 30B,qwen3moe,pass4.query3,0,6,0.2575,row_count_mismatch,1124
+qwen3-coder-30b-sqlbench:latest,Qwen3 Coder 30B,qwen3moe,pass4.query4,0,6,0.4333333333333333,row_count_mismatch,1270
+qwen3-coder-30b-sqlbench:latest,Qwen3 Coder 30B,qwen3moe,pass4.query5,0,6,0.77,same_count_wrong_values,900
+qwen3-coder-30b-sqlbench:latest,Qwen3 Coder 30B,qwen3moe,pass4.query6,0,6,0.805,same_count_wrong_values,812
+qwen3-coder-30b-sqlbench:latest,Qwen3 Coder 30B,qwen3moe,pass4.query7,0,6,0.0,row_count_mismatch,1000
+qwen3-coder-30b-sqlbench:latest,Qwen3 Coder 30B,qwen3moe,pass4.query8,0,6,0.5732142857142857,row_count_mismatch,1021
+qwen3-coder-30b-sqlbench:latest,Qwen3 Coder 30B,qwen3moe,pass4.query9,0,6,0.39791666666666664,row_count_mismatch,1021
+qwen3-coder-30b-sqlbench:latest,Qwen3 Coder 30B,qwen3moe,pass4.query10,0,6,1.0,same_count_wrong_values,537
+qwen3-coder-30b-sqlbench:latest,Qwen3 Coder 30B,qwen3moe,pass5.query1,0,6,0.6999999999999998,same_count_wrong_values,711
+qwen3-coder-30b-sqlbench:latest,Qwen3 Coder 30B,qwen3moe,pass5.query2,0,6,0.5844246031746032,row_count_mismatch,1179
+qwen3-coder-30b-sqlbench:latest,Qwen3 Coder 30B,qwen3moe,pass5.query3,0,6,0.5356944444444444,row_count_mismatch,1138
+qwen3-coder-30b-sqlbench:latest,Qwen3 Coder 30B,qwen3moe,pass5.query4,0,6,0.6999999999999998,same_count_wrong_values,954
+qwen3-coder-30b-sqlbench:latest,Qwen3 Coder 30B,qwen3moe,pass5.query5,0,6,0.33625,row_count_mismatch,1138
+qwen3-coder-30b-sqlbench:latest,Qwen3 Coder 30B,qwen3moe,pass5.query6,0,6,0.66,same_count_wrong_values,788
+qwen3-coder-30b-sqlbench:latest,Qwen3 Coder 30B,qwen3moe,pass5.query7,0,6,0.8000000000000002,same_count_wrong_values,837
+qwen3-coder-30b-sqlbench:latest,Qwen3 Coder 30B,qwen3moe,pass5.query8,0,6,0.774,same_count_wrong_values,946
+qwen3-coder-30b-sqlbench:latest,Qwen3 Coder 30B,qwen3moe,pass5.query9,0,6,0.4749999999999999,row_count_mismatch,1003
+qwen3-coder-30b-sqlbench:latest,Qwen3 Coder 30B,qwen3moe,pass5.query10,0,6,0.5800000000000001,same_count_wrong_values,956
+qwen3.6-sqlbench:latest,Qwen3.6,qwen35moe,pass1.query1,0,6,0.8875000000000001,row_count_mismatch,888
+qwen3.6-sqlbench:latest,Qwen3.6,qwen35moe,pass1.query2,0,6,0.8111111111111112,row_count_mismatch,1021
+qwen3.6-sqlbench:latest,Qwen3.6,qwen35moe,pass1.query3,6,6,1.0,none,303
+qwen3.6-sqlbench:latest,Qwen3.6,qwen35moe,pass1.query4,3,6,0.9700000000000001,same_count_wrong_values,421
+qwen3.6-sqlbench:latest,Qwen3.6,qwen35moe,pass1.query5,0,6,0.8000000000000002,row_count_mismatch,885
+qwen3.6-sqlbench:latest,Qwen3.6,qwen35moe,pass1.query6,0,6,0.86875,same_count_wrong_values,671
+qwen3.6-sqlbench:latest,Qwen3.6,qwen35moe,pass1.query7,0,6,0.6,same_count_wrong_values,912
+qwen3.6-sqlbench:latest,Qwen3.6,qwen35moe,pass1.query8,0,6,0.775,same_count_wrong_values,900
+qwen3.6-sqlbench:latest,Qwen3.6,qwen35moe,pass1.query9,0,6,0.75,same_count_wrong_values,788
+qwen3.6-sqlbench:latest,Qwen3.6,qwen35moe,pass1.query10,6,6,1.0,none,303
+qwen3.6-sqlbench:latest,Qwen3.6,qwen35moe,pass2.query1,0,6,0.7555555555555555,row_count_mismatch,752
+qwen3.6-sqlbench:latest,Qwen3.6,qwen35moe,pass2.query2,6,6,1.0,none,303
+qwen3.6-sqlbench:latest,Qwen3.6,qwen35moe,pass2.query3,6,6,1.0,none,303
+qwen3.6-sqlbench:latest,Qwen3.6,qwen35moe,pass2.query4,0,6,0.5241071428571429,row_count_mismatch,1130
+qwen3.6-sqlbench:latest,Qwen3.6,qwen35moe,pass2.query5,0,6,0.47500000000000003,row_count_mismatch,1010
+qwen3.6-sqlbench:latest,Qwen3.6,qwen35moe,pass2.query6,0,6,0.6249999999999999,row_count_mismatch,1013
+qwen3.6-sqlbench:latest,Qwen3.6,qwen35moe,pass2.query7,0,6,0.7999999999999999,same_count_wrong_values,780
+qwen3.6-sqlbench:latest,Qwen3.6,qwen35moe,pass2.query8,0,6,0.8999999999999999,same_count_wrong_values,803
+qwen3.6-sqlbench:latest,Qwen3.6,qwen35moe,pass2.query9,0,6,0.43249999999999994,row_count_mismatch,1130
+qwen3.6-sqlbench:latest,Qwen3.6,qwen35moe,pass2.query10,0,6,0.94,same_count_wrong_values,672
+qwen3.6-sqlbench:latest,Qwen3.6,qwen35moe,pass3.query1,3,6,1.0,same_count_wrong_values,421
+qwen3.6-sqlbench:latest,Qwen3.6,qwen35moe,pass3.query2,0,6,0.5499999999999999,same_count_wrong_values,1032
+qwen3.6-sqlbench:latest,Qwen3.6,qwen35moe,pass3.query3,0,6,0.88,same_count_wrong_values,803
+qwen3.6-sqlbench:latest,Qwen3.6,qwen35moe,pass3.query4,0,6,0.44999999999999996,row_count_mismatch,1004
+qwen3.6-sqlbench:latest,Qwen3.6,qwen35moe,pass3.query5,0,6,0.96,same_count_wrong_values,671
+qwen3.6-sqlbench:latest,Qwen3.6,qwen35moe,pass3.query6,0,6,0.8250000000000001,same_count_wrong_values,788
+qwen3.6-sqlbench:latest,Qwen3.6,qwen35moe,pass3.query7,0,6,0.0,same_count_wrong_values,773
+qwen3.6-sqlbench:latest,Qwen3.6,qwen35moe,pass3.query8,0,6,0.4033333333333333,row_count_mismatch,1242
+qwen3.6-sqlbench:latest,Qwen3.6,qwen35moe,pass3.query9,0,6,0.90625,same_count_wrong_values,788
+qwen3.6-sqlbench:latest,Qwen3.6,qwen35moe,pass3.query10,0,6,0.7083333333333334,row_count_mismatch,878
+qwen3.6-sqlbench:latest,Qwen3.6,qwen35moe,pass4.query1,0,6,0.8875000000000001,same_count_wrong_values,671
+qwen3.6-sqlbench:latest,Qwen3.6,qwen35moe,pass4.query2,0,6,0.3866666666666667,row_count_mismatch,1125
+qwen3.6-sqlbench:latest,Qwen3.6,qwen35moe,pass4.query3,0,6,0.5187499999999999,row_count_mismatch,1116
+qwen3.6-sqlbench:latest,Qwen3.6,qwen35moe,pass4.query4,0,6,0.44999999999999996,row_count_mismatch,1262
+qwen3.6-sqlbench:latest,Qwen3.6,qwen35moe,pass4.query5,0,6,0.7956666666666666,row_count_mismatch,990
+qwen3.6-sqlbench:latest,Qwen3.6,qwen35moe,pass4.query6,0,6,0.805,same_count_wrong_values,804
+qwen3.6-sqlbench:latest,Qwen3.6,qwen35moe,pass4.query7,0,6,0.0,same_count_wrong_values,894
+qwen3.6-sqlbench:latest,Qwen3.6,qwen35moe,pass4.query8,0,6,0.5775396825396826,row_count_mismatch,1013
+qwen3.6-sqlbench:latest,Qwen3.6,qwen35moe,pass4.query9,0,6,0.5666666666666667,row_count_mismatch,878
+qwen3.6-sqlbench:latest,Qwen3.6,qwen35moe,pass4.query10,3,6,1.0,same_count_wrong_values,421
+qwen3.6-sqlbench:latest,Qwen3.6,qwen35moe,pass5.query1,0,6,0.7075,same_count_wrong_values,703
+qwen3.6-sqlbench:latest,Qwen3.6,qwen35moe,pass5.query2,0,6,0.6305555555555555,row_count_mismatch,1036
+qwen3.6-sqlbench:latest,Qwen3.6,qwen35moe,pass5.query3,0,6,0.4354166666666666,row_count_mismatch,1130
+qwen3.6-sqlbench:latest,Qwen3.6,qwen35moe,pass5.query4,0,6,0.6999999999999998,same_count_wrong_values,946
+qwen3.6-sqlbench:latest,Qwen3.6,qwen35moe,pass5.query5,0,6,0.17916666666666667,row_count_mismatch,1130
+qwen3.6-sqlbench:latest,Qwen3.6,qwen35moe,pass5.query6,0,6,0.62,same_count_wrong_values,780
+qwen3.6-sqlbench:latest,Qwen3.6,qwen35moe,pass5.query7,0,6,0.7999999999999999,same_count_wrong_values,829
+qwen3.6-sqlbench:latest,Qwen3.6,qwen35moe,pass5.query8,0,6,0.7999999999999999,same_count_wrong_values,938
+qwen3.6-sqlbench:latest,Qwen3.6,qwen35moe,pass5.query9,0,6,0.18194444444444444,row_count_mismatch,1130
+qwen3.6-sqlbench:latest,Qwen3.6,qwen35moe,pass5.query10,0,6,0.54,same_count_wrong_values,948
+qwen3.6-27b-sqlbench:latest,Qwen3.6 27B,qwen35,pass1.query1,6,6,1.0,none,307
+qwen3.6-27b-sqlbench:latest,Qwen3.6 27B,qwen35,pass1.query2,3,6,0.9611111111111111,row_count_mismatch,420
+qwen3.6-27b-sqlbench:latest,Qwen3.6 27B,qwen35,pass1.query3,6,6,1.0,none,307
+qwen3.6-27b-sqlbench:latest,Qwen3.6 27B,qwen35,pass1.query4,0,6,0.9700000000000001,same_count_wrong_values,543
+qwen3.6-27b-sqlbench:latest,Qwen3.6 27B,qwen35,pass1.query5,0,6,0.8312500000000002,row_count_mismatch,889
+qwen3.6-27b-sqlbench:latest,Qwen3.6 27B,qwen35,pass1.query6,0,6,0.94375,same_count_wrong_values,543
+qwen3.6-27b-sqlbench:latest,Qwen3.6 27B,qwen35,pass1.query7,0,6,0.6999999999999998,same_count_wrong_values,916
+qwen3.6-27b-sqlbench:latest,Qwen3.6 27B,qwen35,pass1.query8,0,6,0.8000000000000002,same_count_wrong_values,904
+qwen3.6-27b-sqlbench:latest,Qwen3.6 27B,qwen35,pass1.query9,0,6,0.8555555555555556,same_count_wrong_values,792
+qwen3.6-27b-sqlbench:latest,Qwen3.6 27B,qwen35,pass1.query10,6,6,1.0,none,307
+qwen3.6-27b-sqlbench:latest,Qwen3.6 27B,qwen35,pass2.query1,0,6,0.8714285714285714,row_count_mismatch,756
+qwen3.6-27b-sqlbench:latest,Qwen3.6 27B,qwen35,pass2.query2,6,6,1.0,none,307
+qwen3.6-27b-sqlbench:latest,Qwen3.6 27B,qwen35,pass2.query3,6,6,1.0,none,307
+qwen3.6-27b-sqlbench:latest,Qwen3.6 27B,qwen35,pass2.query4,0,6,0.6805555555555555,same_count_wrong_values,901
+qwen3.6-27b-sqlbench:latest,Qwen3.6 27B,qwen35,pass2.query5,0,6,0.6749999999999999,same_count_wrong_values,916
+qwen3.6-27b-sqlbench:latest,Qwen3.6 27B,qwen35,pass2.query6,3,6,0.9625,same_count_wrong_values,425
+qwen3.6-27b-sqlbench:latest,Qwen3.6 27B,qwen35,pass2.query7,0,6,0.86,same_count_wrong_values,652
+qwen3.6-27b-sqlbench:latest,Qwen3.6 27B,qwen35,pass2.query8,0,6,0.8833333333333333,same_count_wrong_values,784
+qwen3.6-27b-sqlbench:latest,Qwen3.6 27B,qwen35,pass2.query9,0,6,0.5802777777777778,row_count_mismatch,1134
+qwen3.6-27b-sqlbench:latest,Qwen3.6 27B,qwen35,pass2.query10,3,6,0.98,same_count_wrong_values,425
+qwen3.6-27b-sqlbench:latest,Qwen3.6 27B,qwen35,pass3.query1,6,6,1.0,none,307
+qwen3.6-27b-sqlbench:latest,Qwen3.6 27B,qwen35,pass3.query2,0,6,0.703125,same_count_wrong_values,901
+qwen3.6-27b-sqlbench:latest,Qwen3.6 27B,qwen35,pass3.query3,0,6,0.9099999999999998,same_count_wrong_values,807
+qwen3.6-27b-sqlbench:latest,Qwen3.6 27B,qwen35,pass3.query4,0,6,0.6,row_count_mismatch,873
+qwen3.6-27b-sqlbench:latest,Qwen3.6 27B,qwen35,pass3.query5,6,6,1.0,none,307
+qwen3.6-27b-sqlbench:latest,Qwen3.6 27B,qwen35,pass3.query6,0,6,0.875,same_count_wrong_values,792
+qwen3.6-27b-sqlbench:latest,Qwen3.6 27B,qwen35,pass3.query7,0,6,0.0,same_count_wrong_values,777
+qwen3.6-27b-sqlbench:latest,Qwen3.6 27B,qwen35,pass3.query8,0,6,0.725,row_count_mismatch,1111
+qwen3.6-27b-sqlbench:latest,Qwen3.6 27B,qwen35,pass3.query9,0,6,0.7250000000000001,same_count_wrong_values,769
+qwen3.6-27b-sqlbench:latest,Qwen3.6 27B,qwen35,pass3.query10,0,6,0.8458333333333333,same_count_wrong_values,784
+qwen3.6-27b-sqlbench:latest,Qwen3.6 27B,qwen35,pass4.query1,0,6,0.94375,same_count_wrong_values,543
+qwen3.6-27b-sqlbench:latest,Qwen3.6 27B,qwen35,pass4.query2,0,6,0.8458333333333333,same_count_wrong_values,896
+qwen3.6-27b-sqlbench:latest,Qwen3.6 27B,qwen35,pass4.query3,0,6,0.7312500000000001,row_count_mismatch,853
+qwen3.6-27b-sqlbench:latest,Qwen3.6 27B,qwen35,pass4.query4,0,6,0.5416666666666666,row_count_mismatch,1134
+qwen3.6-27b-sqlbench:latest,Qwen3.6 27B,qwen35,pass4.query5,0,6,0.94,same_count_wrong_values,655
+qwen3.6-27b-sqlbench:latest,Qwen3.6 27B,qwen35,pass4.query6,0,6,0.7555555555555555,same_count_wrong_values,808
+qwen3.6-27b-sqlbench:latest,Qwen3.6 27B,qwen35,pass4.query7,0,6,0.0,row_count_mismatch,996
+qwen3.6-27b-sqlbench:latest,Qwen3.6 27B,qwen35,pass4.query8,0,6,0.6157142857142857,row_count_mismatch,1017
+qwen3.6-27b-sqlbench:latest,Qwen3.6 27B,qwen35,pass4.query9,0,6,0.6687500000000001,same_count_wrong_values,784
+qwen3.6-27b-sqlbench:latest,Qwen3.6 27B,qwen35,pass4.query10,3,6,1.0,same_count_wrong_values,425
+qwen3.6-27b-sqlbench:latest,Qwen3.6 27B,qwen35,pass5.query1,0,6,0.7600000000000001,same_count_wrong_values,707
+qwen3.6-27b-sqlbench:latest,Qwen3.6 27B,qwen35,pass5.query2,0,6,0.7038888888888889,row_count_mismatch,1040
+qwen3.6-27b-sqlbench:latest,Qwen3.6 27B,qwen35,pass5.query3,0,6,0.5889583333333334,row_count_mismatch,1134
+qwen3.6-27b-sqlbench:latest,Qwen3.6 27B,qwen35,pass5.query4,0,6,0.6999999999999998,same_count_wrong_values,950
+qwen3.6-27b-sqlbench:latest,Qwen3.6 27B,qwen35,pass5.query5,0,6,0.6625,row_count_mismatch,999
+qwen3.6-27b-sqlbench:latest,Qwen3.6 27B,qwen35,pass5.query6,0,6,0.6999999999999998,same_count_wrong_values,675
+qwen3.6-27b-sqlbench:latest,Qwen3.6 27B,qwen35,pass5.query7,0,6,0.7875,same_count_wrong_values,833
+qwen3.6-27b-sqlbench:latest,Qwen3.6 27B,qwen35,pass5.query8,0,6,0.7789999999999999,row_count_mismatch,1040
+qwen3.6-27b-sqlbench:latest,Qwen3.6 27B,qwen35,pass5.query9,0,6,0.32075757575757574,row_count_mismatch,1134
+qwen3.6-27b-sqlbench:latest,Qwen3.6 27B,qwen35,pass5.query10,0,6,0.54,same_count_wrong_values,952

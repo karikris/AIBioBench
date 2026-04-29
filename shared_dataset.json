@@ -1,5 +1,5 @@
 {
-  "benchmark_id": "AIBioBench_photosynthesis_snowflake_v4",
+  "benchmark_id": "AIBioBench_photosynthesis_snowflake_v5",
   "dataset_id": "AIBioBench_photosynthesis_dataset_v2",
   "schema_text": "fact_calls -> sample_dim and fact_calls -> variant_dim -> gene_dim",
   "schema_diagram": "fact_calls\n\u251c\u2500\u2500 sample_dim\n\u2514\u2500\u2500 variant_dim\n    \u2514\u2500\u2500 gene_dim",

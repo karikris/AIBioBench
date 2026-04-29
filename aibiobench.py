@@ -504,13 +504,57 @@ def make_csv_text(table_name: str, table: dict) -> str:
     return "\n".join(lines)
 
 
-def build_case_prompt(case: dict, dataset: dict, instruction_lookup: Dict[str, dict], answer_columns: List[str]) -> str:
+def load_query_engineering_registry(repo_root: Path, manifest: dict, args: argparse.Namespace) -> dict:
+    if not getattr(args, "query_engineering", True):
+        return {}
+
+    cfg = manifest.get("query_engineering", {}) or {}
+    registry_value = args.query_engineering_registry or cfg.get("registry_file")
+    if not registry_value:
+        return {}
+    registry_path = Path(registry_value)
+    if not registry_path.is_absolute():
+        registry_path = repo_root / registry_path
+    if not registry_path.exists():
+        raise FileNotFoundError(f"Query engineering registry not found: {registry_path}")
+    registry = load_json(registry_path)
+    registry["_registry_path"] = str(registry_path)
+    return registry
+
+
+def model_guidance_entry(registry: dict, model: str, case_id: str) -> Optional[dict]:
+    if not registry:
+        return None
+    guidance_by_model = registry.get("guidance_by_model", {})
+    model_entry = guidance_by_model.get(model)
+    if model_entry is None and model.endswith(":latest"):
+        model_entry = guidance_by_model.get(model[:-7])
+    if model_entry is None:
+        return None
+    return (model_entry.get("cases") or {}).get(case_id)
+
+
+def build_case_prompt(
+    case: dict,
+    dataset: dict,
+    instruction_lookup: Dict[str, dict],
+    answer_columns: List[str],
+    model_guidance: Optional[dict] = None,
+) -> str:
     inst = instruction_lookup[case["standard_instructions_id"]]["text"].strip()
     table_blocks = []
     for table_name, table in dataset["tables"].items():
         table_blocks.append(f"{table_name}:\n{make_csv_text(table_name, table)}")
 
     output_columns_text = ", ".join(answer_columns)
+    model_guidance_text = ""
+    if model_guidance and model_guidance.get("text"):
+        heading = model_guidance.get("heading") or "Model-specific guidance for v5"
+        model_guidance_text = (
+            f"{heading}:\n"
+            f"{str(model_guidance['text']).strip()}\n\n"
+        )
+
     return (
         "/no_think\n"
         "You are benchmarking a local model on data analysis accuracy.\n\n"
@@ -531,7 +575,8 @@ def build_case_prompt(case: dict, dataset: dict, instruction_lookup: Dict[str, d
         + "\n\n".join(table_blocks)
         + "\n\n"
         f"Task:\n{case['prompt']}\n\n"
-        f"Return these columns in this exact order:\n{output_columns_text}\n"
+        + model_guidance_text
+        + f"Return these columns in this exact order:\n{output_columns_text}\n"
     )
 
 
@@ -915,12 +960,14 @@ def run_case(
     repeat_group_id: str,
     repeat_count_planned: int,
     manifest: dict,
+    query_engineering_registry: dict,
     prompt_cost_per_1m: float,
     completion_cost_per_1m: float,
 ) -> dict:
     case_id = case["case_id"]
     answer_columns = gold["columns"]
-    prompt = build_case_prompt(case, dataset, instruction_lookup, answer_columns)
+    guidance = model_guidance_entry(query_engineering_registry, model, case_id)
+    prompt = build_case_prompt(case, dataset, instruction_lookup, answer_columns, guidance)
 
     if cold_start:
         log(f"{model} {case_id} attempt={attempt_index}: cold start requested; stopping loaded copy first")
@@ -1106,6 +1153,13 @@ def run_case(
         "parse_error": parse_error or "",
         "output_validation_error": output_validation_error or "",
         "error": error or "",
+        "query_engineering_registry_id": query_engineering_registry.get("registry_id", "") if query_engineering_registry else "",
+        "query_engineering_registry_path": query_engineering_registry.get("_registry_path", "") if query_engineering_registry else "",
+        "query_engineering_addendum_id": guidance.get("addendum_id", "") if guidance else "",
+        "query_engineering_model_family": guidance.get("model_family", "") if guidance else "",
+        "query_engineering_source_runs": json.dumps(guidance.get("source_runs", []), ensure_ascii=False) if guidance else "[]",
+        "query_engineering_addendum_chars": len(guidance.get("text", "")) if guidance else 0,
+        "query_engineering_prompt_parts": 2 if guidance else 1,
         "ps_context": ps.get("context_length"),
         "ps_loaded_gib": ps_loaded_gib,
         "ps_vram_gib": ps_vram_gib,
@@ -1567,6 +1621,8 @@ def build_run_meta(
         "repairable_near_miss_examples": manifest.get("repairable_near_miss_examples", []),
         "append_output_enabled": args.append_output,
         "bundle_dir_name": args.bundle_dir_name or bundle_dir_basename(manifest["benchmark_id"]),
+        "query_engineering_enabled": bool(getattr(args, "query_engineering", True) and manifest.get("query_engineering")),
+        "query_engineering_registry": str(args.query_engineering_registry) if getattr(args, "query_engineering_registry", None) else (manifest.get("query_engineering", {}) or {}).get("registry_file", ""),
         "merged_model_count": len(merged_models),
         "merged_attempt_count": len(merged_rows),
         "merged_source_run_ids": source_run_ids,
@@ -1595,7 +1651,7 @@ def parse_args() -> argparse.Namespace:
     p.add_argument("--case-ids", nargs="*", default=None)
     p.add_argument("--limit", type=int, default=None)
     p.add_argument("--repeats", type=int, default=None)
-    p.add_argument("--repeat-group-id", default="default_repeatability_v3")
+    p.add_argument("--repeat-group-id", default=None)
     p.add_argument("--no-validate", action="store_true")
     p.add_argument("--keep-alive", default=KEEP_ALIVE)
     p.add_argument("--temperature", type=float, default=DEFAULT_OPTIONS["temperature"])
@@ -1603,10 +1659,22 @@ def parse_args() -> argparse.Namespace:
     p.add_argument("--top-k", type=int, default=DEFAULT_OPTIONS["top_k"])
     p.add_argument("--prompt-cost-per-1m", type=float, default=0.0)
     p.add_argument("--completion-cost-per-1m", type=float, default=0.0)
+    p.add_argument(
+        "--query-engineering-registry",
+        type=Path,
+        default=None,
+        help="Override the manifest query-engineering registry path.",
+    )
+    p.add_argument(
+        "--no-query-engineering",
+        action="store_false",
+        dest="query_engineering",
+        help="Disable manifest-driven model-specific query addenda.",
+    )
     p.add_argument("--no-cold-first-case", action="store_false", dest="cold_first_case")
     p.add_argument("--no-stop-between-models", action="store_false", dest="stop_between_models")
     p.add_argument("--dry-run", action="store_true")
-    p.set_defaults(cold_first_case=True, stop_between_models=True, append_output=True)
+    p.set_defaults(cold_first_case=True, stop_between_models=True, append_output=True, query_engineering=True)
     return p.parse_args()
 
 
@@ -1633,6 +1701,8 @@ def main() -> None:
     instruction_lookup = bm["instruction_lookup"]
     result_schema = bm["result_schema"]
     models = resolve_default_models(args.models, manifest)
+    repo_root = args.manifest.resolve().parent
+    query_engineering_registry = load_query_engineering_registry(repo_root, manifest, args)
 
     selected_cases = []
     for case in cases:
@@ -1652,9 +1722,9 @@ def main() -> None:
         raise SystemExit("No benchmark cases selected.")
 
     repeats = int(args.repeats or manifest.get("default_repeats_per_case", 1))
+    args.repeat_group_id = args.repeat_group_id or manifest.get("default_repeat_group_id", "default_repeatability")
     run_started_at_utc = utc_now_iso()
     run_id = f"{manifest['benchmark_id']}__{datetime.now().strftime('%Y%m%d_%H%M%S')}"
-    repo_root = args.manifest.resolve().parent
     output_dir = resolve_output_dir(
         requested_output_dir=args.output_dir,
         repo_root=repo_root,
@@ -1668,9 +1738,17 @@ def main() -> None:
     log(f"Benchmark: {manifest['benchmark_id']} v{manifest['version']}")
     log(f"Selected cases: {len(selected_cases)} | Repeats per case: {repeats} | Models: {len(models)}")
     log(f"Output directory: {output_dir}")
+    if query_engineering_registry:
+        log(
+            "Query engineering registry: "
+            f"{query_engineering_registry.get('registry_id', '-')}"
+            f" ({query_engineering_registry.get('_registry_path', '-')})"
+        )
     if args.dry_run:
         for case in selected_cases:
-            log(f"DRY RUN case={case['case_id']} pass={case['pass']} lang={case['language']} difficulty={case['difficulty']}")
+            guidance_count = sum(1 for model in models if model_guidance_entry(query_engineering_registry, model, case["case_id"]))
+            suffix = f" guidance_models={guidance_count}/{len(models)}" if query_engineering_registry else ""
+            log(f"DRY RUN case={case['case_id']} pass={case['pass']} lang={case['language']} difficulty={case['difficulty']}{suffix}")
         return
 
     output_dir.mkdir(parents=True, exist_ok=True)
@@ -1722,6 +1800,7 @@ def main() -> None:
                     repeat_group_id=args.repeat_group_id,
                     repeat_count_planned=repeats,
                     manifest=manifest,
+                    query_engineering_registry=query_engineering_registry,
                     prompt_cost_per_1m=args.prompt_cost_per_1m,
                     completion_cost_per_1m=args.completion_cost_per_1m,
                 )

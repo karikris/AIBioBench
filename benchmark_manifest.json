@@ -1,6 +1,6 @@
 {
-  "benchmark_id": "AIBioBench_photosynthesis_snowflake_v4",
-  "version": "4.0.0",
+  "benchmark_id": "AIBioBench_photosynthesis_snowflake_v5",
+  "version": "5.0.0",
   "repo": "github.com/karikris/AIBioBench",
   "dataset_file": "shared_dataset.json",
   "cases_file": "benchmark_cases.jsonl",
@@ -110,8 +110,17 @@
     "definition": "cost_per_correct_answer_usd = total_estimated_cost_usd / max(number_of_correct_answers, 1)"
   },
   "runner_notes": {
-    "repeatability": "Run each case at least three times per model to distinguish stable failures from prompt-sensitive failures. For v4, shared standards intentionally match the shorter v2 standard instructions while query prompts carry task-specific guardrails from v3 failure analysis.",
+    "repeatability": "Run each case at least three times per model to distinguish stable failures from prompt-sensitive failures. For v5, shared standards match the shorter v2/v4 wording, case prompts match the v2/v3 base query text, and model-specific guidance is appended at runtime from query_engineering_registry/v5/model_query_guidance.json.",
     "failure_family_reporting": "Aggregate by failure_family_primary and failure_families, not only by case_id.",
     "compatibility": "Designed for the flat-root GitHub AIBioBench layout."
+  },
+  "default_repeat_group_id": "default_repeatability_v5",
+  "query_engineering": {
+    "enabled": true,
+    "registry_id": "photosynthesis_snowflake_v5_model_query_guidance",
+    "registry_file": "query_engineering_registry/v5/model_query_guidance.json",
+    "strategy": "base_v2_v3_query_plus_model_specific_v5_addendum",
+    "base_query_source": "v2/v3 benchmark_cases prompt text",
+    "addendum_source": "v2 and v3 raw results plus per-pass failure-point analyses"
   }
 }
