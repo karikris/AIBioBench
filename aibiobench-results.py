@@ -25,6 +25,13 @@ REQUIRED_RESULTS_FILES = (
 )
 
 
+def bundle_label_from_dir(source_dir: Path) -> str:
+    match = re.search(r"photosynthesis_snowflake_v(\d+)", source_dir.name)
+    if match:
+        return f"v{match.group(1)}"
+    return source_dir.name
+
+
 def utc_now_iso() -> str:
     return datetime.now(timezone.utc).replace(microsecond=0).isoformat().replace("+00:00", "Z")
 
@@ -93,7 +100,7 @@ def iter_selected_files(results_dir: Path, include_subdirs: bool) -> Iterable[Pa
             yield path
 
 
-def file_description(path: Path, rel_path: Path) -> str:
+def file_description(path: Path, rel_path: Path, bundle_label: str) -> str:
     name = rel_path.name
     rel_text = rel_path.as_posix()
     if name == "detailed_results.csv":
@@ -103,10 +110,10 @@ def file_description(path: Path, rel_path: Path) -> str:
     if name == "run_results.jsonl":
         return "Benchmark run results in schema-compatible JSONL format."
     if name == "run_meta.json":
-        return "Benchmark run metadata for the merged local v5 bundle."
+        return f"Benchmark run metadata for the merged local {bundle_label} bundle."
     if name.startswith("summary_") and name.endswith(".csv"):
-        return f"Summary table exported from the merged local v5 bundle: {rel_text}."
-    return f"File from the AIBioBench v5 local results bundle: {rel_text}."
+        return f"Summary table exported from the merged local {bundle_label} bundle: {rel_text}."
+    return f"File from the AIBioBench {bundle_label} local results bundle: {rel_text}."
 
 
 def build_dataset_metadata(
@@ -118,14 +125,15 @@ def build_dataset_metadata(
     source_dir: Path,
     files: Sequence[Tuple[Path, Path]],
 ) -> dict:
+    bundle_label = bundle_label_from_dir(source_dir)
     description_lines = [
-        "Full AIBioBench v5 results bundle published from the local merged results directory.",
+        f"Full AIBioBench {bundle_label} results bundle published from the local merged results directory.",
         "",
         f"Kaggle dataset page: {dataset_url}",
         f"Local source bundle: `{source_dir}`",
         f"GitHub repository for code, benchmark definitions, schemas, and publishing scripts: {github_repo_url}",
         "This Kaggle dataset contains the published result bundle; the executable code lives in the GitHub repository.",
-        "Scope of this upload: root result files plus analysis subfolders from the merged v5 bundle.",
+        f"Scope of this upload: root result files plus analysis subfolders from the merged {bundle_label} bundle.",
         "",
         "Included files:",
     ]
@@ -145,7 +153,7 @@ def build_dataset_metadata(
             f"GitHub repository {github_repo_url}, and Kaggle dataset page {dataset_url}"
         ),
         "resources": [
-            {"path": rel_path.as_posix(), "description": file_description(path, rel_path)}
+            {"path": rel_path.as_posix(), "description": file_description(path, rel_path, bundle_label)}
             for path, rel_path in files
         ],
     }
@@ -263,7 +271,8 @@ def main() -> None:
     token = extract_kaggle_token(args.tokens_path.resolve())
 
     dataset_id = args.dataset_id
-    version_message = args.version_message or f"Update full v5 results bundle from {results_dir.name} at {utc_now_iso()}"
+    bundle_label = bundle_label_from_dir(results_dir)
+    version_message = args.version_message or f"Update full {bundle_label} results bundle from {results_dir.name} at {utc_now_iso()}"
 
     with tempfile.TemporaryDirectory(prefix="aibiobench-kaggle-") as tmp_dir:
         staging_dir = args.staging_dir.resolve() if args.staging_dir else Path(tmp_dir) / dataset_id.split("/", 1)[1]
