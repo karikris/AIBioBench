@@ -38,6 +38,44 @@ QUALITY_COMPONENTS = (
     ("mean_numeric_correctness", "Numeric"),
     ("mean_sort_correctness", "Sort"),
 )
+SUMMARY_KEYS = [
+    "attempts",
+    "exact_attempts",
+    "exact_attempt_rate",
+    "mean_score",
+    "mean_row_set_correctness",
+    "mean_numeric_correctness",
+    "mean_sort_correctness",
+    "mean_aligned_cell_accuracy",
+    "total_wall_s",
+    "avg_query_wall_s",
+    "avg_gen_tps",
+    "avg_cpu_gpu_ratio",
+    "dominant_failure_mode",
+    "dominant_non_exact_failure_mode",
+]
+DELTA_METRICS = (
+    "exact_attempts",
+    "exact_attempt_rate",
+    "mean_score",
+    "mean_row_set_correctness",
+    "mean_numeric_correctness",
+    "mean_sort_correctness",
+    "mean_aligned_cell_accuracy",
+    "total_wall_s",
+    "avg_query_wall_s",
+    "avg_gen_tps",
+    "avg_cpu_gpu_ratio",
+)
+QUALITY_DELTA_METRICS = (
+    "exact_attempts",
+    "exact_attempt_rate",
+    "mean_score",
+    "mean_row_set_correctness",
+    "mean_numeric_correctness",
+    "mean_sort_correctness",
+    "mean_aligned_cell_accuracy",
+)
 
 
 def case_sort_key(case_id: str) -> tuple[int, int]:
@@ -69,7 +107,8 @@ def load_rows(results_dir: Path, run_label: str, case_meta: dict) -> list[dict]:
                 continue
             row["_run"] = run_label
             row["_failure_mode"] = base.classify_failure(row)
-            row["_family"] = case_meta[row["case_id"]]["metadata"]["failure_family_primary"]
+            meta = case_meta.get(row["case_id"], {})
+            row["_family"] = row.get("failure_family_primary_case") or meta.get("metadata", {}).get("failure_family_primary", "")
             row["_display_model"] = base.canonical_model_name(row["model"])
             rows.append(row)
     return rows
@@ -113,6 +152,7 @@ def summarize_items(items: list[dict]) -> dict:
         "avg_gen_tps": avg(base.as_float(r["server_gen_tps"]) for r in items),
         "avg_cpu_gpu_ratio": avg(cpu_gpu_ratios),
         "dominant_failure_mode": modes.most_common(1)[0][0] if modes else "",
+        "dominant_non_exact_failure_mode": base.dominant_non_exact_mode(modes) if modes else "none",
         **{mode: modes[mode] for mode in FAILURE_MODES},
     }
 
@@ -147,41 +187,10 @@ def build_comparisons(rows_by_run: dict[str, list[dict]], case_meta: dict) -> di
         for run in RUN_LABELS:
             items = rows_by_run[run] if scope == "total" else [r for r in rows_by_run[run] if r["pass"] == scope]
             summary = summarize_items(items)
-            add_prefixed(
-                row,
-                run,
-                summary,
-                [
-                    "attempts",
-                    "exact_attempts",
-                    "exact_attempt_rate",
-                    "mean_score",
-                    "mean_row_set_correctness",
-                    "mean_numeric_correctness",
-                    "mean_sort_correctness",
-                    "mean_aligned_cell_accuracy",
-                    "total_wall_s",
-                    "avg_query_wall_s",
-                    "avg_gen_tps",
-                    "avg_cpu_gpu_ratio",
-                    "dominant_failure_mode",
-                ],
-            )
+            add_prefixed(row, run, summary, SUMMARY_KEYS)
             for mode in FAILURE_MODES:
                 row[f"{run}_{mode}"] = summary[mode]
-        for metric in (
-            "exact_attempts",
-            "exact_attempt_rate",
-            "mean_score",
-            "mean_row_set_correctness",
-            "mean_numeric_correctness",
-            "mean_sort_correctness",
-            "mean_aligned_cell_accuracy",
-            "total_wall_s",
-            "avg_query_wall_s",
-            "avg_gen_tps",
-            "avg_cpu_gpu_ratio",
-        ):
+        for metric in DELTA_METRICS:
             row[f"delta_{metric}"] = diff_value(row[f"v3_{metric}"], row[f"v2_{metric}"])
         for mode in FAILURE_MODES:
             row[f"delta_{mode}"] = int(row[f"v3_{mode}"]) - int(row[f"v2_{mode}"])
@@ -195,41 +204,10 @@ def build_comparisons(rows_by_run: dict[str, list[dict]], case_meta: dict) -> di
         for run in RUN_LABELS:
             items = [r for r in rows_by_run[run] if r["model"] == model]
             summary = summarize_items(items)
-            add_prefixed(
-                total_row,
-                run,
-                summary,
-                [
-                    "attempts",
-                    "exact_attempts",
-                    "exact_attempt_rate",
-                    "mean_score",
-                    "mean_row_set_correctness",
-                    "mean_numeric_correctness",
-                    "mean_sort_correctness",
-                    "mean_aligned_cell_accuracy",
-                    "total_wall_s",
-                    "avg_query_wall_s",
-                    "avg_gen_tps",
-                    "avg_cpu_gpu_ratio",
-                    "dominant_failure_mode",
-                ],
-            )
+            add_prefixed(total_row, run, summary, SUMMARY_KEYS)
             for mode in FAILURE_MODES:
                 total_row[f"{run}_{mode}"] = summary[mode]
-        for metric in (
-            "exact_attempts",
-            "exact_attempt_rate",
-            "mean_score",
-            "mean_row_set_correctness",
-            "mean_numeric_correctness",
-            "mean_sort_correctness",
-            "mean_aligned_cell_accuracy",
-            "total_wall_s",
-            "avg_query_wall_s",
-            "avg_gen_tps",
-            "avg_cpu_gpu_ratio",
-        ):
+        for metric in DELTA_METRICS:
             total_row[f"delta_{metric}"] = diff_value(total_row[f"v3_{metric}"], total_row[f"v2_{metric}"])
         for mode in FAILURE_MODES:
             total_row[f"delta_{mode}"] = int(total_row[f"v3_{mode}"]) - int(total_row[f"v2_{mode}"])
@@ -240,35 +218,13 @@ def build_comparisons(rows_by_run: dict[str, list[dict]], case_meta: dict) -> di
             for run in RUN_LABELS:
                 items = [r for r in rows_by_run[run] if r["model"] == model and r["pass"] == pass_no]
                 summary = summarize_items(items)
-                add_prefixed(
-                    pass_row,
-                    run,
-                    summary,
-                    [
-                        "attempts",
-                        "exact_attempts",
-                        "mean_score",
-                        "mean_row_set_correctness",
-                        "mean_numeric_correctness",
-                        "mean_sort_correctness",
-                        "total_wall_s",
-                        "avg_query_wall_s",
-                        "avg_gen_tps",
-                        "avg_cpu_gpu_ratio",
-                    ],
-                )
-            for metric in (
-                "exact_attempts",
-                "mean_score",
-                "mean_row_set_correctness",
-                "mean_numeric_correctness",
-                "mean_sort_correctness",
-                "total_wall_s",
-                "avg_query_wall_s",
-                "avg_gen_tps",
-                "avg_cpu_gpu_ratio",
-            ):
+                add_prefixed(pass_row, run, summary, SUMMARY_KEYS)
+                for mode in FAILURE_MODES:
+                    pass_row[f"{run}_{mode}"] = summary[mode]
+            for metric in DELTA_METRICS:
                 pass_row[f"delta_{metric}"] = diff_value(pass_row[f"v3_{metric}"], pass_row[f"v2_{metric}"])
+            for mode in FAILURE_MODES:
+                pass_row[f"delta_{mode}"] = int(pass_row[f"v3_{mode}"]) - int(pass_row[f"v2_{mode}"])
             model_pass_rows.append(pass_row)
 
     model_rows.sort(key=lambda r: (-r["delta_mean_score"], -r["v3_mean_score"], r["display_model"]))
@@ -313,31 +269,44 @@ def build_comparisons(rows_by_run: dict[str, list[dict]], case_meta: dict) -> di
                     [
                         "attempts",
                         "exact_attempts",
+                        "exact_attempt_rate",
                         "mean_score",
+                        "mean_aligned_cell_accuracy",
                         "mean_row_set_correctness",
                         "mean_numeric_correctness",
                         "mean_sort_correctness",
+                        "dominant_failure_mode",
+                        "dominant_non_exact_failure_mode",
                     ],
                 )
-            for metric in (
-                "exact_attempts",
-                "mean_score",
-                "mean_row_set_correctness",
-                "mean_numeric_correctness",
-                "mean_sort_correctness",
-            ):
+                for mode in FAILURE_MODES:
+                    row[f"{run}_{mode}"] = summary[mode]
+            for metric in QUALITY_DELTA_METRICS:
                 row[f"delta_{metric}"] = diff_value(row[f"v3_{metric}"], row[f"v2_{metric}"])
+            for mode in FAILURE_MODES:
+                row[f"delta_{mode}"] = int(row[f"v3_{mode}"]) - int(row[f"v2_{mode}"])
             family_rows.append(row)
 
     query_rows = []
-    all_cases = sorted(case_meta, key=case_sort_key)
+    all_cases = sorted({r["case_id"] for rows in rows_by_run.values() for r in rows}, key=case_sort_key)
     for case_id in all_cases:
-        meta = case_meta[case_id]
+        meta = case_meta.get(case_id, {})
+        v2_items = [r for r in rows_by_run["v2"] if r["case_id"] == case_id]
+        v3_items = [r for r in rows_by_run["v3"] if r["case_id"] == case_id]
+        first = (v3_items or v2_items)[0]
+        repo_metadata = meta.get("metadata", {})
+        metadata_benchmark_id = meta.get("benchmark_id", "")
         row = {
             "case_id": case_id,
             "query": query_label(case_id),
-            "pass": str(meta["pass"]),
-            "failure_family": meta["metadata"]["failure_family_primary"],
+            "pass": first.get("pass", str(meta.get("pass", ""))),
+            "query_no": first.get("query", meta.get("query", "")),
+            "failure_family": first.get("failure_family_primary_case") or repo_metadata.get("failure_family_primary", ""),
+            "v2_run_benchmark_id": v2_items[0].get("benchmark_id", "") if v2_items else "",
+            "v3_run_benchmark_id": v3_items[0].get("benchmark_id", "") if v3_items else "",
+            "metadata_benchmark_id": metadata_benchmark_id,
+            "v2_metadata_matches_run": (v2_items[0].get("benchmark_id", "") == metadata_benchmark_id) if v2_items else False,
+            "v3_metadata_matches_run": (v3_items[0].get("benchmark_id", "") == metadata_benchmark_id) if v3_items else False,
         }
         for run in RUN_LABELS:
             items = [r for r in rows_by_run[run] if r["case_id"] == case_id]
@@ -349,20 +318,22 @@ def build_comparisons(rows_by_run: dict[str, list[dict]], case_meta: dict) -> di
                 [
                     "attempts",
                     "exact_attempts",
+                    "exact_attempt_rate",
                     "mean_score",
+                    "mean_aligned_cell_accuracy",
                     "mean_row_set_correctness",
                     "mean_numeric_correctness",
                     "mean_sort_correctness",
+                    "dominant_failure_mode",
+                    "dominant_non_exact_failure_mode",
                 ],
             )
-        for metric in (
-            "exact_attempts",
-            "mean_score",
-            "mean_row_set_correctness",
-            "mean_numeric_correctness",
-            "mean_sort_correctness",
-        ):
+            for mode in FAILURE_MODES:
+                row[f"{run}_{mode}"] = summary[mode]
+        for metric in QUALITY_DELTA_METRICS:
             row[f"delta_{metric}"] = diff_value(row[f"v3_{metric}"], row[f"v2_{metric}"])
+        for mode in FAILURE_MODES:
+            row[f"delta_{mode}"] = int(row[f"v3_{mode}"]) - int(row[f"v2_{mode}"])
         query_rows.append(row)
 
     speed_score_rows = []
@@ -787,6 +758,7 @@ def write_report(path: Path, comparisons: dict[str, list[dict]], v2_dir: Path, v
         f"- Total mean score changed from {total['v2_mean_score']:.3f} to {total['v3_mean_score']:.3f} ({total['delta_mean_score']:+.3f}).",
         f"- Total exact attempts changed from {int(total['v2_exact_attempts'])}/{int(total['v2_attempts'])} to {int(total['v3_exact_attempts'])}/{int(total['v3_attempts'])} ({int(total['delta_exact_attempts']):+d}).",
         f"- Row-set correctness changed {total['delta_mean_row_set_correctness']:+.3f}, numeric correctness changed {total['delta_mean_numeric_correctness']:+.3f}, and sort correctness changed {total['delta_mean_sort_correctness']:+.3f}.",
+        f"- Invalid/error attempts changed from {int(total['v2_invalid_json_or_error'])} to {int(total['v3_invalid_json_or_error'])} ({int(total['delta_invalid_json_or_error']):+d}); dominant non-exact failure changed from `{total['v2_dominant_non_exact_failure_mode']}` to `{total['v3_dominant_non_exact_failure_mode']}`.",
         f"- Total wall time changed from {total['v2_total_wall_s'] / 3600:.2f}h to {total['v3_total_wall_s'] / 3600:.2f}h; average generation speed changed from {total['v2_avg_gen_tps']:.2f} to {total['v3_avg_gen_tps']:.2f} tokens/s.",
         f"- Average query time changed from {total['v2_avg_query_wall_s']:.1f}s to {total['v3_avg_query_wall_s']:.1f}s; average CPU/GPU ratio changed from {total['v2_avg_cpu_gpu_ratio']:.1f} to {total['v3_avg_cpu_gpu_ratio']:.1f}.",
         "",
