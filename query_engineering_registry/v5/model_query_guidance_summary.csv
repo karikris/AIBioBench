@@ -1,204 +1,204 @@
 model,display_model,model_family,case_id,source_runs,source_exact_attempts,source_attempts,source_mean_score,dominant_non_exact_failure_mode,v4_exact_attempts,v4_attempts,v4_mean_score,v4_mean_row_set_correctness,v4_mean_numeric_correctness,v4_mean_sort_correctness,v4_dominant_non_exact_failure_mode,addendum_chars
-codellama-70b-sqlbench:latest,CodeLlama 70B,llama,pass1.query1,"v2,v3,v4",0,6,0.7916666666666666,row_count_mismatch,0,3,0.875,0.875,0.875,0.875,same_count_wrong_values,2458
-codellama-70b-sqlbench:latest,CodeLlama 70B,llama,pass1.query2,"v2,v3,v4",0,6,0.525,row_count_mismatch,0,3,0.8500000000000001,1.0,1.0,0.25,order_only,2585
-codellama-70b-sqlbench:latest,CodeLlama 70B,llama,pass1.query3,"v2,v3,v4",5,6,0.9972222222222222,same_count_wrong_values,2,3,0.9944444444444445,1.0,0.9814814814814815,1.0,same_count_wrong_values,2113
-codellama-70b-sqlbench:latest,CodeLlama 70B,llama,pass1.query4,"v2,v3,v4",0,6,0.43999999999999995,column_error,0,3,0.8799999999999999,1.0,0.6,1.0,same_count_wrong_values,2414
-codellama-70b-sqlbench:latest,CodeLlama 70B,llama,pass1.query5,"v2,v3,v4",0,6,0.7169642857142856,row_count_mismatch,0,3,0.8625000000000002,0.875,1.0,0.625,row_count_mismatch,2295
-codellama-70b-sqlbench:latest,CodeLlama 70B,llama,pass1.query6,"v2,v3,v4",0,6,0.49374999999999997,row_count_mismatch,0,3,0.6375,0.75,0.375,0.75,same_count_wrong_values,2457
-codellama-70b-sqlbench:latest,CodeLlama 70B,llama,pass1.query7,"v2,v3,v4",0,6,0.5416666666666666,row_count_mismatch,0,3,0.75,1.0,0.16666666666666666,1.0,same_count_wrong_values,2271
-codellama-70b-sqlbench:latest,CodeLlama 70B,llama,pass1.query8,"v2,v3,v4",0,6,0.7166666666666667,same_count_wrong_values,0,3,0.6833333333333332,0.8333333333333334,0.3333333333333333,0.8333333333333334,row_count_mismatch,2943
-codellama-70b-sqlbench:latest,CodeLlama 70B,llama,pass1.query9,"v2,v3,v4",0,6,0.6277777777777778,row_count_mismatch,0,3,0.6972222222222223,0.9166666666666666,0.1851851851851852,0.9166666666666666,same_count_wrong_values,2543
-codellama-70b-sqlbench:latest,CodeLlama 70B,llama,pass1.query10,"v2,v3,v4",3,6,1.0,same_count_wrong_values,3,3,1.0,1.0,1.0,1.0,none,2342
-codellama-70b-sqlbench:latest,CodeLlama 70B,llama,pass2.query1,"v2,v3,v4",0,6,0.8714285714285714,row_count_mismatch,0,3,0.8714285714285714,0.8571428571428571,1.0,0.7142857142857143,row_count_mismatch,2407
-codellama-70b-sqlbench:latest,CodeLlama 70B,llama,pass2.query2,"v2,v3,v4",0,6,1.0,same_count_wrong_values,0,3,1.0,1.0,1.0,1.0,same_count_wrong_values,2252
-codellama-70b-sqlbench:latest,CodeLlama 70B,llama,pass2.query3,"v2,v3,v4",0,6,0.6649999999999999,row_count_mismatch,0,3,0.9099999999999998,1.0,0.6999999999999998,1.0,same_count_wrong_values,2416
-codellama-70b-sqlbench:latest,CodeLlama 70B,llama,pass2.query4,"v2,v3,v4",0,6,0.2875,same_count_wrong_values,0,3,0.3499999999999999,0.5,0.16666666666666666,0.25,row_count_mismatch,2390
-codellama-70b-sqlbench:latest,CodeLlama 70B,llama,pass2.query5,"v2,v3,v4",0,6,0.4166666666666667,row_count_mismatch,0,3,0.6166666666666667,1.0,0.16666666666666666,0.3333333333333333,same_count_wrong_values,2456
-codellama-70b-sqlbench:latest,CodeLlama 70B,llama,pass2.query6,"v2,v3,v4",0,6,0.5874999999999999,row_count_mismatch,0,3,0.7749999999999999,1.0,0.25,1.0,same_count_wrong_values,2473
-codellama-70b-sqlbench:latest,CodeLlama 70B,llama,pass2.query7,"v2,v3,v4",0,6,0.5650000000000001,column_error,0,3,0.77,1.0,0.5,0.6,same_count_wrong_values,2464
-codellama-70b-sqlbench:latest,CodeLlama 70B,llama,pass2.query8,"v2,v3,v4",0,6,0.6333333333333334,row_count_mismatch,0,3,0.8000000000000002,1.0,0.3333333333333333,1.0,same_count_wrong_values,2608
-codellama-70b-sqlbench:latest,CodeLlama 70B,llama,pass2.query9,"v2,v3,v4",0,6,0.3833333333333333,same_count_wrong_values,0,3,0.5333333333333333,0.6666666666666666,0.2222222222222222,0.6666666666666666,same_count_wrong_values,2593
-codellama-70b-sqlbench:latest,CodeLlama 70B,llama,pass2.query10,"v2,v3,v4",0,6,0.7799999999999999,row_count_mismatch,0,3,0.8799999999999999,1.0,0.6,1.0,same_count_wrong_values,2236
-codellama-70b-sqlbench:latest,CodeLlama 70B,llama,pass3.query1,"v2,v3,v4",3,6,1.0,same_count_wrong_values,3,3,1.0,1.0,1.0,1.0,none,1828
-codellama-70b-sqlbench:latest,CodeLlama 70B,llama,pass3.query2,"v2,v3,v4",0,6,0.18437500000000004,column_error,0,3,0.3687500000000001,0.5,0.0625,0.5,same_count_wrong_values,2593
-codellama-70b-sqlbench:latest,CodeLlama 70B,llama,pass3.query3,"v2,v3,v4",0,6,0.63,row_count_mismatch,0,3,0.8500000000000001,1.0,0.5,1.0,same_count_wrong_values,2596
-codellama-70b-sqlbench:latest,CodeLlama 70B,llama,pass3.query4,"v2,v3,v4",0,6,0.6,row_count_mismatch,0,3,0.8000000000000002,1.0,0.3333333333333333,1.0,same_count_wrong_values,2467
-codellama-70b-sqlbench:latest,CodeLlama 70B,llama,pass3.query5,"v2,v3,v4",0,6,0.77,same_count_wrong_values,0,3,0.8999999999999999,1.0,0.6666666666666666,1.0,same_count_wrong_values,2150
-codellama-70b-sqlbench:latest,CodeLlama 70B,llama,pass3.query6,"v2,v3,v4",0,6,0.42500000000000004,invalid_json_or_error,0,3,0.8500000000000001,1.0,0.5,1.0,same_count_wrong_values,2441
-codellama-70b-sqlbench:latest,CodeLlama 70B,llama,pass3.query7,"v2,v3,v4",3,6,0.5,row_count_mismatch,3,3,1.0,1.0,1.0,1.0,none,1951
-codellama-70b-sqlbench:latest,CodeLlama 70B,llama,pass3.query8,"v2,v3,v4",0,6,0.3194444444444444,row_count_mismatch,0,3,0.4555555555555555,0.5555555555555555,0.2222222222222222,0.5555555555555555,same_count_wrong_values,2705
-codellama-70b-sqlbench:latest,CodeLlama 70B,llama,pass3.query9,"v2,v3,v4",0,6,0.6276785714285714,row_count_mismatch,0,3,0.875,1.0,0.5833333333333334,1.0,same_count_wrong_values,2279
-codellama-70b-sqlbench:latest,CodeLlama 70B,llama,pass3.query10,"v2,v3,v4",0,6,0.5208333333333334,row_count_mismatch,0,3,0.5916666666666667,1.0,0.08333333333333333,0.3333333333333333,same_count_wrong_values,2476
-codellama-70b-sqlbench:latest,CodeLlama 70B,llama,pass4.query1,"v2,v3,v4",0,6,0.90625,same_count_wrong_values,0,3,0.9249999999999999,1.0,0.75,1.0,same_count_wrong_values,1651
-codellama-70b-sqlbench:latest,CodeLlama 70B,llama,pass4.query2,"v2,v3,v4",0,6,0.3625,row_count_mismatch,0,3,0.36666666666666664,0.5555555555555555,0.0,0.4444444444444444,row_count_mismatch,2537
-codellama-70b-sqlbench:latest,CodeLlama 70B,llama,pass4.query3,"v2,v3,v4",0,6,0.5041666666666667,row_count_mismatch,0,3,0.7749999999999999,1.0,0.25,1.0,same_count_wrong_values,2705
-codellama-70b-sqlbench:latest,CodeLlama 70B,llama,pass4.query4,"v2,v3,v4",0,6,0.575,row_count_mismatch,0,3,0.6999999999999998,1.0,0.0,1.0,same_count_wrong_values,2456
-codellama-70b-sqlbench:latest,CodeLlama 70B,llama,pass4.query5,"v2,v3,v4",0,6,0.37399999999999994,invalid_json_or_error,0,3,0.7479999999999999,1.0,0.56,0.4000000000000001,same_count_wrong_values,2576
-codellama-70b-sqlbench:latest,CodeLlama 70B,llama,pass4.query6,"v2,v3,v4",0,6,0.64,row_count_mismatch,0,3,0.82,1.0,0.4000000000000001,1.0,same_count_wrong_values,2462
-codellama-70b-sqlbench:latest,CodeLlama 70B,llama,pass4.query7,"v2,v3,v4",0,6,0.3416666666666666,row_count_mismatch,0,3,0.6833333333333332,0.8333333333333334,1.0,0.3333333333333333,row_count_mismatch,2127
-codellama-70b-sqlbench:latest,CodeLlama 70B,llama,pass4.query8,"v2,v3,v4",0,6,0.36964285714285716,row_count_mismatch,0,3,0.37142857142857144,0.5,0.07142857142857142,0.5,same_count_wrong_values,2456
-codellama-70b-sqlbench:latest,CodeLlama 70B,llama,pass4.query9,"v2,v3,v4",0,6,0.6749999999999999,same_count_wrong_values,0,3,0.7749999999999999,1.0,0.25,1.0,same_count_wrong_values,2291
-codellama-70b-sqlbench:latest,CodeLlama 70B,llama,pass4.query10,"v2,v3,v4",0,6,1.0,same_count_wrong_values,0,3,1.0,1.0,1.0,1.0,same_count_wrong_values,1759
-codellama-70b-sqlbench:latest,CodeLlama 70B,llama,pass5.query1,"v2,v3,v4",0,6,0.3499999999999999,invalid_json_or_error,0,3,0.6999999999999998,1.0,0.0,1.0,same_count_wrong_values,2332
-codellama-70b-sqlbench:latest,CodeLlama 70B,llama,pass5.query2,"v2,v3,v4",0,6,0.3157142857142857,column_error,0,3,0.6314285714285715,0.8571428571428571,0.20000000000000004,0.7142857142857143,row_count_mismatch,2431
-codellama-70b-sqlbench:latest,CodeLlama 70B,llama,pass5.query3,"v2,v3,v4",0,6,0.203125,invalid_json_or_error,0,3,0.40625,0.5,0.1875,0.5,row_count_mismatch,2942
-codellama-70b-sqlbench:latest,CodeLlama 70B,llama,pass5.query4,"v2,v3,v4",0,6,0.6999999999999998,same_count_wrong_values,0,3,0.6999999999999998,1.0,0.0,1.0,same_count_wrong_values,2317
-codellama-70b-sqlbench:latest,CodeLlama 70B,llama,pass5.query5,"v2,v3,v4",0,6,0.0,column_error,0,3,0.0,0.0,0.0,0.0,row_count_mismatch,2542
-codellama-70b-sqlbench:latest,CodeLlama 70B,llama,pass5.query6,"v2,v3,v4",0,6,0.31,invalid_json_or_error,0,3,0.62,1.0,0.0,0.6,same_count_wrong_values,2472
-codellama-70b-sqlbench:latest,CodeLlama 70B,llama,pass5.query7,"v2,v3,v4",0,6,0.6458333333333333,same_count_wrong_values,0,3,0.5166666666666666,0.6666666666666666,0.16666666666666666,0.6666666666666666,same_count_wrong_values,2584
-codellama-70b-sqlbench:latest,CodeLlama 70B,llama,pass5.query8,"v2,v3,v4",0,6,0.7320000000000001,same_count_wrong_values,0,3,0.8080000000000002,1.0,0.36000000000000004,1.0,same_count_wrong_values,2573
-codellama-70b-sqlbench:latest,CodeLlama 70B,llama,pass5.query9,"v2,v3,v4",0,6,0.11666666666666665,invalid_json_or_error,0,3,0.2333333333333333,0.3333333333333333,0.0,0.3333333333333333,same_count_wrong_values,2631
-codellama-70b-sqlbench:latest,CodeLlama 70B,llama,pass5.query10,"v2,v3,v4",0,6,0.22000000000000006,row_count_mismatch,0,3,0.0,0.0,0.0,0.0,invalid_json_or_error,2583
-command-r-plus-sqlbench:latest,Command R+,command-r,pass1.query1,"v2,v3,v4",3,6,0.9500000000000001,row_count_mismatch,3,3,1.0,1.0,1.0,1.0,none,2190
-command-r-plus-sqlbench:latest,Command R+,command-r,pass1.query2,"v2,v3,v4",0,6,0.8038194444444445,row_count_mismatch,0,3,0.8500000000000001,1.0,1.0,0.25,order_only,2423
-command-r-plus-sqlbench:latest,Command R+,command-r,pass1.query3,"v2,v3,v4",0,6,0.9916666666666667,same_count_wrong_values,0,3,0.9833333333333334,1.0,0.9444444444444443,1.0,same_count_wrong_values,2048
-command-r-plus-sqlbench:latest,Command R+,command-r,pass1.query4,"v2,v3,v4",0,6,0.9700000000000001,same_count_wrong_values,0,3,0.9700000000000001,1.0,0.9,1.0,same_count_wrong_values,2052
-command-r-plus-sqlbench:latest,Command R+,command-r,pass1.query5,"v2,v3,v4",2,6,0.8761904761904762,row_count_mismatch,2,3,0.9523809523809524,0.9523809523809524,0.9523809523809524,0.9523809523809524,same_count_wrong_values,2169
-command-r-plus-sqlbench:latest,Command R+,command-r,pass1.query6,"v2,v3,v4",0,6,0.7000000000000001,row_count_mismatch,0,3,0.7875,1.0,0.625,0.5,same_count_wrong_values,2154
-command-r-plus-sqlbench:latest,Command R+,command-r,pass1.query7,"v2,v3,v4",0,6,0.6333333333333333,row_count_mismatch,0,3,0.7833333333333333,1.0,0.27777777777777773,1.0,same_count_wrong_values,2561
-command-r-plus-sqlbench:latest,Command R+,command-r,pass1.query8,"v2,v3,v4",0,6,0.8000000000000002,same_count_wrong_values,0,3,0.8000000000000002,1.0,0.3333333333333333,1.0,same_count_wrong_values,2293
-command-r-plus-sqlbench:latest,Command R+,command-r,pass1.query9,"v2,v3,v4",0,6,0.8555555555555555,same_count_wrong_values,0,3,0.8222222222222223,1.0,0.4074074074074074,1.0,same_count_wrong_values,2181
-command-r-plus-sqlbench:latest,Command R+,command-r,pass1.query10,"v2,v3,v4",6,6,1.0,none,3,3,1.0,1.0,1.0,1.0,none,1856
-command-r-plus-sqlbench:latest,Command R+,command-r,pass2.query1,"v2,v3,v4",3,6,0.8722222222222222,row_count_mismatch,3,3,1.0,1.0,1.0,1.0,none,2192
-command-r-plus-sqlbench:latest,Command R+,command-r,pass2.query2,"v2,v3,v4",0,6,1.0,same_count_wrong_values,0,3,1.0,1.0,1.0,1.0,same_count_wrong_values,1758
-command-r-plus-sqlbench:latest,Command R+,command-r,pass2.query3,"v2,v3,v4",2,6,0.7744444444444444,row_count_mismatch,2,3,0.89,0.9333333333333332,0.9,0.7666666666666666,row_count_mismatch,2456
-command-r-plus-sqlbench:latest,Command R+,command-r,pass2.query4,"v2,v3,v4",0,6,0.28148148148148144,row_count_mismatch,0,3,0.2833333333333333,0.3333333333333333,0.16666666666666666,0.3333333333333333,same_count_wrong_values,2546
-command-r-plus-sqlbench:latest,Command R+,command-r,pass2.query5,"v2,v3,v4",0,6,0.55,same_count_wrong_values,0,3,0.55,1.0,0.16666666666666666,0.0,same_count_wrong_values,2153
-command-r-plus-sqlbench:latest,Command R+,command-r,pass2.query6,"v2,v3,v4",0,6,0.7875,row_count_mismatch,0,3,0.9250000000000002,1.0,0.75,1.0,same_count_wrong_values,2713
-command-r-plus-sqlbench:latest,Command R+,command-r,pass2.query7,"v2,v3,v4",0,6,0.6649999999999999,row_count_mismatch,0,3,0.7999999999999999,1.0,0.6,0.6,same_count_wrong_values,2161
-command-r-plus-sqlbench:latest,Command R+,command-r,pass2.query8,"v2,v3,v4",0,6,0.6833333333333332,row_count_mismatch,0,3,0.8000000000000002,1.0,0.3333333333333333,1.0,same_count_wrong_values,2440
-command-r-plus-sqlbench:latest,Command R+,command-r,pass2.query9,"v2,v3,v4",0,6,0.6777777777777777,same_count_wrong_values,0,3,0.5,0.6666666666666666,0.1111111111111111,0.6666666666666666,same_count_wrong_values,2698
-command-r-plus-sqlbench:latest,Command R+,command-r,pass2.query10,"v2,v3,v4",0,6,0.9466666666666667,same_count_wrong_values,0,3,0.9333333333333332,1.0,0.7777777777777777,1.0,same_count_wrong_values,2068
-command-r-plus-sqlbench:latest,Command R+,command-r,pass3.query1,"v2,v3,v4",3,6,1.0,same_count_wrong_values,3,3,1.0,1.0,1.0,1.0,none,1710
-command-r-plus-sqlbench:latest,Command R+,command-r,pass3.query2,"v2,v3,v4",0,6,0.38125000000000003,row_count_mismatch,0,3,0.35000000000000003,0.5,0.16666666666666666,0.25,same_count_wrong_values,2698
-command-r-plus-sqlbench:latest,Command R+,command-r,pass3.query3,"v2,v3,v4",0,6,0.75,same_count_wrong_values,0,3,0.7600000000000001,1.0,0.6,0.4000000000000001,same_count_wrong_values,2566
-command-r-plus-sqlbench:latest,Command R+,command-r,pass3.query4,"v2,v3,v4",0,6,0.65,row_count_mismatch,0,3,0.75,1.0,0.16666666666666666,1.0,same_count_wrong_values,2572
-command-r-plus-sqlbench:latest,Command R+,command-r,pass3.query5,"v2,v3,v4",0,6,0.9700000000000001,same_count_wrong_values,0,3,0.98,1.0,0.9333333333333332,1.0,same_count_wrong_values,2032
-command-r-plus-sqlbench:latest,Command R+,command-r,pass3.query6,"v2,v3,v4",0,6,0.6150000000000001,row_count_mismatch,0,3,0.6,0.75,0.4166666666666667,0.5,same_count_wrong_values,2546
-command-r-plus-sqlbench:latest,Command R+,command-r,pass3.query7,"v2,v3,v4",3,6,0.5,row_count_mismatch,3,3,1.0,1.0,1.0,1.0,none,2056
-command-r-plus-sqlbench:latest,Command R+,command-r,pass3.query8,"v2,v3,v4",0,6,0.7333333333333333,same_count_wrong_values,0,3,0.5166666666666666,0.6666666666666666,0.16666666666666666,0.6666666666666666,same_count_wrong_values,2810
-command-r-plus-sqlbench:latest,Command R+,command-r,pass3.query9,"v2,v3,v4",0,6,0.7566666666666667,same_count_wrong_values,0,3,0.7945833333333333,0.9333333333333332,0.6041666666666666,0.7333333333333334,same_count_wrong_values,2296
-command-r-plus-sqlbench:latest,Command R+,command-r,pass3.query10,"v2,v3,v4",0,6,0.5152777777777778,row_count_mismatch,0,3,0.46388888888888885,0.7777777777777777,0.027777777777777776,0.3333333333333333,same_count_wrong_values,2581
-command-r-plus-sqlbench:latest,Command R+,command-r,pass4.query1,"v2,v3,v4",0,6,0.8500000000000001,same_count_wrong_values,0,3,0.8500000000000001,1.0,0.5,1.0,same_count_wrong_values,1533
-command-r-plus-sqlbench:latest,Command R+,command-r,pass4.query2,"v2,v3,v4",0,6,0.2333333333333333,row_count_mismatch,0,3,0.2583333333333333,0.3333333333333333,0.08333333333333333,0.3333333333333333,same_count_wrong_values,2693
-command-r-plus-sqlbench:latest,Command R+,command-r,pass4.query3,"v2,v3,v4",0,6,0.3333333333333333,same_count_wrong_values,0,3,0.3499999999999999,0.5,0.0,0.5,same_count_wrong_values,2537
-command-r-plus-sqlbench:latest,Command R+,command-r,pass4.query4,"v2,v3,v4",0,6,0.6166666666666667,row_count_mismatch,0,3,0.8000000000000002,1.0,0.3333333333333333,1.0,same_count_wrong_values,2561
-command-r-plus-sqlbench:latest,Command R+,command-r,pass4.query5,"v2,v3,v4",0,6,0.75,row_count_mismatch,0,3,0.8879999999999999,1.0,0.6266666666666666,1.0,same_count_wrong_values,2681
-command-r-plus-sqlbench:latest,Command R+,command-r,pass4.query6,"v2,v3,v4",0,6,0.7200000000000001,row_count_mismatch,0,3,0.82,1.0,0.4000000000000001,1.0,same_count_wrong_values,2702
-command-r-plus-sqlbench:latest,Command R+,command-r,pass4.query7,"v2,v3,v4",0,6,0.44999999999999996,same_count_wrong_values,0,3,0.8999999999999999,1.0,1.0,0.6666666666666666,same_count_wrong_values,2283
-command-r-plus-sqlbench:latest,Command R+,command-r,pass4.query8,"v2,v3,v4",0,6,0.5523809523809523,same_count_wrong_values,0,3,0.5357142857142857,0.75,0.5357142857142857,0.0,same_count_wrong_values,2561
-command-r-plus-sqlbench:latest,Command R+,command-r,pass4.query9,"v2,v3,v4",0,6,0.6520833333333333,same_count_wrong_values,0,3,0.65,1.0,0.5,0.0,same_count_wrong_values,2173
-command-r-plus-sqlbench:latest,Command R+,command-r,pass4.query10,"v2,v3,v4",0,6,1.0,same_count_wrong_values,0,3,1.0,1.0,1.0,1.0,same_count_wrong_values,1641
-command-r-plus-sqlbench:latest,Command R+,command-r,pass5.query1,"v2,v3,v4",0,6,0.6999999999999998,same_count_wrong_values,0,3,0.6999999999999998,1.0,0.0,1.0,same_count_wrong_values,1920
-command-r-plus-sqlbench:latest,Command R+,command-r,pass5.query2,"v2,v3,v4",0,6,0.5629922027290447,row_count_mismatch,0,3,0.7455555555555554,0.8888888888888888,0.5222222222222223,0.7222222222222222,same_count_wrong_values,2587
-command-r-plus-sqlbench:latest,Command R+,command-r,pass5.query3,"v2,v3,v4",0,6,0.5675,same_count_wrong_values,0,3,0.6375,0.75,0.375,0.75,same_count_wrong_values,2583
-command-r-plus-sqlbench:latest,Command R+,command-r,pass5.query4,"v2,v3,v4",0,6,0.6999999999999998,same_count_wrong_values,0,3,0.6999999999999998,1.0,0.0,1.0,same_count_wrong_values,2199
-command-r-plus-sqlbench:latest,Command R+,command-r,pass5.query5,"v2,v3,v4",0,6,0.63125,row_count_mismatch,0,3,0.7875,1.0,0.2916666666666667,1.0,same_count_wrong_values,2698
-command-r-plus-sqlbench:latest,Command R+,command-r,pass5.query6,"v2,v3,v4",0,6,0.5666666666666667,same_count_wrong_values,0,3,0.62,1.0,0.0,0.6,same_count_wrong_values,2169
-command-r-plus-sqlbench:latest,Command R+,command-r,pass5.query7,"v2,v3,v4",0,6,0.7583333333333333,same_count_wrong_values,0,3,0.75,1.0,0.16666666666666666,1.0,same_count_wrong_values,2222
-command-r-plus-sqlbench:latest,Command R+,command-r,pass5.query8,"v2,v3,v4",0,6,0.8420000000000001,same_count_wrong_values,0,3,0.868,1.0,0.56,1.0,same_count_wrong_values,2346
-command-r-plus-sqlbench:latest,Command R+,command-r,pass5.query9,"v2,v3,v4",0,6,0.1361111111111111,row_count_mismatch,0,3,0.1722222222222222,0.2222222222222222,0.05555555555555555,0.2222222222222222,same_count_wrong_values,2658
-command-r-plus-sqlbench:latest,Command R+,command-r,pass5.query10,"v2,v3,v4",0,6,0.5800000000000001,same_count_wrong_values,0,3,0.5800000000000001,1.0,0.0,0.4000000000000001,same_count_wrong_values,2201
-dbrx-sqlbench:latest,DBRX,dbrx,pass1.query1,"v2,v3,v4",3,6,0.8250000000000001,row_count_mismatch,3,3,1.0,1.0,1.0,1.0,none,2058
-dbrx-sqlbench:latest,DBRX,dbrx,pass1.query2,"v2,v3,v4",0,6,0.7375000000000002,row_count_mismatch,0,3,0.8500000000000001,1.0,1.0,0.25,order_only,2291
-dbrx-sqlbench:latest,DBRX,dbrx,pass1.query3,"v2,v3,v4",4,6,0.9722222222222223,same_count_wrong_values,3,3,1.0,1.0,1.0,1.0,none,1854
-dbrx-sqlbench:latest,DBRX,dbrx,pass1.query4,"v2,v3,v4",0,6,0.9,same_count_wrong_values,0,3,0.8500000000000001,1.0,0.5,1.0,same_count_wrong_values,2143
-dbrx-sqlbench:latest,DBRX,dbrx,pass1.query5,"v2,v3,v4",0,6,0.41904761904761906,row_count_mismatch,0,3,0.6285714285714286,0.7142857142857143,0.7142857142857143,0.2857142857142857,row_count_mismatch,2557
-dbrx-sqlbench:latest,DBRX,dbrx,pass1.query6,"v2,v3,v4",0,6,0.8000000000000002,same_count_wrong_values,0,3,0.75,1.0,0.16666666666666666,1.0,column_error,2418
-dbrx-sqlbench:latest,DBRX,dbrx,pass1.query7,"v2,v3,v4",0,6,0.611111111111111,same_count_wrong_values,0,3,0.6999999999999998,1.0,0.0,1.0,same_count_wrong_values,2294
-dbrx-sqlbench:latest,DBRX,dbrx,pass1.query8,"v2,v3,v4",0,6,0.7583333333333333,same_count_wrong_values,0,3,0.7833333333333333,1.0,0.27777777777777773,1.0,same_count_wrong_values,2434
-dbrx-sqlbench:latest,DBRX,dbrx,pass1.query9,"v2,v3,v4",0,6,0.7000000000000001,same_count_wrong_values,0,3,0.688888888888889,0.8888888888888888,0.2222222222222222,0.8888888888888888,same_count_wrong_values,2566
-dbrx-sqlbench:latest,DBRX,dbrx,pass1.query10,"v2,v3,v4",0,6,1.0,same_count_wrong_values,0,3,1.0,1.0,1.0,1.0,same_count_wrong_values,1870
-dbrx-sqlbench:latest,DBRX,dbrx,pass2.query1,"v2,v3,v4",0,6,0.7222222222222222,same_count_wrong_values,0,3,0.8444444444444444,0.888888888888889,0.888888888888889,0.6666666666666666,same_count_wrong_values,2381
-dbrx-sqlbench:latest,DBRX,dbrx,pass2.query2,"v2,v3,v4",0,6,1.0,same_count_wrong_values,0,3,1.0,1.0,1.0,1.0,same_count_wrong_values,1849
-dbrx-sqlbench:latest,DBRX,dbrx,pass2.query3,"v2,v3,v4",0,6,0.6816666666666666,same_count_wrong_values,0,3,0.8533333333333334,0.9666666666666667,0.7666666666666666,0.7000000000000001,same_count_wrong_values,2486
-dbrx-sqlbench:latest,DBRX,dbrx,pass2.query4,"v2,v3,v4",0,6,0.27638888888888885,row_count_mismatch,0,3,0.28611111111111115,0.4166666666666667,0.05555555555555555,0.3055555555555555,same_count_wrong_values,2414
-dbrx-sqlbench:latest,DBRX,dbrx,pass2.query5,"v2,v3,v4",0,6,0.6611111111111111,same_count_wrong_values,0,3,0.8000000000000002,1.0,0.3333333333333333,1.0,same_count_wrong_values,2294
-dbrx-sqlbench:latest,DBRX,dbrx,pass2.query6,"v2,v3,v4",0,6,0.5833333333333334,same_count_wrong_values,0,3,0.8500000000000001,1.0,0.5,1.0,same_count_wrong_values,2581
-dbrx-sqlbench:latest,DBRX,dbrx,pass2.query7,"v2,v3,v4",0,6,0.6766666666666666,same_count_wrong_values,0,3,0.7399999999999999,1.0,0.4000000000000001,0.6,same_count_wrong_values,2252
-dbrx-sqlbench:latest,DBRX,dbrx,pass2.query8,"v2,v3,v4",0,6,0.37222222222222223,row_count_mismatch,0,3,0.7444444444444445,1.0,0.14814814814814814,1.0,same_count_wrong_values,2581
-dbrx-sqlbench:latest,DBRX,dbrx,pass2.query9,"v2,v3,v4",0,6,0.25425925925925924,row_count_mismatch,0,3,0.2288888888888889,0.3333333333333333,0.07407407407407407,0.20000000000000004,row_count_mismatch,2515
-dbrx-sqlbench:latest,DBRX,dbrx,pass2.query10,"v2,v3,v4",0,6,0.7799999999999999,row_count_mismatch,0,3,0.8799999999999999,1.0,0.6,1.0,same_count_wrong_values,2209
-dbrx-sqlbench:latest,DBRX,dbrx,pass3.query1,"v2,v3,v4",3,6,1.0,same_count_wrong_values,3,3,1.0,1.0,1.0,1.0,none,1801
-dbrx-sqlbench:latest,DBRX,dbrx,pass3.query2,"v2,v3,v4",0,6,0.534375,same_count_wrong_values,0,3,0.55,0.75,0.25,0.5,same_count_wrong_values,2516
-dbrx-sqlbench:latest,DBRX,dbrx,pass3.query3,"v2,v3,v4",0,6,0.5883333333333334,row_count_mismatch,0,3,0.8033333333333333,1.0,0.43333333333333335,0.8666666666666667,same_count_wrong_values,2384
-dbrx-sqlbench:latest,DBRX,dbrx,pass3.query4,"v2,v3,v4",0,6,0.5166666666666667,row_count_mismatch,0,3,0.6333333333333333,0.8333333333333334,0.16666666666666666,0.8333333333333334,same_count_wrong_values,2537
-dbrx-sqlbench:latest,DBRX,dbrx,pass3.query5,"v2,v3,v4",0,6,0.8733333333333334,same_count_wrong_values,0,3,0.88,1.0,0.6,1.0,same_count_wrong_values,2123
-dbrx-sqlbench:latest,DBRX,dbrx,pass3.query6,"v2,v3,v4",0,6,0.8375,same_count_wrong_values,0,3,0.8583333333333334,1.0,0.5277777777777778,1.0,same_count_wrong_values,2120
-dbrx-sqlbench:latest,DBRX,dbrx,pass3.query7,"v2,v3,v4",0,6,0.5,row_count_mismatch,0,3,1.0,1.0,1.0,1.0,same_count_wrong_values,1980
-dbrx-sqlbench:latest,DBRX,dbrx,pass3.query8,"v2,v3,v4",0,6,0.13333333333333333,row_count_mismatch,0,3,0.0,0.0,0.0,0.0,same_count_wrong_values,2678
-dbrx-sqlbench:latest,DBRX,dbrx,pass3.query9,"v2,v3,v4",0,6,0.7875,same_count_wrong_values,0,3,0.875,1.0,0.5833333333333334,1.0,same_count_wrong_values,2252
-dbrx-sqlbench:latest,DBRX,dbrx,pass3.query10,"v2,v3,v4",0,6,0.7055555555555556,same_count_wrong_values,0,3,0.6916666666666668,1.0,0.4166666666666667,0.3333333333333333,same_count_wrong_values,2264
-dbrx-sqlbench:latest,DBRX,dbrx,pass4.query1,"v2,v3,v4",0,6,0.9125,same_count_wrong_values,0,3,0.9624999999999999,1.0,0.875,1.0,same_count_wrong_values,1624
-dbrx-sqlbench:latest,DBRX,dbrx,pass4.query2,"v2,v3,v4",0,6,0.25,row_count_mismatch,0,3,0.3366666666666667,0.43333333333333335,0.1111111111111111,0.43333333333333335,row_count_mismatch,2510
-dbrx-sqlbench:latest,DBRX,dbrx,pass4.query3,"v2,v3,v4",0,6,0.13749999999999998,row_count_mismatch,0,3,0.27499999999999997,0.3333333333333333,0.25,0.16666666666666666,column_error,2785
-dbrx-sqlbench:latest,DBRX,dbrx,pass4.query4,"v2,v3,v4",0,6,0.4749999999999999,row_count_mismatch,0,3,0.4777777777777777,0.4444444444444444,0.5555555555555555,0.4444444444444444,row_count_mismatch,2378
-dbrx-sqlbench:latest,DBRX,dbrx,pass4.query5,"v2,v3,v4",0,6,0.5219999999999999,same_count_wrong_values,0,3,0.8026666666666666,1.0,0.6533333333333333,0.5333333333333333,same_count_wrong_values,2499
-dbrx-sqlbench:latest,DBRX,dbrx,pass4.query6,"v2,v3,v4",0,6,0.7250000000000001,row_count_mismatch,0,3,0.81,1.0,0.3666666666666667,1.0,same_count_wrong_values,2385
-dbrx-sqlbench:latest,DBRX,dbrx,pass4.query7,"v2,v3,v4",0,6,0.21212121212121213,row_count_mismatch,0,3,0.42424242424242425,0.5303030303030303,1.0,0.17676767676767677,row_count_mismatch,2389
-dbrx-sqlbench:latest,DBRX,dbrx,pass4.query8,"v2,v3,v4",0,6,0.5488095238095237,column_error,0,3,0.45714285714285713,0.5,0.35714285714285715,0.5,same_count_wrong_values,2526
-dbrx-sqlbench:latest,DBRX,dbrx,pass4.query9,"v2,v3,v4",0,6,0.5854166666666667,column_error,0,3,0.775,1.0,0.25,1.0,same_count_wrong_values,2449
-dbrx-sqlbench:latest,DBRX,dbrx,pass4.query10,"v2,v3,v4",0,6,0.9883333333333333,same_count_wrong_values,0,3,1.0,1.0,1.0,1.0,same_count_wrong_values,1732
-dbrx-sqlbench:latest,DBRX,dbrx,pass5.query1,"v2,v3,v4",0,6,0.6766666666666666,same_count_wrong_values,0,3,0.6999999999999998,1.0,0.0,1.0,same_count_wrong_values,2011
-dbrx-sqlbench:latest,DBRX,dbrx,pass5.query2,"v2,v3,v4",0,6,0.5792261904761905,row_count_mismatch,0,3,0.7414285714285714,0.8571428571428571,0.5666666666666667,0.7142857142857143,row_count_mismatch,2404
-dbrx-sqlbench:latest,DBRX,dbrx,pass5.query3,"v2,v3,v4",0,6,0.335625,row_count_mismatch,0,3,0.41250000000000003,0.5,0.20833333333333334,0.5,same_count_wrong_values,2724
-dbrx-sqlbench:latest,DBRX,dbrx,pass5.query4,"v2,v3,v4",0,6,0.6999999999999998,same_count_wrong_values,0,3,0.6999999999999998,1.0,0.0,1.0,same_count_wrong_values,2290
-dbrx-sqlbench:latest,DBRX,dbrx,pass5.query5,"v2,v3,v4",0,6,0.5006944444444444,row_count_mismatch,0,3,0.3138888888888889,0.4444444444444444,0.08333333333333333,0.3333333333333333,column_error,2673
-dbrx-sqlbench:latest,DBRX,dbrx,pass5.query6,"v2,v3,v4",0,6,0.5366666666666667,row_count_mismatch,0,3,0.6466666666666666,1.0,0.0,0.7333333333333334,column_error,2417
-dbrx-sqlbench:latest,DBRX,dbrx,pass5.query7,"v2,v3,v4",0,6,0.6916666666666668,same_count_wrong_values,0,3,0.6833333333333335,0.9166666666666666,0.13888888888888887,0.9166666666666666,same_count_wrong_values,2607
-dbrx-sqlbench:latest,DBRX,dbrx,pass5.query8,"v2,v3,v4",0,6,0.6933333333333334,same_count_wrong_values,0,3,0.8080000000000002,1.0,0.36000000000000004,1.0,same_count_wrong_values,2596
-dbrx-sqlbench:latest,DBRX,dbrx,pass5.query9,"v2,v3,v4",0,6,0.21407407407407408,row_count_mismatch,0,3,0.2188888888888889,0.25555555555555554,0.2222222222222222,0.12222222222222223,row_count_mismatch,2475
-dbrx-sqlbench:latest,DBRX,dbrx,pass5.query10,"v2,v3,v4",0,6,0.54,same_count_wrong_values,0,3,0.5933333333333334,1.0,0.0,0.4666666666666666,same_count_wrong_values,2342
-deepseek-coder-33b-sqlbench:latest,DeepSeek Coder 33B,llama,pass1.query1,"v2,v3,v4",0,6,0.9500000000000001,row_count_mismatch,0,3,1.0,1.0,1.0,1.0,same_count_wrong_values,2206
-deepseek-coder-33b-sqlbench:latest,DeepSeek Coder 33B,llama,pass1.query2,"v2,v3,v4",0,6,0.7819444444444444,row_count_mismatch,0,3,0.8312500000000002,1.0,0.9375,0.25,same_count_wrong_values,2362
-deepseek-coder-33b-sqlbench:latest,DeepSeek Coder 33B,llama,pass1.query3,"v2,v3,v4",0,6,1.0,same_count_wrong_values,0,3,1.0,1.0,1.0,1.0,same_count_wrong_values,2049
-deepseek-coder-33b-sqlbench:latest,DeepSeek Coder 33B,llama,pass1.query4,"v2,v3,v4",0,6,0.7714285714285715,row_count_mismatch,0,3,0.7195238095238095,0.8095238095238096,0.6999999999999998,0.5238095238095238,row_count_mismatch,2428
-deepseek-coder-33b-sqlbench:latest,DeepSeek Coder 33B,llama,pass1.query5,"v2,v3,v4",0,6,0.7571428571428571,row_count_mismatch,0,3,0.7142857142857143,0.7142857142857143,0.7142857142857143,0.7142857142857143,same_count_wrong_values,2361
-deepseek-coder-33b-sqlbench:latest,DeepSeek Coder 33B,llama,pass1.query6,"v2,v3,v4",0,6,0.7062499999999999,same_count_wrong_values,0,3,0.6708333333333334,0.8333333333333334,0.2916666666666667,0.8333333333333334,same_count_wrong_values,2422
-deepseek-coder-33b-sqlbench:latest,DeepSeek Coder 33B,llama,pass1.query7,"v2,v3,v4",0,6,0.5333333333333333,row_count_mismatch,0,3,0.5333333333333333,1.0,0.1111111111111111,0.0,same_count_wrong_values,2471
-deepseek-coder-33b-sqlbench:latest,DeepSeek Coder 33B,llama,pass1.query8,"v2,v3,v4",0,6,0.8000000000000002,same_count_wrong_values,0,3,0.7666666666666666,1.0,0.2222222222222222,1.0,same_count_wrong_values,2426
-deepseek-coder-33b-sqlbench:latest,DeepSeek Coder 33B,llama,pass1.query9,"v2,v3,v4",0,6,0.7888888888888889,same_count_wrong_values,0,3,0.8000000000000002,1.0,0.3333333333333333,1.0,same_count_wrong_values,2314
-deepseek-coder-33b-sqlbench:latest,DeepSeek Coder 33B,llama,pass1.query10,"v2,v3,v4",3,6,1.0,same_count_wrong_values,0,3,1.0,1.0,1.0,1.0,same_count_wrong_values,1755
-deepseek-coder-33b-sqlbench:latest,DeepSeek Coder 33B,llama,pass2.query1,"v2,v3,v4",0,6,0.7740740740740741,row_count_mismatch,0,3,0.8037037037037038,0.7777777777777778,0.888888888888889,0.7407407407407408,same_count_wrong_values,2473
-deepseek-coder-33b-sqlbench:latest,DeepSeek Coder 33B,llama,pass2.query2,"v2,v3,v4",0,6,1.0,same_count_wrong_values,0,3,1.0,1.0,1.0,1.0,same_count_wrong_values,1891
-deepseek-coder-33b-sqlbench:latest,DeepSeek Coder 33B,llama,pass2.query3,"v2,v3,v4",0,6,0.5516666666666666,row_count_mismatch,0,3,0.5833333333333334,0.7666666666666666,0.6,0.10000000000000002,row_count_mismatch,2380
-deepseek-coder-33b-sqlbench:latest,DeepSeek Coder 33B,llama,pass2.query4,"v2,v3,v4",0,6,0.28888888888888886,same_count_wrong_values,0,3,0.28888888888888886,0.4444444444444444,0.1111111111111111,0.16666666666666666,same_count_wrong_values,2456
-deepseek-coder-33b-sqlbench:latest,DeepSeek Coder 33B,llama,pass2.query5,"v2,v3,v4",0,6,0.5455555555555556,same_count_wrong_values,0,3,0.55,1.0,0.16666666666666666,0.0,same_count_wrong_values,2336
-deepseek-coder-33b-sqlbench:latest,DeepSeek Coder 33B,llama,pass2.query6,"v2,v3,v4",0,6,0.38749999999999996,row_count_mismatch,0,3,0.7749999999999999,1.0,0.25,1.0,same_count_wrong_values,2623
-deepseek-coder-33b-sqlbench:latest,DeepSeek Coder 33B,llama,pass2.query7,"v2,v3,v4",0,6,0.61,same_count_wrong_values,0,3,0.7399999999999999,1.0,0.4000000000000001,0.6,same_count_wrong_values,2344
-deepseek-coder-33b-sqlbench:latest,DeepSeek Coder 33B,llama,pass2.query8,"v2,v3,v4",0,6,0.5888888888888889,same_count_wrong_values,0,3,0.6999999999999998,1.0,0.0,1.0,same_count_wrong_values,2488
-deepseek-coder-33b-sqlbench:latest,DeepSeek Coder 33B,llama,pass2.query9,"v2,v3,v4",0,6,0.4844444444444444,row_count_mismatch,0,3,0.5666666666666667,0.6666666666666666,0.3333333333333333,0.6666666666666666,same_count_wrong_values,2608
-deepseek-coder-33b-sqlbench:latest,DeepSeek Coder 33B,llama,pass2.query10,"v2,v3,v4",0,6,0.8866666666666666,same_count_wrong_values,0,3,0.8799999999999999,1.0,0.6,1.0,same_count_wrong_values,2251
-deepseek-coder-33b-sqlbench:latest,DeepSeek Coder 33B,llama,pass3.query1,"v2,v3,v4",0,6,1.0,same_count_wrong_values,0,3,1.0,1.0,1.0,1.0,same_count_wrong_values,1774
-deepseek-coder-33b-sqlbench:latest,DeepSeek Coder 33B,llama,pass3.query2,"v2,v3,v4",0,6,0.5235416666666667,row_count_mismatch,0,3,0.5895833333333335,0.75,0.2708333333333333,0.6666666666666666,same_count_wrong_values,2608
-deepseek-coder-33b-sqlbench:latest,DeepSeek Coder 33B,llama,pass3.query3,"v2,v3,v4",0,6,0.755,same_count_wrong_values,0,3,0.81,1.0,0.3666666666666667,1.0,same_count_wrong_values,2426
-deepseek-coder-33b-sqlbench:latest,DeepSeek Coder 33B,llama,pass3.query4,"v2,v3,v4",0,6,0.6,row_count_mismatch,0,3,0.8000000000000002,1.0,0.3333333333333333,1.0,same_count_wrong_values,2482
-deepseek-coder-33b-sqlbench:latest,DeepSeek Coder 33B,llama,pass3.query5,"v2,v3,v4",0,6,0.77,same_count_wrong_values,0,3,0.8999999999999999,1.0,0.6666666666666666,1.0,same_count_wrong_values,2165
-deepseek-coder-33b-sqlbench:latest,DeepSeek Coder 33B,llama,pass3.query6,"v2,v3,v4",0,6,0.0,row_count_mismatch,0,3,0.0,0.0,0.0,0.0,same_count_wrong_values,2456
-deepseek-coder-33b-sqlbench:latest,DeepSeek Coder 33B,llama,pass3.query7,"v2,v3,v4",0,6,0.38749999999999996,row_count_mismatch,0,3,0.7749999999999999,1.0,1.0,0.25,order_only,2175
-deepseek-coder-33b-sqlbench:latest,DeepSeek Coder 33B,llama,pass3.query8,"v2,v3,v4",0,6,0.2333333333333333,row_count_mismatch,0,3,0.4666666666666666,0.6666666666666666,0.0,0.6666666666666666,same_count_wrong_values,2720
-deepseek-coder-33b-sqlbench:latest,DeepSeek Coder 33B,llama,pass3.query9,"v2,v3,v4",0,6,0.8229166666666666,same_count_wrong_values,0,3,0.9250000000000002,1.0,0.75,1.0,same_count_wrong_values,2185
-deepseek-coder-33b-sqlbench:latest,DeepSeek Coder 33B,llama,pass3.query10,"v2,v3,v4",0,6,0.5833333333333334,same_count_wrong_values,0,3,0.6416666666666666,1.0,0.25,0.3333333333333333,same_count_wrong_values,2306
-deepseek-coder-33b-sqlbench:latest,DeepSeek Coder 33B,llama,pass4.query1,"v2,v3,v4",0,6,0.8500000000000001,same_count_wrong_values,0,3,0.8500000000000001,1.0,0.5,1.0,same_count_wrong_values,1666
-deepseek-coder-33b-sqlbench:latest,DeepSeek Coder 33B,llama,pass4.query2,"v2,v3,v4",0,6,0.46249999999999997,row_count_mismatch,0,3,0.5,0.6666666666666666,0.1111111111111111,0.6666666666666666,same_count_wrong_values,2553
-deepseek-coder-33b-sqlbench:latest,DeepSeek Coder 33B,llama,pass4.query3,"v2,v3,v4",0,6,0.4229166666666666,row_count_mismatch,0,3,0.6458333333333333,0.8333333333333334,0.20833333333333334,0.8333333333333334,same_count_wrong_values,2720
-deepseek-coder-33b-sqlbench:latest,DeepSeek Coder 33B,llama,pass4.query4,"v2,v3,v4",0,6,0.44166666666666665,row_count_mismatch,0,3,0.3333333333333333,0.3333333333333333,0.3333333333333333,0.3333333333333333,row_count_mismatch,2420
-deepseek-coder-33b-sqlbench:latest,DeepSeek Coder 33B,llama,pass4.query5,"v2,v3,v4",0,6,0.7413333333333333,same_count_wrong_values,0,3,0.8919999999999999,1.0,0.64,1.0,same_count_wrong_values,2456
-deepseek-coder-33b-sqlbench:latest,DeepSeek Coder 33B,llama,pass4.query6,"v2,v3,v4",0,6,0.7600000000000001,same_count_wrong_values,0,3,0.73,1.0,0.10000000000000002,1.0,same_count_wrong_values,2318
-deepseek-coder-33b-sqlbench:latest,DeepSeek Coder 33B,llama,pass4.query7,"v2,v3,v4",0,6,0.425,row_count_mismatch,0,3,0.85,1.0,1.0,0.5,same_count_wrong_values,2193
-deepseek-coder-33b-sqlbench:latest,DeepSeek Coder 33B,llama,pass4.query8,"v2,v3,v4",0,6,0.3823412698412698,row_count_mismatch,0,3,0.369047619047619,0.5,0.2857142857142857,0.16666666666666666,same_count_wrong_values,2471
-deepseek-coder-33b-sqlbench:latest,DeepSeek Coder 33B,llama,pass4.query9,"v2,v3,v4",0,6,0.4847222222222222,row_count_mismatch,0,3,0.6166666666666666,1.0,0.16666666666666666,0.3333333333333333,same_count_wrong_values,2491
-deepseek-coder-33b-sqlbench:latest,DeepSeek Coder 33B,llama,pass4.query10,"v2,v3,v4",0,6,1.0,same_count_wrong_values,0,3,1.0,1.0,1.0,1.0,same_count_wrong_values,1774
-deepseek-coder-33b-sqlbench:latest,DeepSeek Coder 33B,llama,pass5.query1,"v2,v3,v4",0,6,0.63,row_count_mismatch,0,3,0.6999999999999998,1.0,0.0,1.0,same_count_wrong_values,2103
-deepseek-coder-33b-sqlbench:latest,DeepSeek Coder 33B,llama,pass5.query2,"v2,v3,v4",0,6,0.5616666666666666,row_count_mismatch,0,3,0.5822222222222222,0.7777777777777778,0.20000000000000004,0.6666666666666666,same_count_wrong_values,2497
-deepseek-coder-33b-sqlbench:latest,DeepSeek Coder 33B,llama,pass5.query3,"v2,v3,v4",0,6,0.37375,same_count_wrong_values,0,3,0.53125,0.75,0.1875,0.5,same_count_wrong_values,2766
-deepseek-coder-33b-sqlbench:latest,DeepSeek Coder 33B,llama,pass5.query4,"v2,v3,v4",0,6,0.6999999999999998,same_count_wrong_values,0,3,0.6999999999999998,1.0,0.0,1.0,same_count_wrong_values,2332
-deepseek-coder-33b-sqlbench:latest,DeepSeek Coder 33B,llama,pass5.query5,"v2,v3,v4",0,6,0.46875,row_count_mismatch,0,3,0.725,1.0,0.08333333333333333,1.0,same_count_wrong_values,2608
-deepseek-coder-33b-sqlbench:latest,DeepSeek Coder 33B,llama,pass5.query6,"v2,v3,v4",0,6,0.53,row_count_mismatch,0,3,0.62,1.0,0.0,0.6,same_count_wrong_values,2352
-deepseek-coder-33b-sqlbench:latest,DeepSeek Coder 33B,llama,pass5.query7,"v2,v3,v4",0,6,0.7666666666666666,same_count_wrong_values,0,3,0.75,1.0,0.16666666666666666,1.0,same_count_wrong_values,2355
-deepseek-coder-33b-sqlbench:latest,DeepSeek Coder 33B,llama,pass5.query8,"v2,v3,v4",0,6,0.6653333333333333,row_count_mismatch,0,3,0.82,1.0,0.39999999999999997,1.0,same_count_wrong_values,2638
-deepseek-coder-33b-sqlbench:latest,DeepSeek Coder 33B,llama,pass5.query9,"v2,v3,v4",0,6,0.3788888888888889,same_count_wrong_values,0,3,0.24166666666666667,0.3333333333333333,0.027777777777777776,0.3333333333333333,same_count_wrong_values,2568
-deepseek-coder-33b-sqlbench:latest,DeepSeek Coder 33B,llama,pass5.query10,"v2,v3,v4",0,6,0.5100000000000001,row_count_mismatch,0,3,0.5800000000000001,1.0,0.0,0.4000000000000001,same_count_wrong_values,2384
+codellama-70b-sqlbench:latest,CodeLlama 70B,llama,pass1.query1,"v2,v3,v4",0,3,0.875,same_count_wrong_values,0,3,0.875,0.875,0.875,0.875,same_count_wrong_values,2458
+codellama-70b-sqlbench:latest,CodeLlama 70B,llama,pass1.query2,"v2,v3,v4",0,3,0.8500000000000001,order_only,0,3,0.8500000000000001,1.0,1.0,0.25,order_only,2585
+codellama-70b-sqlbench:latest,CodeLlama 70B,llama,pass1.query3,"v2,v3,v4",2,3,0.9944444444444445,same_count_wrong_values,2,3,0.9944444444444445,1.0,0.9814814814814815,1.0,same_count_wrong_values,2113
+codellama-70b-sqlbench:latest,CodeLlama 70B,llama,pass1.query4,"v2,v3,v4",0,3,0.8799999999999999,same_count_wrong_values,0,3,0.8799999999999999,1.0,0.6,1.0,same_count_wrong_values,2414
+codellama-70b-sqlbench:latest,CodeLlama 70B,llama,pass1.query5,"v2,v3,v4",0,3,0.8625000000000002,row_count_mismatch,0,3,0.8625000000000002,0.875,1.0,0.625,row_count_mismatch,2295
+codellama-70b-sqlbench:latest,CodeLlama 70B,llama,pass1.query6,"v2,v3,v4",0,3,0.6375,same_count_wrong_values,0,3,0.6375,0.75,0.375,0.75,same_count_wrong_values,2457
+codellama-70b-sqlbench:latest,CodeLlama 70B,llama,pass1.query7,"v2,v3,v4",0,3,0.75,same_count_wrong_values,0,3,0.75,1.0,0.16666666666666666,1.0,same_count_wrong_values,2271
+codellama-70b-sqlbench:latest,CodeLlama 70B,llama,pass1.query8,"v2,v3,v4",0,3,0.6833333333333332,row_count_mismatch,0,3,0.6833333333333332,0.8333333333333334,0.3333333333333333,0.8333333333333334,row_count_mismatch,2943
+codellama-70b-sqlbench:latest,CodeLlama 70B,llama,pass1.query9,"v2,v3,v4",0,3,0.6972222222222223,same_count_wrong_values,0,3,0.6972222222222223,0.9166666666666666,0.1851851851851852,0.9166666666666666,same_count_wrong_values,2543
+codellama-70b-sqlbench:latest,CodeLlama 70B,llama,pass1.query10,"v2,v3,v4",3,3,1.0,none,3,3,1.0,1.0,1.0,1.0,none,2342
+codellama-70b-sqlbench:latest,CodeLlama 70B,llama,pass2.query1,"v2,v3,v4",0,3,0.8714285714285714,row_count_mismatch,0,3,0.8714285714285714,0.8571428571428571,1.0,0.7142857142857143,row_count_mismatch,2407
+codellama-70b-sqlbench:latest,CodeLlama 70B,llama,pass2.query2,"v2,v3,v4",0,3,1.0,same_count_wrong_values,0,3,1.0,1.0,1.0,1.0,same_count_wrong_values,2252
+codellama-70b-sqlbench:latest,CodeLlama 70B,llama,pass2.query3,"v2,v3,v4",0,3,0.9099999999999998,same_count_wrong_values,0,3,0.9099999999999998,1.0,0.6999999999999998,1.0,same_count_wrong_values,2416
+codellama-70b-sqlbench:latest,CodeLlama 70B,llama,pass2.query4,"v2,v3,v4",0,3,0.3499999999999999,row_count_mismatch,0,3,0.3499999999999999,0.5,0.16666666666666666,0.25,row_count_mismatch,2390
+codellama-70b-sqlbench:latest,CodeLlama 70B,llama,pass2.query5,"v2,v3,v4",0,3,0.6166666666666667,same_count_wrong_values,0,3,0.6166666666666667,1.0,0.16666666666666666,0.3333333333333333,same_count_wrong_values,2456
+codellama-70b-sqlbench:latest,CodeLlama 70B,llama,pass2.query6,"v2,v3,v4",0,3,0.7749999999999999,same_count_wrong_values,0,3,0.7749999999999999,1.0,0.25,1.0,same_count_wrong_values,2473
+codellama-70b-sqlbench:latest,CodeLlama 70B,llama,pass2.query7,"v2,v3,v4",0,3,0.77,same_count_wrong_values,0,3,0.77,1.0,0.5,0.6,same_count_wrong_values,2464
+codellama-70b-sqlbench:latest,CodeLlama 70B,llama,pass2.query8,"v2,v3,v4",0,3,0.8000000000000002,same_count_wrong_values,0,3,0.8000000000000002,1.0,0.3333333333333333,1.0,same_count_wrong_values,2608
+codellama-70b-sqlbench:latest,CodeLlama 70B,llama,pass2.query9,"v2,v3,v4",0,3,0.5333333333333333,same_count_wrong_values,0,3,0.5333333333333333,0.6666666666666666,0.2222222222222222,0.6666666666666666,same_count_wrong_values,2593
+codellama-70b-sqlbench:latest,CodeLlama 70B,llama,pass2.query10,"v2,v3,v4",0,3,0.8799999999999999,same_count_wrong_values,0,3,0.8799999999999999,1.0,0.6,1.0,same_count_wrong_values,2236
+codellama-70b-sqlbench:latest,CodeLlama 70B,llama,pass3.query1,"v2,v3,v4",3,3,1.0,none,3,3,1.0,1.0,1.0,1.0,none,1828
+codellama-70b-sqlbench:latest,CodeLlama 70B,llama,pass3.query2,"v2,v3,v4",0,3,0.3687500000000001,same_count_wrong_values,0,3,0.3687500000000001,0.5,0.0625,0.5,same_count_wrong_values,2593
+codellama-70b-sqlbench:latest,CodeLlama 70B,llama,pass3.query3,"v2,v3,v4",0,3,0.8500000000000001,same_count_wrong_values,0,3,0.8500000000000001,1.0,0.5,1.0,same_count_wrong_values,2596
+codellama-70b-sqlbench:latest,CodeLlama 70B,llama,pass3.query4,"v2,v3,v4",0,3,0.8000000000000002,same_count_wrong_values,0,3,0.8000000000000002,1.0,0.3333333333333333,1.0,same_count_wrong_values,2467
+codellama-70b-sqlbench:latest,CodeLlama 70B,llama,pass3.query5,"v2,v3,v4",0,3,0.8999999999999999,same_count_wrong_values,0,3,0.8999999999999999,1.0,0.6666666666666666,1.0,same_count_wrong_values,2150
+codellama-70b-sqlbench:latest,CodeLlama 70B,llama,pass3.query6,"v2,v3,v4",0,3,0.8500000000000001,same_count_wrong_values,0,3,0.8500000000000001,1.0,0.5,1.0,same_count_wrong_values,2441
+codellama-70b-sqlbench:latest,CodeLlama 70B,llama,pass3.query7,"v2,v3,v4",3,3,1.0,none,3,3,1.0,1.0,1.0,1.0,none,1951
+codellama-70b-sqlbench:latest,CodeLlama 70B,llama,pass3.query8,"v2,v3,v4",0,3,0.4555555555555555,same_count_wrong_values,0,3,0.4555555555555555,0.5555555555555555,0.2222222222222222,0.5555555555555555,same_count_wrong_values,2705
+codellama-70b-sqlbench:latest,CodeLlama 70B,llama,pass3.query9,"v2,v3,v4",0,3,0.875,same_count_wrong_values,0,3,0.875,1.0,0.5833333333333334,1.0,same_count_wrong_values,2279
+codellama-70b-sqlbench:latest,CodeLlama 70B,llama,pass3.query10,"v2,v3,v4",0,3,0.5916666666666667,same_count_wrong_values,0,3,0.5916666666666667,1.0,0.08333333333333333,0.3333333333333333,same_count_wrong_values,2476
+codellama-70b-sqlbench:latest,CodeLlama 70B,llama,pass4.query1,"v2,v3,v4",0,3,0.9249999999999999,same_count_wrong_values,0,3,0.9249999999999999,1.0,0.75,1.0,same_count_wrong_values,1651
+codellama-70b-sqlbench:latest,CodeLlama 70B,llama,pass4.query2,"v2,v3,v4",0,3,0.36666666666666664,row_count_mismatch,0,3,0.36666666666666664,0.5555555555555555,0.0,0.4444444444444444,row_count_mismatch,2537
+codellama-70b-sqlbench:latest,CodeLlama 70B,llama,pass4.query3,"v2,v3,v4",0,3,0.7749999999999999,same_count_wrong_values,0,3,0.7749999999999999,1.0,0.25,1.0,same_count_wrong_values,2705
+codellama-70b-sqlbench:latest,CodeLlama 70B,llama,pass4.query4,"v2,v3,v4",0,3,0.6999999999999998,same_count_wrong_values,0,3,0.6999999999999998,1.0,0.0,1.0,same_count_wrong_values,2456
+codellama-70b-sqlbench:latest,CodeLlama 70B,llama,pass4.query5,"v2,v3,v4",0,3,0.7479999999999999,same_count_wrong_values,0,3,0.7479999999999999,1.0,0.56,0.4000000000000001,same_count_wrong_values,2576
+codellama-70b-sqlbench:latest,CodeLlama 70B,llama,pass4.query6,"v2,v3,v4",0,3,0.82,same_count_wrong_values,0,3,0.82,1.0,0.4000000000000001,1.0,same_count_wrong_values,2462
+codellama-70b-sqlbench:latest,CodeLlama 70B,llama,pass4.query7,"v2,v3,v4",0,3,0.6833333333333332,row_count_mismatch,0,3,0.6833333333333332,0.8333333333333334,1.0,0.3333333333333333,row_count_mismatch,2127
+codellama-70b-sqlbench:latest,CodeLlama 70B,llama,pass4.query8,"v2,v3,v4",0,3,0.37142857142857144,same_count_wrong_values,0,3,0.37142857142857144,0.5,0.07142857142857142,0.5,same_count_wrong_values,2456
+codellama-70b-sqlbench:latest,CodeLlama 70B,llama,pass4.query9,"v2,v3,v4",0,3,0.7749999999999999,same_count_wrong_values,0,3,0.7749999999999999,1.0,0.25,1.0,same_count_wrong_values,2291
+codellama-70b-sqlbench:latest,CodeLlama 70B,llama,pass4.query10,"v2,v3,v4",0,3,1.0,same_count_wrong_values,0,3,1.0,1.0,1.0,1.0,same_count_wrong_values,1759
+codellama-70b-sqlbench:latest,CodeLlama 70B,llama,pass5.query1,"v2,v3,v4",0,3,0.6999999999999998,same_count_wrong_values,0,3,0.6999999999999998,1.0,0.0,1.0,same_count_wrong_values,2332
+codellama-70b-sqlbench:latest,CodeLlama 70B,llama,pass5.query2,"v2,v3,v4",0,3,0.6314285714285715,row_count_mismatch,0,3,0.6314285714285715,0.8571428571428571,0.20000000000000004,0.7142857142857143,row_count_mismatch,2431
+codellama-70b-sqlbench:latest,CodeLlama 70B,llama,pass5.query3,"v2,v3,v4",0,3,0.40625,row_count_mismatch,0,3,0.40625,0.5,0.1875,0.5,row_count_mismatch,2942
+codellama-70b-sqlbench:latest,CodeLlama 70B,llama,pass5.query4,"v2,v3,v4",0,3,0.6999999999999998,same_count_wrong_values,0,3,0.6999999999999998,1.0,0.0,1.0,same_count_wrong_values,2317
+codellama-70b-sqlbench:latest,CodeLlama 70B,llama,pass5.query5,"v2,v3,v4",0,3,0.0,row_count_mismatch,0,3,0.0,0.0,0.0,0.0,row_count_mismatch,2542
+codellama-70b-sqlbench:latest,CodeLlama 70B,llama,pass5.query6,"v2,v3,v4",0,3,0.62,same_count_wrong_values,0,3,0.62,1.0,0.0,0.6,same_count_wrong_values,2472
+codellama-70b-sqlbench:latest,CodeLlama 70B,llama,pass5.query7,"v2,v3,v4",0,3,0.5166666666666666,same_count_wrong_values,0,3,0.5166666666666666,0.6666666666666666,0.16666666666666666,0.6666666666666666,same_count_wrong_values,2584
+codellama-70b-sqlbench:latest,CodeLlama 70B,llama,pass5.query8,"v2,v3,v4",0,3,0.8080000000000002,same_count_wrong_values,0,3,0.8080000000000002,1.0,0.36000000000000004,1.0,same_count_wrong_values,2573
+codellama-70b-sqlbench:latest,CodeLlama 70B,llama,pass5.query9,"v2,v3,v4",0,3,0.2333333333333333,same_count_wrong_values,0,3,0.2333333333333333,0.3333333333333333,0.0,0.3333333333333333,same_count_wrong_values,2631
+codellama-70b-sqlbench:latest,CodeLlama 70B,llama,pass5.query10,"v2,v3,v4",0,3,0.0,invalid_json_or_error,0,3,0.0,0.0,0.0,0.0,invalid_json_or_error,2583
+command-r-plus-sqlbench:latest,Command R+,command-r,pass1.query1,"v2,v3,v4",3,3,1.0,none,3,3,1.0,1.0,1.0,1.0,none,2190
+command-r-plus-sqlbench:latest,Command R+,command-r,pass1.query2,"v2,v3,v4",0,3,0.8500000000000001,order_only,0,3,0.8500000000000001,1.0,1.0,0.25,order_only,2423
+command-r-plus-sqlbench:latest,Command R+,command-r,pass1.query3,"v2,v3,v4",0,3,0.9833333333333334,same_count_wrong_values,0,3,0.9833333333333334,1.0,0.9444444444444443,1.0,same_count_wrong_values,2048
+command-r-plus-sqlbench:latest,Command R+,command-r,pass1.query4,"v2,v3,v4",0,3,0.9700000000000001,same_count_wrong_values,0,3,0.9700000000000001,1.0,0.9,1.0,same_count_wrong_values,2052
+command-r-plus-sqlbench:latest,Command R+,command-r,pass1.query5,"v2,v3,v4",2,3,0.9523809523809524,same_count_wrong_values,2,3,0.9523809523809524,0.9523809523809524,0.9523809523809524,0.9523809523809524,same_count_wrong_values,2169
+command-r-plus-sqlbench:latest,Command R+,command-r,pass1.query6,"v2,v3,v4",0,3,0.7875,same_count_wrong_values,0,3,0.7875,1.0,0.625,0.5,same_count_wrong_values,2154
+command-r-plus-sqlbench:latest,Command R+,command-r,pass1.query7,"v2,v3,v4",0,3,0.7833333333333333,same_count_wrong_values,0,3,0.7833333333333333,1.0,0.27777777777777773,1.0,same_count_wrong_values,2561
+command-r-plus-sqlbench:latest,Command R+,command-r,pass1.query8,"v2,v3,v4",0,3,0.8000000000000002,same_count_wrong_values,0,3,0.8000000000000002,1.0,0.3333333333333333,1.0,same_count_wrong_values,2293
+command-r-plus-sqlbench:latest,Command R+,command-r,pass1.query9,"v2,v3,v4",0,3,0.8222222222222223,same_count_wrong_values,0,3,0.8222222222222223,1.0,0.4074074074074074,1.0,same_count_wrong_values,2181
+command-r-plus-sqlbench:latest,Command R+,command-r,pass1.query10,"v2,v3,v4",3,3,1.0,none,3,3,1.0,1.0,1.0,1.0,none,1856
+command-r-plus-sqlbench:latest,Command R+,command-r,pass2.query1,"v2,v3,v4",3,3,1.0,none,3,3,1.0,1.0,1.0,1.0,none,2192
+command-r-plus-sqlbench:latest,Command R+,command-r,pass2.query2,"v2,v3,v4",0,3,1.0,same_count_wrong_values,0,3,1.0,1.0,1.0,1.0,same_count_wrong_values,1758
+command-r-plus-sqlbench:latest,Command R+,command-r,pass2.query3,"v2,v3,v4",2,3,0.89,row_count_mismatch,2,3,0.89,0.9333333333333332,0.9,0.7666666666666666,row_count_mismatch,2456
+command-r-plus-sqlbench:latest,Command R+,command-r,pass2.query4,"v2,v3,v4",0,3,0.2833333333333333,same_count_wrong_values,0,3,0.2833333333333333,0.3333333333333333,0.16666666666666666,0.3333333333333333,same_count_wrong_values,2546
+command-r-plus-sqlbench:latest,Command R+,command-r,pass2.query5,"v2,v3,v4",0,3,0.55,same_count_wrong_values,0,3,0.55,1.0,0.16666666666666666,0.0,same_count_wrong_values,2153
+command-r-plus-sqlbench:latest,Command R+,command-r,pass2.query6,"v2,v3,v4",0,3,0.9250000000000002,same_count_wrong_values,0,3,0.9250000000000002,1.0,0.75,1.0,same_count_wrong_values,2713
+command-r-plus-sqlbench:latest,Command R+,command-r,pass2.query7,"v2,v3,v4",0,3,0.7999999999999999,same_count_wrong_values,0,3,0.7999999999999999,1.0,0.6,0.6,same_count_wrong_values,2161
+command-r-plus-sqlbench:latest,Command R+,command-r,pass2.query8,"v2,v3,v4",0,3,0.8000000000000002,same_count_wrong_values,0,3,0.8000000000000002,1.0,0.3333333333333333,1.0,same_count_wrong_values,2440
+command-r-plus-sqlbench:latest,Command R+,command-r,pass2.query9,"v2,v3,v4",0,3,0.5,same_count_wrong_values,0,3,0.5,0.6666666666666666,0.1111111111111111,0.6666666666666666,same_count_wrong_values,2698
+command-r-plus-sqlbench:latest,Command R+,command-r,pass2.query10,"v2,v3,v4",0,3,0.9333333333333332,same_count_wrong_values,0,3,0.9333333333333332,1.0,0.7777777777777777,1.0,same_count_wrong_values,2068
+command-r-plus-sqlbench:latest,Command R+,command-r,pass3.query1,"v2,v3,v4",3,3,1.0,none,3,3,1.0,1.0,1.0,1.0,none,1710
+command-r-plus-sqlbench:latest,Command R+,command-r,pass3.query2,"v2,v3,v4",0,3,0.35000000000000003,same_count_wrong_values,0,3,0.35000000000000003,0.5,0.16666666666666666,0.25,same_count_wrong_values,2698
+command-r-plus-sqlbench:latest,Command R+,command-r,pass3.query3,"v2,v3,v4",0,3,0.7600000000000001,same_count_wrong_values,0,3,0.7600000000000001,1.0,0.6,0.4000000000000001,same_count_wrong_values,2566
+command-r-plus-sqlbench:latest,Command R+,command-r,pass3.query4,"v2,v3,v4",0,3,0.75,same_count_wrong_values,0,3,0.75,1.0,0.16666666666666666,1.0,same_count_wrong_values,2572
+command-r-plus-sqlbench:latest,Command R+,command-r,pass3.query5,"v2,v3,v4",0,3,0.98,same_count_wrong_values,0,3,0.98,1.0,0.9333333333333332,1.0,same_count_wrong_values,2032
+command-r-plus-sqlbench:latest,Command R+,command-r,pass3.query6,"v2,v3,v4",0,3,0.6,same_count_wrong_values,0,3,0.6,0.75,0.4166666666666667,0.5,same_count_wrong_values,2546
+command-r-plus-sqlbench:latest,Command R+,command-r,pass3.query7,"v2,v3,v4",3,3,1.0,none,3,3,1.0,1.0,1.0,1.0,none,2056
+command-r-plus-sqlbench:latest,Command R+,command-r,pass3.query8,"v2,v3,v4",0,3,0.5166666666666666,same_count_wrong_values,0,3,0.5166666666666666,0.6666666666666666,0.16666666666666666,0.6666666666666666,same_count_wrong_values,2810
+command-r-plus-sqlbench:latest,Command R+,command-r,pass3.query9,"v2,v3,v4",0,3,0.7945833333333333,same_count_wrong_values,0,3,0.7945833333333333,0.9333333333333332,0.6041666666666666,0.7333333333333334,same_count_wrong_values,2296
+command-r-plus-sqlbench:latest,Command R+,command-r,pass3.query10,"v2,v3,v4",0,3,0.46388888888888885,same_count_wrong_values,0,3,0.46388888888888885,0.7777777777777777,0.027777777777777776,0.3333333333333333,same_count_wrong_values,2581
+command-r-plus-sqlbench:latest,Command R+,command-r,pass4.query1,"v2,v3,v4",0,3,0.8500000000000001,same_count_wrong_values,0,3,0.8500000000000001,1.0,0.5,1.0,same_count_wrong_values,1533
+command-r-plus-sqlbench:latest,Command R+,command-r,pass4.query2,"v2,v3,v4",0,3,0.2583333333333333,same_count_wrong_values,0,3,0.2583333333333333,0.3333333333333333,0.08333333333333333,0.3333333333333333,same_count_wrong_values,2693
+command-r-plus-sqlbench:latest,Command R+,command-r,pass4.query3,"v2,v3,v4",0,3,0.3499999999999999,same_count_wrong_values,0,3,0.3499999999999999,0.5,0.0,0.5,same_count_wrong_values,2537
+command-r-plus-sqlbench:latest,Command R+,command-r,pass4.query4,"v2,v3,v4",0,3,0.8000000000000002,same_count_wrong_values,0,3,0.8000000000000002,1.0,0.3333333333333333,1.0,same_count_wrong_values,2561
+command-r-plus-sqlbench:latest,Command R+,command-r,pass4.query5,"v2,v3,v4",0,3,0.8879999999999999,same_count_wrong_values,0,3,0.8879999999999999,1.0,0.6266666666666666,1.0,same_count_wrong_values,2681
+command-r-plus-sqlbench:latest,Command R+,command-r,pass4.query6,"v2,v3,v4",0,3,0.82,same_count_wrong_values,0,3,0.82,1.0,0.4000000000000001,1.0,same_count_wrong_values,2702
+command-r-plus-sqlbench:latest,Command R+,command-r,pass4.query7,"v2,v3,v4",0,3,0.8999999999999999,same_count_wrong_values,0,3,0.8999999999999999,1.0,1.0,0.6666666666666666,same_count_wrong_values,2283
+command-r-plus-sqlbench:latest,Command R+,command-r,pass4.query8,"v2,v3,v4",0,3,0.5357142857142857,same_count_wrong_values,0,3,0.5357142857142857,0.75,0.5357142857142857,0.0,same_count_wrong_values,2561
+command-r-plus-sqlbench:latest,Command R+,command-r,pass4.query9,"v2,v3,v4",0,3,0.65,same_count_wrong_values,0,3,0.65,1.0,0.5,0.0,same_count_wrong_values,2173
+command-r-plus-sqlbench:latest,Command R+,command-r,pass4.query10,"v2,v3,v4",0,3,1.0,same_count_wrong_values,0,3,1.0,1.0,1.0,1.0,same_count_wrong_values,1641
+command-r-plus-sqlbench:latest,Command R+,command-r,pass5.query1,"v2,v3,v4",0,3,0.6999999999999998,same_count_wrong_values,0,3,0.6999999999999998,1.0,0.0,1.0,same_count_wrong_values,1920
+command-r-plus-sqlbench:latest,Command R+,command-r,pass5.query2,"v2,v3,v4",0,3,0.7455555555555554,same_count_wrong_values,0,3,0.7455555555555554,0.8888888888888888,0.5222222222222223,0.7222222222222222,same_count_wrong_values,2587
+command-r-plus-sqlbench:latest,Command R+,command-r,pass5.query3,"v2,v3,v4",0,3,0.6375,same_count_wrong_values,0,3,0.6375,0.75,0.375,0.75,same_count_wrong_values,2583
+command-r-plus-sqlbench:latest,Command R+,command-r,pass5.query4,"v2,v3,v4",0,3,0.6999999999999998,same_count_wrong_values,0,3,0.6999999999999998,1.0,0.0,1.0,same_count_wrong_values,2199
+command-r-plus-sqlbench:latest,Command R+,command-r,pass5.query5,"v2,v3,v4",0,3,0.7875,same_count_wrong_values,0,3,0.7875,1.0,0.2916666666666667,1.0,same_count_wrong_values,2698
+command-r-plus-sqlbench:latest,Command R+,command-r,pass5.query6,"v2,v3,v4",0,3,0.62,same_count_wrong_values,0,3,0.62,1.0,0.0,0.6,same_count_wrong_values,2169
+command-r-plus-sqlbench:latest,Command R+,command-r,pass5.query7,"v2,v3,v4",0,3,0.75,same_count_wrong_values,0,3,0.75,1.0,0.16666666666666666,1.0,same_count_wrong_values,2222
+command-r-plus-sqlbench:latest,Command R+,command-r,pass5.query8,"v2,v3,v4",0,3,0.868,same_count_wrong_values,0,3,0.868,1.0,0.56,1.0,same_count_wrong_values,2346
+command-r-plus-sqlbench:latest,Command R+,command-r,pass5.query9,"v2,v3,v4",0,3,0.1722222222222222,same_count_wrong_values,0,3,0.1722222222222222,0.2222222222222222,0.05555555555555555,0.2222222222222222,same_count_wrong_values,2658
+command-r-plus-sqlbench:latest,Command R+,command-r,pass5.query10,"v2,v3,v4",0,3,0.5800000000000001,same_count_wrong_values,0,3,0.5800000000000001,1.0,0.0,0.4000000000000001,same_count_wrong_values,2201
+dbrx-sqlbench:latest,DBRX,dbrx,pass1.query1,"v2,v3,v4",3,3,1.0,none,3,3,1.0,1.0,1.0,1.0,none,2058
+dbrx-sqlbench:latest,DBRX,dbrx,pass1.query2,"v2,v3,v4",0,3,0.8500000000000001,order_only,0,3,0.8500000000000001,1.0,1.0,0.25,order_only,2291
+dbrx-sqlbench:latest,DBRX,dbrx,pass1.query3,"v2,v3,v4",3,3,1.0,none,3,3,1.0,1.0,1.0,1.0,none,1854
+dbrx-sqlbench:latest,DBRX,dbrx,pass1.query4,"v2,v3,v4",0,3,0.8500000000000001,same_count_wrong_values,0,3,0.8500000000000001,1.0,0.5,1.0,same_count_wrong_values,2143
+dbrx-sqlbench:latest,DBRX,dbrx,pass1.query5,"v2,v3,v4",0,3,0.6285714285714286,row_count_mismatch,0,3,0.6285714285714286,0.7142857142857143,0.7142857142857143,0.2857142857142857,row_count_mismatch,2557
+dbrx-sqlbench:latest,DBRX,dbrx,pass1.query6,"v2,v3,v4",0,3,0.75,column_error,0,3,0.75,1.0,0.16666666666666666,1.0,column_error,2418
+dbrx-sqlbench:latest,DBRX,dbrx,pass1.query7,"v2,v3,v4",0,3,0.6999999999999998,same_count_wrong_values,0,3,0.6999999999999998,1.0,0.0,1.0,same_count_wrong_values,2294
+dbrx-sqlbench:latest,DBRX,dbrx,pass1.query8,"v2,v3,v4",0,3,0.7833333333333333,same_count_wrong_values,0,3,0.7833333333333333,1.0,0.27777777777777773,1.0,same_count_wrong_values,2434
+dbrx-sqlbench:latest,DBRX,dbrx,pass1.query9,"v2,v3,v4",0,3,0.688888888888889,same_count_wrong_values,0,3,0.688888888888889,0.8888888888888888,0.2222222222222222,0.8888888888888888,same_count_wrong_values,2566
+dbrx-sqlbench:latest,DBRX,dbrx,pass1.query10,"v2,v3,v4",0,3,1.0,same_count_wrong_values,0,3,1.0,1.0,1.0,1.0,same_count_wrong_values,1870
+dbrx-sqlbench:latest,DBRX,dbrx,pass2.query1,"v2,v3,v4",0,3,0.8444444444444444,same_count_wrong_values,0,3,0.8444444444444444,0.888888888888889,0.888888888888889,0.6666666666666666,same_count_wrong_values,2381
+dbrx-sqlbench:latest,DBRX,dbrx,pass2.query2,"v2,v3,v4",0,3,1.0,same_count_wrong_values,0,3,1.0,1.0,1.0,1.0,same_count_wrong_values,1849
+dbrx-sqlbench:latest,DBRX,dbrx,pass2.query3,"v2,v3,v4",0,3,0.8533333333333334,same_count_wrong_values,0,3,0.8533333333333334,0.9666666666666667,0.7666666666666666,0.7000000000000001,same_count_wrong_values,2486
+dbrx-sqlbench:latest,DBRX,dbrx,pass2.query4,"v2,v3,v4",0,3,0.28611111111111115,same_count_wrong_values,0,3,0.28611111111111115,0.4166666666666667,0.05555555555555555,0.3055555555555555,same_count_wrong_values,2414
+dbrx-sqlbench:latest,DBRX,dbrx,pass2.query5,"v2,v3,v4",0,3,0.8000000000000002,same_count_wrong_values,0,3,0.8000000000000002,1.0,0.3333333333333333,1.0,same_count_wrong_values,2294
+dbrx-sqlbench:latest,DBRX,dbrx,pass2.query6,"v2,v3,v4",0,3,0.8500000000000001,same_count_wrong_values,0,3,0.8500000000000001,1.0,0.5,1.0,same_count_wrong_values,2581
+dbrx-sqlbench:latest,DBRX,dbrx,pass2.query7,"v2,v3,v4",0,3,0.7399999999999999,same_count_wrong_values,0,3,0.7399999999999999,1.0,0.4000000000000001,0.6,same_count_wrong_values,2252
+dbrx-sqlbench:latest,DBRX,dbrx,pass2.query8,"v2,v3,v4",0,3,0.7444444444444445,same_count_wrong_values,0,3,0.7444444444444445,1.0,0.14814814814814814,1.0,same_count_wrong_values,2581
+dbrx-sqlbench:latest,DBRX,dbrx,pass2.query9,"v2,v3,v4",0,3,0.2288888888888889,row_count_mismatch,0,3,0.2288888888888889,0.3333333333333333,0.07407407407407407,0.20000000000000004,row_count_mismatch,2515
+dbrx-sqlbench:latest,DBRX,dbrx,pass2.query10,"v2,v3,v4",0,3,0.8799999999999999,same_count_wrong_values,0,3,0.8799999999999999,1.0,0.6,1.0,same_count_wrong_values,2209
+dbrx-sqlbench:latest,DBRX,dbrx,pass3.query1,"v2,v3,v4",3,3,1.0,none,3,3,1.0,1.0,1.0,1.0,none,1801
+dbrx-sqlbench:latest,DBRX,dbrx,pass3.query2,"v2,v3,v4",0,3,0.55,same_count_wrong_values,0,3,0.55,0.75,0.25,0.5,same_count_wrong_values,2516
+dbrx-sqlbench:latest,DBRX,dbrx,pass3.query3,"v2,v3,v4",0,3,0.8033333333333333,same_count_wrong_values,0,3,0.8033333333333333,1.0,0.43333333333333335,0.8666666666666667,same_count_wrong_values,2384
+dbrx-sqlbench:latest,DBRX,dbrx,pass3.query4,"v2,v3,v4",0,3,0.6333333333333333,same_count_wrong_values,0,3,0.6333333333333333,0.8333333333333334,0.16666666666666666,0.8333333333333334,same_count_wrong_values,2537
+dbrx-sqlbench:latest,DBRX,dbrx,pass3.query5,"v2,v3,v4",0,3,0.88,same_count_wrong_values,0,3,0.88,1.0,0.6,1.0,same_count_wrong_values,2123
+dbrx-sqlbench:latest,DBRX,dbrx,pass3.query6,"v2,v3,v4",0,3,0.8583333333333334,same_count_wrong_values,0,3,0.8583333333333334,1.0,0.5277777777777778,1.0,same_count_wrong_values,2120
+dbrx-sqlbench:latest,DBRX,dbrx,pass3.query7,"v2,v3,v4",0,3,1.0,same_count_wrong_values,0,3,1.0,1.0,1.0,1.0,same_count_wrong_values,1980
+dbrx-sqlbench:latest,DBRX,dbrx,pass3.query8,"v2,v3,v4",0,3,0.0,same_count_wrong_values,0,3,0.0,0.0,0.0,0.0,same_count_wrong_values,2678
+dbrx-sqlbench:latest,DBRX,dbrx,pass3.query9,"v2,v3,v4",0,3,0.875,same_count_wrong_values,0,3,0.875,1.0,0.5833333333333334,1.0,same_count_wrong_values,2252
+dbrx-sqlbench:latest,DBRX,dbrx,pass3.query10,"v2,v3,v4",0,3,0.6916666666666668,same_count_wrong_values,0,3,0.6916666666666668,1.0,0.4166666666666667,0.3333333333333333,same_count_wrong_values,2264
+dbrx-sqlbench:latest,DBRX,dbrx,pass4.query1,"v2,v3,v4",0,3,0.9624999999999999,same_count_wrong_values,0,3,0.9624999999999999,1.0,0.875,1.0,same_count_wrong_values,1624
+dbrx-sqlbench:latest,DBRX,dbrx,pass4.query2,"v2,v3,v4",0,3,0.3366666666666667,row_count_mismatch,0,3,0.3366666666666667,0.43333333333333335,0.1111111111111111,0.43333333333333335,row_count_mismatch,2510
+dbrx-sqlbench:latest,DBRX,dbrx,pass4.query3,"v2,v3,v4",0,3,0.27499999999999997,column_error,0,3,0.27499999999999997,0.3333333333333333,0.25,0.16666666666666666,column_error,2785
+dbrx-sqlbench:latest,DBRX,dbrx,pass4.query4,"v2,v3,v4",0,3,0.4777777777777777,row_count_mismatch,0,3,0.4777777777777777,0.4444444444444444,0.5555555555555555,0.4444444444444444,row_count_mismatch,2378
+dbrx-sqlbench:latest,DBRX,dbrx,pass4.query5,"v2,v3,v4",0,3,0.8026666666666666,same_count_wrong_values,0,3,0.8026666666666666,1.0,0.6533333333333333,0.5333333333333333,same_count_wrong_values,2499
+dbrx-sqlbench:latest,DBRX,dbrx,pass4.query6,"v2,v3,v4",0,3,0.81,same_count_wrong_values,0,3,0.81,1.0,0.3666666666666667,1.0,same_count_wrong_values,2385
+dbrx-sqlbench:latest,DBRX,dbrx,pass4.query7,"v2,v3,v4",0,3,0.42424242424242425,row_count_mismatch,0,3,0.42424242424242425,0.5303030303030303,1.0,0.17676767676767677,row_count_mismatch,2389
+dbrx-sqlbench:latest,DBRX,dbrx,pass4.query8,"v2,v3,v4",0,3,0.45714285714285713,same_count_wrong_values,0,3,0.45714285714285713,0.5,0.35714285714285715,0.5,same_count_wrong_values,2526
+dbrx-sqlbench:latest,DBRX,dbrx,pass4.query9,"v2,v3,v4",0,3,0.775,same_count_wrong_values,0,3,0.775,1.0,0.25,1.0,same_count_wrong_values,2449
+dbrx-sqlbench:latest,DBRX,dbrx,pass4.query10,"v2,v3,v4",0,3,1.0,same_count_wrong_values,0,3,1.0,1.0,1.0,1.0,same_count_wrong_values,1732
+dbrx-sqlbench:latest,DBRX,dbrx,pass5.query1,"v2,v3,v4",0,3,0.6999999999999998,same_count_wrong_values,0,3,0.6999999999999998,1.0,0.0,1.0,same_count_wrong_values,2011
+dbrx-sqlbench:latest,DBRX,dbrx,pass5.query2,"v2,v3,v4",0,3,0.7414285714285714,row_count_mismatch,0,3,0.7414285714285714,0.8571428571428571,0.5666666666666667,0.7142857142857143,row_count_mismatch,2404
+dbrx-sqlbench:latest,DBRX,dbrx,pass5.query3,"v2,v3,v4",0,3,0.41250000000000003,same_count_wrong_values,0,3,0.41250000000000003,0.5,0.20833333333333334,0.5,same_count_wrong_values,2724
+dbrx-sqlbench:latest,DBRX,dbrx,pass5.query4,"v2,v3,v4",0,3,0.6999999999999998,same_count_wrong_values,0,3,0.6999999999999998,1.0,0.0,1.0,same_count_wrong_values,2290
+dbrx-sqlbench:latest,DBRX,dbrx,pass5.query5,"v2,v3,v4",0,3,0.3138888888888889,column_error,0,3,0.3138888888888889,0.4444444444444444,0.08333333333333333,0.3333333333333333,column_error,2673
+dbrx-sqlbench:latest,DBRX,dbrx,pass5.query6,"v2,v3,v4",0,3,0.6466666666666666,column_error,0,3,0.6466666666666666,1.0,0.0,0.7333333333333334,column_error,2417
+dbrx-sqlbench:latest,DBRX,dbrx,pass5.query7,"v2,v3,v4",0,3,0.6833333333333335,same_count_wrong_values,0,3,0.6833333333333335,0.9166666666666666,0.13888888888888887,0.9166666666666666,same_count_wrong_values,2607
+dbrx-sqlbench:latest,DBRX,dbrx,pass5.query8,"v2,v3,v4",0,3,0.8080000000000002,same_count_wrong_values,0,3,0.8080000000000002,1.0,0.36000000000000004,1.0,same_count_wrong_values,2596
+dbrx-sqlbench:latest,DBRX,dbrx,pass5.query9,"v2,v3,v4",0,3,0.2188888888888889,row_count_mismatch,0,3,0.2188888888888889,0.25555555555555554,0.2222222222222222,0.12222222222222223,row_count_mismatch,2475
+dbrx-sqlbench:latest,DBRX,dbrx,pass5.query10,"v2,v3,v4",0,3,0.5933333333333334,same_count_wrong_values,0,3,0.5933333333333334,1.0,0.0,0.4666666666666666,same_count_wrong_values,2342
+deepseek-coder-33b-sqlbench:latest,DeepSeek Coder 33B,llama,pass1.query1,"v2,v3,v4",0,3,1.0,same_count_wrong_values,0,3,1.0,1.0,1.0,1.0,same_count_wrong_values,2206
+deepseek-coder-33b-sqlbench:latest,DeepSeek Coder 33B,llama,pass1.query2,"v2,v3,v4",0,3,0.8312500000000002,same_count_wrong_values,0,3,0.8312500000000002,1.0,0.9375,0.25,same_count_wrong_values,2362
+deepseek-coder-33b-sqlbench:latest,DeepSeek Coder 33B,llama,pass1.query3,"v2,v3,v4",0,3,1.0,same_count_wrong_values,0,3,1.0,1.0,1.0,1.0,same_count_wrong_values,2049
+deepseek-coder-33b-sqlbench:latest,DeepSeek Coder 33B,llama,pass1.query4,"v2,v3,v4",0,3,0.7195238095238095,row_count_mismatch,0,3,0.7195238095238095,0.8095238095238096,0.6999999999999998,0.5238095238095238,row_count_mismatch,2428
+deepseek-coder-33b-sqlbench:latest,DeepSeek Coder 33B,llama,pass1.query5,"v2,v3,v4",0,3,0.7142857142857143,same_count_wrong_values,0,3,0.7142857142857143,0.7142857142857143,0.7142857142857143,0.7142857142857143,same_count_wrong_values,2361
+deepseek-coder-33b-sqlbench:latest,DeepSeek Coder 33B,llama,pass1.query6,"v2,v3,v4",0,3,0.6708333333333334,same_count_wrong_values,0,3,0.6708333333333334,0.8333333333333334,0.2916666666666667,0.8333333333333334,same_count_wrong_values,2422
+deepseek-coder-33b-sqlbench:latest,DeepSeek Coder 33B,llama,pass1.query7,"v2,v3,v4",0,3,0.5333333333333333,same_count_wrong_values,0,3,0.5333333333333333,1.0,0.1111111111111111,0.0,same_count_wrong_values,2471
+deepseek-coder-33b-sqlbench:latest,DeepSeek Coder 33B,llama,pass1.query8,"v2,v3,v4",0,3,0.7666666666666666,same_count_wrong_values,0,3,0.7666666666666666,1.0,0.2222222222222222,1.0,same_count_wrong_values,2426
+deepseek-coder-33b-sqlbench:latest,DeepSeek Coder 33B,llama,pass1.query9,"v2,v3,v4",0,3,0.8000000000000002,same_count_wrong_values,0,3,0.8000000000000002,1.0,0.3333333333333333,1.0,same_count_wrong_values,2314
+deepseek-coder-33b-sqlbench:latest,DeepSeek Coder 33B,llama,pass1.query10,"v2,v3,v4",0,3,1.0,same_count_wrong_values,0,3,1.0,1.0,1.0,1.0,same_count_wrong_values,1755
+deepseek-coder-33b-sqlbench:latest,DeepSeek Coder 33B,llama,pass2.query1,"v2,v3,v4",0,3,0.8037037037037038,same_count_wrong_values,0,3,0.8037037037037038,0.7777777777777778,0.888888888888889,0.7407407407407408,same_count_wrong_values,2473
+deepseek-coder-33b-sqlbench:latest,DeepSeek Coder 33B,llama,pass2.query2,"v2,v3,v4",0,3,1.0,same_count_wrong_values,0,3,1.0,1.0,1.0,1.0,same_count_wrong_values,1891
+deepseek-coder-33b-sqlbench:latest,DeepSeek Coder 33B,llama,pass2.query3,"v2,v3,v4",0,3,0.5833333333333334,row_count_mismatch,0,3,0.5833333333333334,0.7666666666666666,0.6,0.10000000000000002,row_count_mismatch,2380
+deepseek-coder-33b-sqlbench:latest,DeepSeek Coder 33B,llama,pass2.query4,"v2,v3,v4",0,3,0.28888888888888886,same_count_wrong_values,0,3,0.28888888888888886,0.4444444444444444,0.1111111111111111,0.16666666666666666,same_count_wrong_values,2456
+deepseek-coder-33b-sqlbench:latest,DeepSeek Coder 33B,llama,pass2.query5,"v2,v3,v4",0,3,0.55,same_count_wrong_values,0,3,0.55,1.0,0.16666666666666666,0.0,same_count_wrong_values,2336
+deepseek-coder-33b-sqlbench:latest,DeepSeek Coder 33B,llama,pass2.query6,"v2,v3,v4",0,3,0.7749999999999999,same_count_wrong_values,0,3,0.7749999999999999,1.0,0.25,1.0,same_count_wrong_values,2623
+deepseek-coder-33b-sqlbench:latest,DeepSeek Coder 33B,llama,pass2.query7,"v2,v3,v4",0,3,0.7399999999999999,same_count_wrong_values,0,3,0.7399999999999999,1.0,0.4000000000000001,0.6,same_count_wrong_values,2344
+deepseek-coder-33b-sqlbench:latest,DeepSeek Coder 33B,llama,pass2.query8,"v2,v3,v4",0,3,0.6999999999999998,same_count_wrong_values,0,3,0.6999999999999998,1.0,0.0,1.0,same_count_wrong_values,2488
+deepseek-coder-33b-sqlbench:latest,DeepSeek Coder 33B,llama,pass2.query9,"v2,v3,v4",0,3,0.5666666666666667,same_count_wrong_values,0,3,0.5666666666666667,0.6666666666666666,0.3333333333333333,0.6666666666666666,same_count_wrong_values,2608
+deepseek-coder-33b-sqlbench:latest,DeepSeek Coder 33B,llama,pass2.query10,"v2,v3,v4",0,3,0.8799999999999999,same_count_wrong_values,0,3,0.8799999999999999,1.0,0.6,1.0,same_count_wrong_values,2251
+deepseek-coder-33b-sqlbench:latest,DeepSeek Coder 33B,llama,pass3.query1,"v2,v3,v4",0,3,1.0,same_count_wrong_values,0,3,1.0,1.0,1.0,1.0,same_count_wrong_values,1774
+deepseek-coder-33b-sqlbench:latest,DeepSeek Coder 33B,llama,pass3.query2,"v2,v3,v4",0,3,0.5895833333333335,same_count_wrong_values,0,3,0.5895833333333335,0.75,0.2708333333333333,0.6666666666666666,same_count_wrong_values,2608
+deepseek-coder-33b-sqlbench:latest,DeepSeek Coder 33B,llama,pass3.query3,"v2,v3,v4",0,3,0.81,same_count_wrong_values,0,3,0.81,1.0,0.3666666666666667,1.0,same_count_wrong_values,2426
+deepseek-coder-33b-sqlbench:latest,DeepSeek Coder 33B,llama,pass3.query4,"v2,v3,v4",0,3,0.8000000000000002,same_count_wrong_values,0,3,0.8000000000000002,1.0,0.3333333333333333,1.0,same_count_wrong_values,2482
+deepseek-coder-33b-sqlbench:latest,DeepSeek Coder 33B,llama,pass3.query5,"v2,v3,v4",0,3,0.8999999999999999,same_count_wrong_values,0,3,0.8999999999999999,1.0,0.6666666666666666,1.0,same_count_wrong_values,2165
+deepseek-coder-33b-sqlbench:latest,DeepSeek Coder 33B,llama,pass3.query6,"v2,v3,v4",0,3,0.0,same_count_wrong_values,0,3,0.0,0.0,0.0,0.0,same_count_wrong_values,2456
+deepseek-coder-33b-sqlbench:latest,DeepSeek Coder 33B,llama,pass3.query7,"v2,v3,v4",0,3,0.7749999999999999,order_only,0,3,0.7749999999999999,1.0,1.0,0.25,order_only,2175
+deepseek-coder-33b-sqlbench:latest,DeepSeek Coder 33B,llama,pass3.query8,"v2,v3,v4",0,3,0.4666666666666666,same_count_wrong_values,0,3,0.4666666666666666,0.6666666666666666,0.0,0.6666666666666666,same_count_wrong_values,2720
+deepseek-coder-33b-sqlbench:latest,DeepSeek Coder 33B,llama,pass3.query9,"v2,v3,v4",0,3,0.9250000000000002,same_count_wrong_values,0,3,0.9250000000000002,1.0,0.75,1.0,same_count_wrong_values,2185
+deepseek-coder-33b-sqlbench:latest,DeepSeek Coder 33B,llama,pass3.query10,"v2,v3,v4",0,3,0.6416666666666666,same_count_wrong_values,0,3,0.6416666666666666,1.0,0.25,0.3333333333333333,same_count_wrong_values,2306
+deepseek-coder-33b-sqlbench:latest,DeepSeek Coder 33B,llama,pass4.query1,"v2,v3,v4",0,3,0.8500000000000001,same_count_wrong_values,0,3,0.8500000000000001,1.0,0.5,1.0,same_count_wrong_values,1666
+deepseek-coder-33b-sqlbench:latest,DeepSeek Coder 33B,llama,pass4.query2,"v2,v3,v4",0,3,0.5,same_count_wrong_values,0,3,0.5,0.6666666666666666,0.1111111111111111,0.6666666666666666,same_count_wrong_values,2553
+deepseek-coder-33b-sqlbench:latest,DeepSeek Coder 33B,llama,pass4.query3,"v2,v3,v4",0,3,0.6458333333333333,same_count_wrong_values,0,3,0.6458333333333333,0.8333333333333334,0.20833333333333334,0.8333333333333334,same_count_wrong_values,2720
+deepseek-coder-33b-sqlbench:latest,DeepSeek Coder 33B,llama,pass4.query4,"v2,v3,v4",0,3,0.3333333333333333,row_count_mismatch,0,3,0.3333333333333333,0.3333333333333333,0.3333333333333333,0.3333333333333333,row_count_mismatch,2420
+deepseek-coder-33b-sqlbench:latest,DeepSeek Coder 33B,llama,pass4.query5,"v2,v3,v4",0,3,0.8919999999999999,same_count_wrong_values,0,3,0.8919999999999999,1.0,0.64,1.0,same_count_wrong_values,2456
+deepseek-coder-33b-sqlbench:latest,DeepSeek Coder 33B,llama,pass4.query6,"v2,v3,v4",0,3,0.73,same_count_wrong_values,0,3,0.73,1.0,0.10000000000000002,1.0,same_count_wrong_values,2318
+deepseek-coder-33b-sqlbench:latest,DeepSeek Coder 33B,llama,pass4.query7,"v2,v3,v4",0,3,0.85,same_count_wrong_values,0,3,0.85,1.0,1.0,0.5,same_count_wrong_values,2193
+deepseek-coder-33b-sqlbench:latest,DeepSeek Coder 33B,llama,pass4.query8,"v2,v3,v4",0,3,0.369047619047619,same_count_wrong_values,0,3,0.369047619047619,0.5,0.2857142857142857,0.16666666666666666,same_count_wrong_values,2471
+deepseek-coder-33b-sqlbench:latest,DeepSeek Coder 33B,llama,pass4.query9,"v2,v3,v4",0,3,0.6166666666666666,same_count_wrong_values,0,3,0.6166666666666666,1.0,0.16666666666666666,0.3333333333333333,same_count_wrong_values,2491
+deepseek-coder-33b-sqlbench:latest,DeepSeek Coder 33B,llama,pass4.query10,"v2,v3,v4",0,3,1.0,same_count_wrong_values,0,3,1.0,1.0,1.0,1.0,same_count_wrong_values,1774
+deepseek-coder-33b-sqlbench:latest,DeepSeek Coder 33B,llama,pass5.query1,"v2,v3,v4",0,3,0.6999999999999998,same_count_wrong_values,0,3,0.6999999999999998,1.0,0.0,1.0,same_count_wrong_values,2103
+deepseek-coder-33b-sqlbench:latest,DeepSeek Coder 33B,llama,pass5.query2,"v2,v3,v4",0,3,0.5822222222222222,same_count_wrong_values,0,3,0.5822222222222222,0.7777777777777778,0.20000000000000004,0.6666666666666666,same_count_wrong_values,2497
+deepseek-coder-33b-sqlbench:latest,DeepSeek Coder 33B,llama,pass5.query3,"v2,v3,v4",0,3,0.53125,same_count_wrong_values,0,3,0.53125,0.75,0.1875,0.5,same_count_wrong_values,2766
+deepseek-coder-33b-sqlbench:latest,DeepSeek Coder 33B,llama,pass5.query4,"v2,v3,v4",0,3,0.6999999999999998,same_count_wrong_values,0,3,0.6999999999999998,1.0,0.0,1.0,same_count_wrong_values,2332
+deepseek-coder-33b-sqlbench:latest,DeepSeek Coder 33B,llama,pass5.query5,"v2,v3,v4",0,3,0.725,same_count_wrong_values,0,3,0.725,1.0,0.08333333333333333,1.0,same_count_wrong_values,2608
+deepseek-coder-33b-sqlbench:latest,DeepSeek Coder 33B,llama,pass5.query6,"v2,v3,v4",0,3,0.62,same_count_wrong_values,0,3,0.62,1.0,0.0,0.6,same_count_wrong_values,2352
+deepseek-coder-33b-sqlbench:latest,DeepSeek Coder 33B,llama,pass5.query7,"v2,v3,v4",0,3,0.75,same_count_wrong_values,0,3,0.75,1.0,0.16666666666666666,1.0,same_count_wrong_values,2355
+deepseek-coder-33b-sqlbench:latest,DeepSeek Coder 33B,llama,pass5.query8,"v2,v3,v4",0,3,0.82,same_count_wrong_values,0,3,0.82,1.0,0.39999999999999997,1.0,same_count_wrong_values,2638
+deepseek-coder-33b-sqlbench:latest,DeepSeek Coder 33B,llama,pass5.query9,"v2,v3,v4",0,3,0.24166666666666667,same_count_wrong_values,0,3,0.24166666666666667,0.3333333333333333,0.027777777777777776,0.3333333333333333,same_count_wrong_values,2568
+deepseek-coder-33b-sqlbench:latest,DeepSeek Coder 33B,llama,pass5.query10,"v2,v3,v4",0,3,0.5800000000000001,same_count_wrong_values,0,3,0.5800000000000001,1.0,0.0,0.4000000000000001,same_count_wrong_values,2384
 gemma4-26b-sqlbench:latest,Gemma 4 26B,gemma4,pass1.query1,"v2,v3,v4",3,9,0.9166666666666666,row_count_mismatch,3,3,1.0,1.0,1.0,1.0,none,2084
 gemma4-26b-sqlbench:latest,Gemma 4 26B,gemma4,pass1.query2,"v2,v3,v4",0,9,0.7416666666666667,order_only,0,3,0.8500000000000001,1.0,1.0,0.25,order_only,2254
 gemma4-26b-sqlbench:latest,Gemma 4 26B,gemma4,pass1.query3,"v2,v3,v4",9,9,1.0,none,3,3,1.0,1.0,1.0,1.0,none,1757
@@ -299,106 +299,106 @@ gemma4-31b-sqlbench:latest,Gemma 4 31B,gemma4,pass5.query7,"v2,v3,v4",0,9,0.8083
 gemma4-31b-sqlbench:latest,Gemma 4 31B,gemma4,pass5.query8,"v2,v3,v4",0,9,0.8266666666666667,same_count_wrong_values,0,3,0.848,1.0,0.7600000000000001,0.6,same_count_wrong_values,2458
 gemma4-31b-sqlbench:latest,Gemma 4 31B,gemma4,pass5.query9,"v2,v3,v4",0,9,0.7749999999999999,same_count_wrong_values,0,3,0.8249999999999998,1.0,0.4166666666666667,1.0,same_count_wrong_values,2417
 gemma4-31b-sqlbench:latest,Gemma 4 31B,gemma4,pass5.query10,"v2,v3,v4",0,9,0.6272222222222221,same_count_wrong_values,0,3,0.7166666666666667,1.0,0.2333333333333333,0.7333333333333334,same_count_wrong_values,2204
-llama3-70b-sqlbench:latest,Llama 3 70B,llama,pass1.query1,"v2,v3,v4",3,6,0.9500000000000001,row_count_mismatch,3,3,1.0,1.0,1.0,1.0,none,2079
-llama3-70b-sqlbench:latest,Llama 3 70B,llama,pass1.query2,"v2,v3,v4",0,6,0.8083333333333335,row_count_mismatch,0,3,0.8500000000000001,1.0,1.0,0.25,order_only,2312
-llama3-70b-sqlbench:latest,Llama 3 70B,llama,pass1.query3,"v2,v3,v4",0,6,0.9861111111111112,same_count_wrong_values,0,3,0.9888888888888889,1.0,0.9629629629629629,1.0,same_count_wrong_values,2160
-llama3-70b-sqlbench:latest,Llama 3 70B,llama,pass1.query4,"v2,v3,v4",0,6,0.9305555555555555,same_count_wrong_values,0,3,0.9700000000000001,1.0,0.9,1.0,same_count_wrong_values,2214
-llama3-70b-sqlbench:latest,Llama 3 70B,llama,pass1.query5,"v2,v3,v4",0,6,0.8071428571428573,row_count_mismatch,0,3,0.8285714285714286,0.8571428571428571,0.8571428571428571,0.7142857142857143,same_count_wrong_values,2340
-llama3-70b-sqlbench:latest,Llama 3 70B,llama,pass1.query6,"v2,v3,v4",0,6,0.9250000000000002,same_count_wrong_values,0,3,0.9250000000000002,1.0,0.75,1.0,same_count_wrong_values,2157
-llama3-70b-sqlbench:latest,Llama 3 70B,llama,pass1.query7,"v2,v3,v4",0,6,0.6833333333333332,row_count_mismatch,0,3,0.8833333333333333,1.0,0.611111111111111,1.0,same_count_wrong_values,2450
-llama3-70b-sqlbench:latest,Llama 3 70B,llama,pass1.query8,"v2,v3,v4",0,6,0.8000000000000002,same_count_wrong_values,0,3,0.8500000000000001,1.0,0.5,1.0,same_count_wrong_values,2405
-llama3-70b-sqlbench:latest,Llama 3 70B,llama,pass1.query9,"v2,v3,v4",0,6,0.8222222222222223,same_count_wrong_values,0,3,0.8444444444444444,1.0,0.48148148148148145,1.0,same_count_wrong_values,2293
-llama3-70b-sqlbench:latest,Llama 3 70B,llama,pass1.query10,"v2,v3,v4",6,6,1.0,none,3,3,1.0,1.0,1.0,1.0,none,1741
-llama3-70b-sqlbench:latest,Llama 3 70B,llama,pass2.query1,"v2,v3,v4",0,6,0.8722222222222222,row_count_mismatch,0,3,1.0,1.0,1.0,1.0,same_count_wrong_values,2320
-llama3-70b-sqlbench:latest,Llama 3 70B,llama,pass2.query2,"v2,v3,v4",0,6,1.0,same_count_wrong_values,0,3,1.0,1.0,1.0,1.0,same_count_wrong_values,1870
-llama3-70b-sqlbench:latest,Llama 3 70B,llama,pass2.query3,"v2,v3,v4",3,6,0.5,same_count_wrong_values,3,3,1.0,1.0,1.0,1.0,none,2304
-llama3-70b-sqlbench:latest,Llama 3 70B,llama,pass2.query4,"v2,v3,v4",0,6,0.575,same_count_wrong_values,0,3,0.6916666666666668,0.8333333333333334,0.5833333333333334,0.5,same_count_wrong_values,2385
-llama3-70b-sqlbench:latest,Llama 3 70B,llama,pass2.query5,"v2,v3,v4",0,6,0.7361111111111112,same_count_wrong_values,0,3,0.8000000000000002,1.0,0.3333333333333333,1.0,same_count_wrong_values,2265
-llama3-70b-sqlbench:latest,Llama 3 70B,llama,pass2.query6,"v2,v3,v4",0,6,0.7972222222222222,row_count_mismatch,0,3,0.9250000000000002,1.0,0.75,1.0,same_count_wrong_values,2602
-llama3-70b-sqlbench:latest,Llama 3 70B,llama,pass2.query7,"v2,v3,v4",0,6,0.755,same_count_wrong_values,0,3,0.7399999999999999,1.0,0.4000000000000001,0.6,same_count_wrong_values,2273
-llama3-70b-sqlbench:latest,Llama 3 70B,llama,pass2.query8,"v2,v3,v4",0,6,0.8999999999999999,same_count_wrong_values,0,3,0.8999999999999999,1.0,0.6666666666666666,1.0,same_count_wrong_values,2467
-llama3-70b-sqlbench:latest,Llama 3 70B,llama,pass2.query9,"v2,v3,v4",0,6,0.65,row_count_mismatch,0,3,0.8666666666666667,1.0,0.5555555555555556,1.0,same_count_wrong_values,2587
-llama3-70b-sqlbench:latest,Llama 3 70B,llama,pass2.query10,"v2,v3,v4",0,6,0.8300000000000001,same_count_wrong_values,0,3,0.8400000000000002,1.0,0.4666666666666666,1.0,same_count_wrong_values,2230
-llama3-70b-sqlbench:latest,Llama 3 70B,llama,pass3.query1,"v2,v3,v4",0,6,1.0,same_count_wrong_values,0,3,1.0,1.0,1.0,1.0,same_count_wrong_values,1753
-llama3-70b-sqlbench:latest,Llama 3 70B,llama,pass3.query2,"v2,v3,v4",0,6,0.5677083333333334,row_count_mismatch,0,3,0.65625,0.75,0.4375,0.75,same_count_wrong_values,2587
-llama3-70b-sqlbench:latest,Llama 3 70B,llama,pass3.query3,"v2,v3,v4",0,6,0.8666666666666667,row_count_mismatch,0,3,0.94,1.0,0.8000000000000002,1.0,same_count_wrong_values,2346
-llama3-70b-sqlbench:latest,Llama 3 70B,llama,pass3.query4,"v2,v3,v4",0,6,0.5055555555555555,row_count_mismatch,0,3,0.8999999999999999,1.0,0.6666666666666666,1.0,same_count_wrong_values,2461
-llama3-70b-sqlbench:latest,Llama 3 70B,llama,pass3.query5,"v2,v3,v4",0,6,0.8162698412698414,row_count_mismatch,0,3,0.94,1.0,0.8000000000000002,1.0,same_count_wrong_values,2303
-llama3-70b-sqlbench:latest,Llama 3 70B,llama,pass3.query6,"v2,v3,v4",0,6,0.875,same_count_wrong_values,0,3,0.8666666666666667,1.0,0.5555555555555556,1.0,same_count_wrong_values,2191
-llama3-70b-sqlbench:latest,Llama 3 70B,llama,pass3.query7,"v2,v3,v4",3,6,0.5,row_count_mismatch,3,3,1.0,1.0,1.0,1.0,none,2070
-llama3-70b-sqlbench:latest,Llama 3 70B,llama,pass3.query8,"v2,v3,v4",0,6,0.49166666666666664,same_count_wrong_values,0,3,0.4833333333333332,0.6666666666666666,0.27777777777777773,0.3333333333333333,same_count_wrong_values,2699
-llama3-70b-sqlbench:latest,Llama 3 70B,llama,pass3.query9,"v2,v3,v4",0,6,0.7875,same_count_wrong_values,0,3,0.8874999999999998,1.0,0.625,1.0,same_count_wrong_values,2273
-llama3-70b-sqlbench:latest,Llama 3 70B,llama,pass3.query10,"v2,v3,v4",0,6,0.8333333333333334,same_count_wrong_values,0,3,0.9250000000000002,1.0,0.75,1.0,same_count_wrong_values,2285
-llama3-70b-sqlbench:latest,Llama 3 70B,llama,pass4.query1,"v2,v3,v4",0,6,0.90625,same_count_wrong_values,0,3,0.8874999999999998,1.0,0.625,1.0,same_count_wrong_values,1645
-llama3-70b-sqlbench:latest,Llama 3 70B,llama,pass4.query2,"v2,v3,v4",0,6,0.5775,row_count_mismatch,0,3,0.8500000000000001,1.0,0.5,1.0,same_count_wrong_values,2582
-llama3-70b-sqlbench:latest,Llama 3 70B,llama,pass4.query3,"v2,v3,v4",0,6,0.58875,row_count_mismatch,0,3,0.8125,1.0,0.375,1.0,same_count_wrong_values,2699
-llama3-70b-sqlbench:latest,Llama 3 70B,llama,pass4.query4,"v2,v3,v4",3,6,0.7333333333333334,row_count_mismatch,3,3,1.0,1.0,1.0,1.0,none,2344
-llama3-70b-sqlbench:latest,Llama 3 70B,llama,pass4.query5,"v2,v3,v4",0,6,0.7160000000000001,row_count_mismatch,0,3,0.82,1.0,0.4000000000000001,1.0,same_count_wrong_values,2385
-llama3-70b-sqlbench:latest,Llama 3 70B,llama,pass4.query6,"v2,v3,v4",0,6,0.6733333333333333,same_count_wrong_values,0,3,0.73,1.0,0.10000000000000002,1.0,same_count_wrong_values,2297
-llama3-70b-sqlbench:latest,Llama 3 70B,llama,pass4.query7,"v2,v3,v4",0,6,0.3972222222222222,same_count_wrong_values,0,3,0.7944444444444444,0.9444444444444445,1.0,0.4444444444444444,same_count_wrong_values,2122
-llama3-70b-sqlbench:latest,Llama 3 70B,llama,pass4.query8,"v2,v3,v4",0,6,0.5910714285714286,same_count_wrong_values,0,3,0.6571428571428571,0.75,0.6071428571428571,0.5,same_count_wrong_values,2450
-llama3-70b-sqlbench:latest,Llama 3 70B,llama,pass4.query9,"v2,v3,v4",0,6,0.53125,row_count_mismatch,0,3,0.6999999999999998,1.0,0.0,1.0,same_count_wrong_values,2470
-llama3-70b-sqlbench:latest,Llama 3 70B,llama,pass4.query10,"v2,v3,v4",0,6,1.0,same_count_wrong_values,0,3,1.0,1.0,1.0,1.0,same_count_wrong_values,1753
-llama3-70b-sqlbench:latest,Llama 3 70B,llama,pass5.query1,"v2,v3,v4",0,6,0.6999999999999998,same_count_wrong_values,0,3,0.6999999999999998,1.0,0.0,1.0,same_count_wrong_values,2032
-llama3-70b-sqlbench:latest,Llama 3 70B,llama,pass5.query2,"v2,v3,v4",0,6,0.7678571428571428,row_count_mismatch,0,3,0.7942857142857142,0.9047619047619048,0.6,0.8095238095238096,row_count_mismatch,2425
-llama3-70b-sqlbench:latest,Llama 3 70B,llama,pass5.query3,"v2,v3,v4",0,6,0.6820833333333333,same_count_wrong_values,0,3,0.7749999999999999,1.0,0.25,1.0,same_count_wrong_values,2745
-llama3-70b-sqlbench:latest,Llama 3 70B,llama,pass5.query4,"v2,v3,v4",0,6,0.6999999999999998,same_count_wrong_values,0,3,0.6999999999999998,1.0,0.0,1.0,same_count_wrong_values,2311
-llama3-70b-sqlbench:latest,Llama 3 70B,llama,pass5.query5,"v2,v3,v4",0,6,0.6249999999999999,row_count_mismatch,0,3,0.7749999999999999,1.0,0.25,1.0,same_count_wrong_values,2587
-llama3-70b-sqlbench:latest,Llama 3 70B,llama,pass5.query6,"v2,v3,v4",0,6,0.63,row_count_mismatch,0,3,0.6999999999999998,1.0,0.0,1.0,same_count_wrong_values,2222
-llama3-70b-sqlbench:latest,Llama 3 70B,llama,pass5.query7,"v2,v3,v4",0,6,0.6749999999999999,same_count_wrong_values,0,3,0.7749999999999999,1.0,0.25,1.0,same_count_wrong_values,2443
-llama3-70b-sqlbench:latest,Llama 3 70B,llama,pass5.query8,"v2,v3,v4",0,6,0.7220000000000001,row_count_mismatch,0,3,0.8320000000000002,1.0,0.44,1.0,same_count_wrong_values,2617
-llama3-70b-sqlbench:latest,Llama 3 70B,llama,pass5.query9,"v2,v3,v4",0,6,0.48249999999999993,row_count_mismatch,0,3,0.5249999999999999,0.6666666666666666,0.19444444444444442,0.6666666666666666,same_count_wrong_values,2547
-llama3-70b-sqlbench:latest,Llama 3 70B,llama,pass5.query10,"v2,v3,v4",0,6,0.49000000000000005,row_count_mismatch,0,3,0.5800000000000001,1.0,0.0,0.4000000000000001,same_count_wrong_values,2313
-mixtral-8x22b-sqlbench:latest,Mixtral 8x22B,llama,pass1.query1,"v2,v3,v4",3,6,0.9416666666666668,same_count_wrong_values,3,3,1.0,1.0,1.0,1.0,none,2101
-mixtral-8x22b-sqlbench:latest,Mixtral 8x22B,llama,pass1.query2,"v2,v3,v4",0,6,0.8083333333333335,row_count_mismatch,0,3,0.8500000000000001,1.0,1.0,0.25,order_only,2443
-mixtral-8x22b-sqlbench:latest,Mixtral 8x22B,llama,pass1.query3,"v2,v3,v4",3,6,0.9916666666666667,same_count_wrong_values,0,3,0.9833333333333334,1.0,0.9444444444444443,1.0,same_count_wrong_values,2028
-mixtral-8x22b-sqlbench:latest,Mixtral 8x22B,llama,pass1.query4,"v2,v3,v4",0,6,0.9105555555555555,same_count_wrong_values,0,3,0.94,1.0,0.8000000000000002,1.0,same_count_wrong_values,2220
-mixtral-8x22b-sqlbench:latest,Mixtral 8x22B,llama,pass1.query5,"v2,v3,v4",0,6,0.7047619047619048,row_count_mismatch,0,3,0.8571428571428572,0.8571428571428571,0.8571428571428571,0.8571428571428571,same_count_wrong_values,2346
-mixtral-8x22b-sqlbench:latest,Mixtral 8x22B,llama,pass1.query6,"v2,v3,v4",0,6,0.775,row_count_mismatch,0,3,0.875,1.0,0.5833333333333334,1.0,same_count_wrong_values,2322
-mixtral-8x22b-sqlbench:latest,Mixtral 8x22B,llama,pass1.query7,"v2,v3,v4",0,6,0.6555555555555556,same_count_wrong_values,0,3,0.75,1.0,0.16666666666666666,1.0,same_count_wrong_values,2271
-mixtral-8x22b-sqlbench:latest,Mixtral 8x22B,llama,pass1.query8,"v2,v3,v4",0,6,0.8250000000000001,same_count_wrong_values,0,3,0.8500000000000001,1.0,0.5,1.0,same_count_wrong_values,2411
-mixtral-8x22b-sqlbench:latest,Mixtral 8x22B,llama,pass1.query9,"v2,v3,v4",0,6,0.7999999999999999,same_count_wrong_values,0,3,0.8111111111111112,1.0,0.3703703703703704,1.0,same_count_wrong_values,2299
-mixtral-8x22b-sqlbench:latest,Mixtral 8x22B,llama,pass1.query10,"v2,v3,v4",2,6,1.0,same_count_wrong_values,2,3,1.0,1.0,1.0,1.0,same_count_wrong_values,1888
-mixtral-8x22b-sqlbench:latest,Mixtral 8x22B,llama,pass2.query1,"v2,v3,v4",3,6,0.8740740740740741,row_count_mismatch,3,3,1.0,1.0,1.0,1.0,none,2087
-mixtral-8x22b-sqlbench:latest,Mixtral 8x22B,llama,pass2.query2,"v2,v3,v4",1,6,1.0,same_count_wrong_values,1,3,1.0,1.0,1.0,1.0,same_count_wrong_values,1867
-mixtral-8x22b-sqlbench:latest,Mixtral 8x22B,llama,pass2.query3,"v2,v3,v4",1,6,0.8166666666666668,row_count_mismatch,1,3,1.0,1.0,1.0,1.0,same_count_wrong_values,2225
-mixtral-8x22b-sqlbench:latest,Mixtral 8x22B,llama,pass2.query4,"v2,v3,v4",0,6,0.44166666666666665,row_count_mismatch,0,3,0.5916666666666667,0.6666666666666666,0.4166666666666667,0.6666666666666666,same_count_wrong_values,2441
-mixtral-8x22b-sqlbench:latest,Mixtral 8x22B,llama,pass2.query5,"v2,v3,v4",0,6,0.6916666666666668,same_count_wrong_values,0,3,0.8000000000000002,1.0,0.3333333333333333,1.0,same_count_wrong_values,2271
-mixtral-8x22b-sqlbench:latest,Mixtral 8x22B,llama,pass2.query6,"v2,v3,v4",0,6,0.9,same_count_wrong_values,0,3,0.875,1.0,0.5833333333333334,1.0,same_count_wrong_values,2044
-mixtral-8x22b-sqlbench:latest,Mixtral 8x22B,llama,pass2.query7,"v2,v3,v4",0,6,0.61,row_count_mismatch,0,3,0.7799999999999999,1.0,0.5333333333333333,0.6,same_count_wrong_values,2279
-mixtral-8x22b-sqlbench:latest,Mixtral 8x22B,llama,pass2.query8,"v2,v3,v4",0,6,0.8888888888888888,same_count_wrong_values,0,3,0.8999999999999999,1.0,0.6666666666666666,1.0,same_count_wrong_values,2423
-mixtral-8x22b-sqlbench:latest,Mixtral 8x22B,llama,pass2.query9,"v2,v3,v4",0,6,0.48055555555555557,row_count_mismatch,0,3,0.5333333333333333,0.6666666666666666,0.2222222222222222,0.6666666666666666,same_count_wrong_values,2593
-mixtral-8x22b-sqlbench:latest,Mixtral 8x22B,llama,pass2.query10,"v2,v3,v4",0,6,0.8605555555555556,same_count_wrong_values,0,3,0.86,1.0,0.5333333333333333,1.0,same_count_wrong_values,2186
-mixtral-8x22b-sqlbench:latest,Mixtral 8x22B,llama,pass3.query1,"v2,v3,v4",4,6,1.0,same_count_wrong_values,2,3,1.0,1.0,1.0,1.0,same_count_wrong_values,1824
-mixtral-8x22b-sqlbench:latest,Mixtral 8x22B,llama,pass3.query2,"v2,v3,v4",0,6,0.69375,same_count_wrong_values,0,3,0.6125,0.75,0.2916666666666667,0.75,same_count_wrong_values,2543
-mixtral-8x22b-sqlbench:latest,Mixtral 8x22B,llama,pass3.query3,"v2,v3,v4",0,6,0.6883333333333335,same_count_wrong_values,0,3,0.8500000000000001,1.0,0.5,1.0,same_count_wrong_values,2411
-mixtral-8x22b-sqlbench:latest,Mixtral 8x22B,llama,pass3.query4,"v2,v3,v4",0,6,0.6083333333333333,row_count_mismatch,0,3,0.7666666666666666,1.0,0.2222222222222222,1.0,same_count_wrong_values,2467
-mixtral-8x22b-sqlbench:latest,Mixtral 8x22B,llama,pass3.query5,"v2,v3,v4",0,6,0.9700000000000001,same_count_wrong_values,0,3,0.96,1.0,0.8666666666666667,1.0,same_count_wrong_values,2200
-mixtral-8x22b-sqlbench:latest,Mixtral 8x22B,llama,pass3.query6,"v2,v3,v4",0,6,0.8366666666666666,same_count_wrong_values,0,3,0.9416666666666668,1.0,0.8055555555555557,1.0,same_count_wrong_values,2147
-mixtral-8x22b-sqlbench:latest,Mixtral 8x22B,llama,pass3.query7,"v2,v3,v4",3,6,0.5,same_count_wrong_values,3,3,1.0,1.0,1.0,1.0,none,1951
-mixtral-8x22b-sqlbench:latest,Mixtral 8x22B,llama,pass3.query8,"v2,v3,v4",0,6,0.5650000000000001,row_count_mismatch,0,3,0.5666666666666667,0.6666666666666666,0.3333333333333333,0.6666666666666666,same_count_wrong_values,2705
-mixtral-8x22b-sqlbench:latest,Mixtral 8x22B,llama,pass3.query9,"v2,v3,v4",0,6,0.7125,same_count_wrong_values,0,3,0.6875,1.0,0.625,0.0,same_count_wrong_values,2279
-mixtral-8x22b-sqlbench:latest,Mixtral 8x22B,llama,pass3.query10,"v2,v3,v4",0,6,0.6958333333333333,same_count_wrong_values,0,3,0.6916666666666668,1.0,0.4166666666666667,0.3333333333333333,same_count_wrong_values,2291
-mixtral-8x22b-sqlbench:latest,Mixtral 8x22B,llama,pass4.query1,"v2,v3,v4",0,6,0.875,same_count_wrong_values,0,3,0.8375,1.0,0.4583333333333333,1.0,same_count_wrong_values,1651
-mixtral-8x22b-sqlbench:latest,Mixtral 8x22B,llama,pass4.query2,"v2,v3,v4",0,6,0.6,same_count_wrong_values,0,3,0.5,0.6666666666666666,0.1111111111111111,0.6666666666666666,same_count_wrong_values,2588
-mixtral-8x22b-sqlbench:latest,Mixtral 8x22B,llama,pass4.query3,"v2,v3,v4",0,6,0.415,row_count_mismatch,0,3,0.38749999999999996,0.5,0.125,0.5,same_count_wrong_values,2705
-mixtral-8x22b-sqlbench:latest,Mixtral 8x22B,llama,pass4.query4,"v2,v3,v4",0,6,0.3833333333333333,row_count_mismatch,0,3,0.2333333333333333,0.3333333333333333,0.0,0.3333333333333333,row_count_mismatch,2405
-mixtral-8x22b-sqlbench:latest,Mixtral 8x22B,llama,pass4.query5,"v2,v3,v4",0,6,0.6746666666666666,same_count_wrong_values,0,3,0.6960000000000001,1.0,0.3866666666666667,0.4000000000000001,same_count_wrong_values,2576
-mixtral-8x22b-sqlbench:latest,Mixtral 8x22B,llama,pass4.query6,"v2,v3,v4",0,6,0.6750000000000002,row_count_mismatch,0,3,0.7600000000000001,1.0,0.20000000000000004,1.0,same_count_wrong_values,2462
-mixtral-8x22b-sqlbench:latest,Mixtral 8x22B,llama,pass4.query7,"v2,v3,v4",0,6,0.425,same_count_wrong_values,0,3,0.85,1.0,1.0,0.5,same_count_wrong_values,2128
-mixtral-8x22b-sqlbench:latest,Mixtral 8x22B,llama,pass4.query8,"v2,v3,v4",0,6,0.7077380952380952,same_count_wrong_values,0,3,0.8797619047619047,1.0,0.8214285714285715,0.6666666666666666,same_count_wrong_values,2321
-mixtral-8x22b-sqlbench:latest,Mixtral 8x22B,llama,pass4.query9,"v2,v3,v4",0,6,0.5416666666666666,row_count_mismatch,0,3,0.65,1.0,0.5,0.0,same_count_wrong_values,2341
-mixtral-8x22b-sqlbench:latest,Mixtral 8x22B,llama,pass4.query10,"v2,v3,v4",0,6,1.0,same_count_wrong_values,0,3,1.0,1.0,1.0,1.0,same_count_wrong_values,1759
-mixtral-8x22b-sqlbench:latest,Mixtral 8x22B,llama,pass5.query1,"v2,v3,v4",0,6,0.7200000000000001,same_count_wrong_values,0,3,0.73,1.0,0.10000000000000002,1.0,same_count_wrong_values,2088
-mixtral-8x22b-sqlbench:latest,Mixtral 8x22B,llama,pass5.query2,"v2,v3,v4",0,6,0.5572222222222222,row_count_mismatch,0,3,0.6044444444444445,0.6666666666666666,0.5333333333333333,0.5555555555555556,row_count_mismatch,2431
-mixtral-8x22b-sqlbench:latest,Mixtral 8x22B,llama,pass5.query3,"v2,v3,v4",0,6,0.66125,row_count_mismatch,0,3,0.61875,0.75,0.3125,0.75,same_count_wrong_values,2751
-mixtral-8x22b-sqlbench:latest,Mixtral 8x22B,llama,pass5.query4,"v2,v3,v4",0,6,0.6999999999999998,same_count_wrong_values,0,3,0.6999999999999998,1.0,0.0,1.0,same_count_wrong_values,2317
-mixtral-8x22b-sqlbench:latest,Mixtral 8x22B,llama,pass5.query5,"v2,v3,v4",0,6,0.38888888888888884,row_count_mismatch,0,3,0.4749999999999999,0.6666666666666666,0.25,0.3333333333333333,row_count_mismatch,2542
-mixtral-8x22b-sqlbench:latest,Mixtral 8x22B,llama,pass5.query6,"v2,v3,v4",0,6,0.6533333333333333,same_count_wrong_values,0,3,0.6999999999999998,1.0,0.0,1.0,same_count_wrong_values,2337
-mixtral-8x22b-sqlbench:latest,Mixtral 8x22B,llama,pass5.query7,"v2,v3,v4",0,6,0.7958333333333334,same_count_wrong_values,0,3,0.8249999999999998,1.0,0.4166666666666667,1.0,same_count_wrong_values,2340
-mixtral-8x22b-sqlbench:latest,Mixtral 8x22B,llama,pass5.query8,"v2,v3,v4",0,6,0.8240000000000002,same_count_wrong_values,0,3,0.852,1.0,0.5066666666666667,1.0,same_count_wrong_values,2464
-mixtral-8x22b-sqlbench:latest,Mixtral 8x22B,llama,pass5.query9,"v2,v3,v4",0,6,0.3680555555555556,row_count_mismatch,0,3,0.44722222222222224,0.6666666666666666,0.08333333333333333,0.4444444444444444,same_count_wrong_values,2553
-mixtral-8x22b-sqlbench:latest,Mixtral 8x22B,llama,pass5.query10,"v2,v3,v4",0,6,0.5466666666666667,same_count_wrong_values,0,3,0.5133333333333333,1.0,0.0,0.06666666666666667,same_count_wrong_values,2369
+llama3-70b-sqlbench:latest,Llama 3 70B,llama,pass1.query1,"v2,v3,v4",3,3,1.0,none,3,3,1.0,1.0,1.0,1.0,none,2079
+llama3-70b-sqlbench:latest,Llama 3 70B,llama,pass1.query2,"v2,v3,v4",0,3,0.8500000000000001,order_only,0,3,0.8500000000000001,1.0,1.0,0.25,order_only,2312
+llama3-70b-sqlbench:latest,Llama 3 70B,llama,pass1.query3,"v2,v3,v4",0,3,0.9888888888888889,same_count_wrong_values,0,3,0.9888888888888889,1.0,0.9629629629629629,1.0,same_count_wrong_values,2160
+llama3-70b-sqlbench:latest,Llama 3 70B,llama,pass1.query4,"v2,v3,v4",0,3,0.9700000000000001,same_count_wrong_values,0,3,0.9700000000000001,1.0,0.9,1.0,same_count_wrong_values,2214
+llama3-70b-sqlbench:latest,Llama 3 70B,llama,pass1.query5,"v2,v3,v4",0,3,0.8285714285714286,same_count_wrong_values,0,3,0.8285714285714286,0.8571428571428571,0.8571428571428571,0.7142857142857143,same_count_wrong_values,2340
+llama3-70b-sqlbench:latest,Llama 3 70B,llama,pass1.query6,"v2,v3,v4",0,3,0.9250000000000002,same_count_wrong_values,0,3,0.9250000000000002,1.0,0.75,1.0,same_count_wrong_values,2157
+llama3-70b-sqlbench:latest,Llama 3 70B,llama,pass1.query7,"v2,v3,v4",0,3,0.8833333333333333,same_count_wrong_values,0,3,0.8833333333333333,1.0,0.611111111111111,1.0,same_count_wrong_values,2450
+llama3-70b-sqlbench:latest,Llama 3 70B,llama,pass1.query8,"v2,v3,v4",0,3,0.8500000000000001,same_count_wrong_values,0,3,0.8500000000000001,1.0,0.5,1.0,same_count_wrong_values,2405
+llama3-70b-sqlbench:latest,Llama 3 70B,llama,pass1.query9,"v2,v3,v4",0,3,0.8444444444444444,same_count_wrong_values,0,3,0.8444444444444444,1.0,0.48148148148148145,1.0,same_count_wrong_values,2293
+llama3-70b-sqlbench:latest,Llama 3 70B,llama,pass1.query10,"v2,v3,v4",3,3,1.0,none,3,3,1.0,1.0,1.0,1.0,none,1741
+llama3-70b-sqlbench:latest,Llama 3 70B,llama,pass2.query1,"v2,v3,v4",0,3,1.0,same_count_wrong_values,0,3,1.0,1.0,1.0,1.0,same_count_wrong_values,2320
+llama3-70b-sqlbench:latest,Llama 3 70B,llama,pass2.query2,"v2,v3,v4",0,3,1.0,same_count_wrong_values,0,3,1.0,1.0,1.0,1.0,same_count_wrong_values,1870
+llama3-70b-sqlbench:latest,Llama 3 70B,llama,pass2.query3,"v2,v3,v4",3,3,1.0,none,3,3,1.0,1.0,1.0,1.0,none,2304
+llama3-70b-sqlbench:latest,Llama 3 70B,llama,pass2.query4,"v2,v3,v4",0,3,0.6916666666666668,same_count_wrong_values,0,3,0.6916666666666668,0.8333333333333334,0.5833333333333334,0.5,same_count_wrong_values,2385
+llama3-70b-sqlbench:latest,Llama 3 70B,llama,pass2.query5,"v2,v3,v4",0,3,0.8000000000000002,same_count_wrong_values,0,3,0.8000000000000002,1.0,0.3333333333333333,1.0,same_count_wrong_values,2265
+llama3-70b-sqlbench:latest,Llama 3 70B,llama,pass2.query6,"v2,v3,v4",0,3,0.9250000000000002,same_count_wrong_values,0,3,0.9250000000000002,1.0,0.75,1.0,same_count_wrong_values,2602
+llama3-70b-sqlbench:latest,Llama 3 70B,llama,pass2.query7,"v2,v3,v4",0,3,0.7399999999999999,same_count_wrong_values,0,3,0.7399999999999999,1.0,0.4000000000000001,0.6,same_count_wrong_values,2273
+llama3-70b-sqlbench:latest,Llama 3 70B,llama,pass2.query8,"v2,v3,v4",0,3,0.8999999999999999,same_count_wrong_values,0,3,0.8999999999999999,1.0,0.6666666666666666,1.0,same_count_wrong_values,2467
+llama3-70b-sqlbench:latest,Llama 3 70B,llama,pass2.query9,"v2,v3,v4",0,3,0.8666666666666667,same_count_wrong_values,0,3,0.8666666666666667,1.0,0.5555555555555556,1.0,same_count_wrong_values,2587
+llama3-70b-sqlbench:latest,Llama 3 70B,llama,pass2.query10,"v2,v3,v4",0,3,0.8400000000000002,same_count_wrong_values,0,3,0.8400000000000002,1.0,0.4666666666666666,1.0,same_count_wrong_values,2230
+llama3-70b-sqlbench:latest,Llama 3 70B,llama,pass3.query1,"v2,v3,v4",0,3,1.0,same_count_wrong_values,0,3,1.0,1.0,1.0,1.0,same_count_wrong_values,1753
+llama3-70b-sqlbench:latest,Llama 3 70B,llama,pass3.query2,"v2,v3,v4",0,3,0.65625,same_count_wrong_values,0,3,0.65625,0.75,0.4375,0.75,same_count_wrong_values,2587
+llama3-70b-sqlbench:latest,Llama 3 70B,llama,pass3.query3,"v2,v3,v4",0,3,0.94,same_count_wrong_values,0,3,0.94,1.0,0.8000000000000002,1.0,same_count_wrong_values,2346
+llama3-70b-sqlbench:latest,Llama 3 70B,llama,pass3.query4,"v2,v3,v4",0,3,0.8999999999999999,same_count_wrong_values,0,3,0.8999999999999999,1.0,0.6666666666666666,1.0,same_count_wrong_values,2461
+llama3-70b-sqlbench:latest,Llama 3 70B,llama,pass3.query5,"v2,v3,v4",0,3,0.94,same_count_wrong_values,0,3,0.94,1.0,0.8000000000000002,1.0,same_count_wrong_values,2303
+llama3-70b-sqlbench:latest,Llama 3 70B,llama,pass3.query6,"v2,v3,v4",0,3,0.8666666666666667,same_count_wrong_values,0,3,0.8666666666666667,1.0,0.5555555555555556,1.0,same_count_wrong_values,2191
+llama3-70b-sqlbench:latest,Llama 3 70B,llama,pass3.query7,"v2,v3,v4",3,3,1.0,none,3,3,1.0,1.0,1.0,1.0,none,2070
+llama3-70b-sqlbench:latest,Llama 3 70B,llama,pass3.query8,"v2,v3,v4",0,3,0.4833333333333332,same_count_wrong_values,0,3,0.4833333333333332,0.6666666666666666,0.27777777777777773,0.3333333333333333,same_count_wrong_values,2699
+llama3-70b-sqlbench:latest,Llama 3 70B,llama,pass3.query9,"v2,v3,v4",0,3,0.8874999999999998,same_count_wrong_values,0,3,0.8874999999999998,1.0,0.625,1.0,same_count_wrong_values,2273
+llama3-70b-sqlbench:latest,Llama 3 70B,llama,pass3.query10,"v2,v3,v4",0,3,0.9250000000000002,same_count_wrong_values,0,3,0.9250000000000002,1.0,0.75,1.0,same_count_wrong_values,2285
+llama3-70b-sqlbench:latest,Llama 3 70B,llama,pass4.query1,"v2,v3,v4",0,3,0.8874999999999998,same_count_wrong_values,0,3,0.8874999999999998,1.0,0.625,1.0,same_count_wrong_values,1645
+llama3-70b-sqlbench:latest,Llama 3 70B,llama,pass4.query2,"v2,v3,v4",0,3,0.8500000000000001,same_count_wrong_values,0,3,0.8500000000000001,1.0,0.5,1.0,same_count_wrong_values,2582
+llama3-70b-sqlbench:latest,Llama 3 70B,llama,pass4.query3,"v2,v3,v4",0,3,0.8125,same_count_wrong_values,0,3,0.8125,1.0,0.375,1.0,same_count_wrong_values,2699
+llama3-70b-sqlbench:latest,Llama 3 70B,llama,pass4.query4,"v2,v3,v4",3,3,1.0,none,3,3,1.0,1.0,1.0,1.0,none,2344
+llama3-70b-sqlbench:latest,Llama 3 70B,llama,pass4.query5,"v2,v3,v4",0,3,0.82,same_count_wrong_values,0,3,0.82,1.0,0.4000000000000001,1.0,same_count_wrong_values,2385
+llama3-70b-sqlbench:latest,Llama 3 70B,llama,pass4.query6,"v2,v3,v4",0,3,0.73,same_count_wrong_values,0,3,0.73,1.0,0.10000000000000002,1.0,same_count_wrong_values,2297
+llama3-70b-sqlbench:latest,Llama 3 70B,llama,pass4.query7,"v2,v3,v4",0,3,0.7944444444444444,same_count_wrong_values,0,3,0.7944444444444444,0.9444444444444445,1.0,0.4444444444444444,same_count_wrong_values,2122
+llama3-70b-sqlbench:latest,Llama 3 70B,llama,pass4.query8,"v2,v3,v4",0,3,0.6571428571428571,same_count_wrong_values,0,3,0.6571428571428571,0.75,0.6071428571428571,0.5,same_count_wrong_values,2450
+llama3-70b-sqlbench:latest,Llama 3 70B,llama,pass4.query9,"v2,v3,v4",0,3,0.6999999999999998,same_count_wrong_values,0,3,0.6999999999999998,1.0,0.0,1.0,same_count_wrong_values,2470
+llama3-70b-sqlbench:latest,Llama 3 70B,llama,pass4.query10,"v2,v3,v4",0,3,1.0,same_count_wrong_values,0,3,1.0,1.0,1.0,1.0,same_count_wrong_values,1753
+llama3-70b-sqlbench:latest,Llama 3 70B,llama,pass5.query1,"v2,v3,v4",0,3,0.6999999999999998,same_count_wrong_values,0,3,0.6999999999999998,1.0,0.0,1.0,same_count_wrong_values,2032
+llama3-70b-sqlbench:latest,Llama 3 70B,llama,pass5.query2,"v2,v3,v4",0,3,0.7942857142857142,row_count_mismatch,0,3,0.7942857142857142,0.9047619047619048,0.6,0.8095238095238096,row_count_mismatch,2425
+llama3-70b-sqlbench:latest,Llama 3 70B,llama,pass5.query3,"v2,v3,v4",0,3,0.7749999999999999,same_count_wrong_values,0,3,0.7749999999999999,1.0,0.25,1.0,same_count_wrong_values,2745
+llama3-70b-sqlbench:latest,Llama 3 70B,llama,pass5.query4,"v2,v3,v4",0,3,0.6999999999999998,same_count_wrong_values,0,3,0.6999999999999998,1.0,0.0,1.0,same_count_wrong_values,2311
+llama3-70b-sqlbench:latest,Llama 3 70B,llama,pass5.query5,"v2,v3,v4",0,3,0.7749999999999999,same_count_wrong_values,0,3,0.7749999999999999,1.0,0.25,1.0,same_count_wrong_values,2587
+llama3-70b-sqlbench:latest,Llama 3 70B,llama,pass5.query6,"v2,v3,v4",0,3,0.6999999999999998,same_count_wrong_values,0,3,0.6999999999999998,1.0,0.0,1.0,same_count_wrong_values,2222
+llama3-70b-sqlbench:latest,Llama 3 70B,llama,pass5.query7,"v2,v3,v4",0,3,0.7749999999999999,same_count_wrong_values,0,3,0.7749999999999999,1.0,0.25,1.0,same_count_wrong_values,2443
+llama3-70b-sqlbench:latest,Llama 3 70B,llama,pass5.query8,"v2,v3,v4",0,3,0.8320000000000002,same_count_wrong_values,0,3,0.8320000000000002,1.0,0.44,1.0,same_count_wrong_values,2617
+llama3-70b-sqlbench:latest,Llama 3 70B,llama,pass5.query9,"v2,v3,v4",0,3,0.5249999999999999,same_count_wrong_values,0,3,0.5249999999999999,0.6666666666666666,0.19444444444444442,0.6666666666666666,same_count_wrong_values,2547
+llama3-70b-sqlbench:latest,Llama 3 70B,llama,pass5.query10,"v2,v3,v4",0,3,0.5800000000000001,same_count_wrong_values,0,3,0.5800000000000001,1.0,0.0,0.4000000000000001,same_count_wrong_values,2313
+mixtral-8x22b-sqlbench:latest,Mixtral 8x22B,llama,pass1.query1,"v2,v3,v4",3,3,1.0,none,3,3,1.0,1.0,1.0,1.0,none,2101
+mixtral-8x22b-sqlbench:latest,Mixtral 8x22B,llama,pass1.query2,"v2,v3,v4",0,3,0.8500000000000001,order_only,0,3,0.8500000000000001,1.0,1.0,0.25,order_only,2443
+mixtral-8x22b-sqlbench:latest,Mixtral 8x22B,llama,pass1.query3,"v2,v3,v4",0,3,0.9833333333333334,same_count_wrong_values,0,3,0.9833333333333334,1.0,0.9444444444444443,1.0,same_count_wrong_values,2028
+mixtral-8x22b-sqlbench:latest,Mixtral 8x22B,llama,pass1.query4,"v2,v3,v4",0,3,0.94,same_count_wrong_values,0,3,0.94,1.0,0.8000000000000002,1.0,same_count_wrong_values,2220
+mixtral-8x22b-sqlbench:latest,Mixtral 8x22B,llama,pass1.query5,"v2,v3,v4",0,3,0.8571428571428572,same_count_wrong_values,0,3,0.8571428571428572,0.8571428571428571,0.8571428571428571,0.8571428571428571,same_count_wrong_values,2346
+mixtral-8x22b-sqlbench:latest,Mixtral 8x22B,llama,pass1.query6,"v2,v3,v4",0,3,0.875,same_count_wrong_values,0,3,0.875,1.0,0.5833333333333334,1.0,same_count_wrong_values,2322
+mixtral-8x22b-sqlbench:latest,Mixtral 8x22B,llama,pass1.query7,"v2,v3,v4",0,3,0.75,same_count_wrong_values,0,3,0.75,1.0,0.16666666666666666,1.0,same_count_wrong_values,2271
+mixtral-8x22b-sqlbench:latest,Mixtral 8x22B,llama,pass1.query8,"v2,v3,v4",0,3,0.8500000000000001,same_count_wrong_values,0,3,0.8500000000000001,1.0,0.5,1.0,same_count_wrong_values,2411
+mixtral-8x22b-sqlbench:latest,Mixtral 8x22B,llama,pass1.query9,"v2,v3,v4",0,3,0.8111111111111112,same_count_wrong_values,0,3,0.8111111111111112,1.0,0.3703703703703704,1.0,same_count_wrong_values,2299
+mixtral-8x22b-sqlbench:latest,Mixtral 8x22B,llama,pass1.query10,"v2,v3,v4",2,3,1.0,same_count_wrong_values,2,3,1.0,1.0,1.0,1.0,same_count_wrong_values,1888
+mixtral-8x22b-sqlbench:latest,Mixtral 8x22B,llama,pass2.query1,"v2,v3,v4",3,3,1.0,none,3,3,1.0,1.0,1.0,1.0,none,2087
+mixtral-8x22b-sqlbench:latest,Mixtral 8x22B,llama,pass2.query2,"v2,v3,v4",1,3,1.0,same_count_wrong_values,1,3,1.0,1.0,1.0,1.0,same_count_wrong_values,1867
+mixtral-8x22b-sqlbench:latest,Mixtral 8x22B,llama,pass2.query3,"v2,v3,v4",1,3,1.0,same_count_wrong_values,1,3,1.0,1.0,1.0,1.0,same_count_wrong_values,2225
+mixtral-8x22b-sqlbench:latest,Mixtral 8x22B,llama,pass2.query4,"v2,v3,v4",0,3,0.5916666666666667,same_count_wrong_values,0,3,0.5916666666666667,0.6666666666666666,0.4166666666666667,0.6666666666666666,same_count_wrong_values,2441
+mixtral-8x22b-sqlbench:latest,Mixtral 8x22B,llama,pass2.query5,"v2,v3,v4",0,3,0.8000000000000002,same_count_wrong_values,0,3,0.8000000000000002,1.0,0.3333333333333333,1.0,same_count_wrong_values,2271
+mixtral-8x22b-sqlbench:latest,Mixtral 8x22B,llama,pass2.query6,"v2,v3,v4",0,3,0.875,same_count_wrong_values,0,3,0.875,1.0,0.5833333333333334,1.0,same_count_wrong_values,2044
+mixtral-8x22b-sqlbench:latest,Mixtral 8x22B,llama,pass2.query7,"v2,v3,v4",0,3,0.7799999999999999,same_count_wrong_values,0,3,0.7799999999999999,1.0,0.5333333333333333,0.6,same_count_wrong_values,2279
+mixtral-8x22b-sqlbench:latest,Mixtral 8x22B,llama,pass2.query8,"v2,v3,v4",0,3,0.8999999999999999,same_count_wrong_values,0,3,0.8999999999999999,1.0,0.6666666666666666,1.0,same_count_wrong_values,2423
+mixtral-8x22b-sqlbench:latest,Mixtral 8x22B,llama,pass2.query9,"v2,v3,v4",0,3,0.5333333333333333,same_count_wrong_values,0,3,0.5333333333333333,0.6666666666666666,0.2222222222222222,0.6666666666666666,same_count_wrong_values,2593
+mixtral-8x22b-sqlbench:latest,Mixtral 8x22B,llama,pass2.query10,"v2,v3,v4",0,3,0.86,same_count_wrong_values,0,3,0.86,1.0,0.5333333333333333,1.0,same_count_wrong_values,2186
+mixtral-8x22b-sqlbench:latest,Mixtral 8x22B,llama,pass3.query1,"v2,v3,v4",2,3,1.0,same_count_wrong_values,2,3,1.0,1.0,1.0,1.0,same_count_wrong_values,1824
+mixtral-8x22b-sqlbench:latest,Mixtral 8x22B,llama,pass3.query2,"v2,v3,v4",0,3,0.6125,same_count_wrong_values,0,3,0.6125,0.75,0.2916666666666667,0.75,same_count_wrong_values,2543
+mixtral-8x22b-sqlbench:latest,Mixtral 8x22B,llama,pass3.query3,"v2,v3,v4",0,3,0.8500000000000001,same_count_wrong_values,0,3,0.8500000000000001,1.0,0.5,1.0,same_count_wrong_values,2411
+mixtral-8x22b-sqlbench:latest,Mixtral 8x22B,llama,pass3.query4,"v2,v3,v4",0,3,0.7666666666666666,same_count_wrong_values,0,3,0.7666666666666666,1.0,0.2222222222222222,1.0,same_count_wrong_values,2467
+mixtral-8x22b-sqlbench:latest,Mixtral 8x22B,llama,pass3.query5,"v2,v3,v4",0,3,0.96,same_count_wrong_values,0,3,0.96,1.0,0.8666666666666667,1.0,same_count_wrong_values,2200
+mixtral-8x22b-sqlbench:latest,Mixtral 8x22B,llama,pass3.query6,"v2,v3,v4",0,3,0.9416666666666668,same_count_wrong_values,0,3,0.9416666666666668,1.0,0.8055555555555557,1.0,same_count_wrong_values,2147
+mixtral-8x22b-sqlbench:latest,Mixtral 8x22B,llama,pass3.query7,"v2,v3,v4",3,3,1.0,none,3,3,1.0,1.0,1.0,1.0,none,1951
+mixtral-8x22b-sqlbench:latest,Mixtral 8x22B,llama,pass3.query8,"v2,v3,v4",0,3,0.5666666666666667,same_count_wrong_values,0,3,0.5666666666666667,0.6666666666666666,0.3333333333333333,0.6666666666666666,same_count_wrong_values,2705
+mixtral-8x22b-sqlbench:latest,Mixtral 8x22B,llama,pass3.query9,"v2,v3,v4",0,3,0.6875,same_count_wrong_values,0,3,0.6875,1.0,0.625,0.0,same_count_wrong_values,2279
+mixtral-8x22b-sqlbench:latest,Mixtral 8x22B,llama,pass3.query10,"v2,v3,v4",0,3,0.6916666666666668,same_count_wrong_values,0,3,0.6916666666666668,1.0,0.4166666666666667,0.3333333333333333,same_count_wrong_values,2291
+mixtral-8x22b-sqlbench:latest,Mixtral 8x22B,llama,pass4.query1,"v2,v3,v4",0,3,0.8375,same_count_wrong_values,0,3,0.8375,1.0,0.4583333333333333,1.0,same_count_wrong_values,1651
+mixtral-8x22b-sqlbench:latest,Mixtral 8x22B,llama,pass4.query2,"v2,v3,v4",0,3,0.5,same_count_wrong_values,0,3,0.5,0.6666666666666666,0.1111111111111111,0.6666666666666666,same_count_wrong_values,2588
+mixtral-8x22b-sqlbench:latest,Mixtral 8x22B,llama,pass4.query3,"v2,v3,v4",0,3,0.38749999999999996,same_count_wrong_values,0,3,0.38749999999999996,0.5,0.125,0.5,same_count_wrong_values,2705
+mixtral-8x22b-sqlbench:latest,Mixtral 8x22B,llama,pass4.query4,"v2,v3,v4",0,3,0.2333333333333333,row_count_mismatch,0,3,0.2333333333333333,0.3333333333333333,0.0,0.3333333333333333,row_count_mismatch,2405
+mixtral-8x22b-sqlbench:latest,Mixtral 8x22B,llama,pass4.query5,"v2,v3,v4",0,3,0.6960000000000001,same_count_wrong_values,0,3,0.6960000000000001,1.0,0.3866666666666667,0.4000000000000001,same_count_wrong_values,2576
+mixtral-8x22b-sqlbench:latest,Mixtral 8x22B,llama,pass4.query6,"v2,v3,v4",0,3,0.7600000000000001,same_count_wrong_values,0,3,0.7600000000000001,1.0,0.20000000000000004,1.0,same_count_wrong_values,2462
+mixtral-8x22b-sqlbench:latest,Mixtral 8x22B,llama,pass4.query7,"v2,v3,v4",0,3,0.85,same_count_wrong_values,0,3,0.85,1.0,1.0,0.5,same_count_wrong_values,2128
+mixtral-8x22b-sqlbench:latest,Mixtral 8x22B,llama,pass4.query8,"v2,v3,v4",0,3,0.8797619047619047,same_count_wrong_values,0,3,0.8797619047619047,1.0,0.8214285714285715,0.6666666666666666,same_count_wrong_values,2321
+mixtral-8x22b-sqlbench:latest,Mixtral 8x22B,llama,pass4.query9,"v2,v3,v4",0,3,0.65,same_count_wrong_values,0,3,0.65,1.0,0.5,0.0,same_count_wrong_values,2341
+mixtral-8x22b-sqlbench:latest,Mixtral 8x22B,llama,pass4.query10,"v2,v3,v4",0,3,1.0,same_count_wrong_values,0,3,1.0,1.0,1.0,1.0,same_count_wrong_values,1759
+mixtral-8x22b-sqlbench:latest,Mixtral 8x22B,llama,pass5.query1,"v2,v3,v4",0,3,0.73,same_count_wrong_values,0,3,0.73,1.0,0.10000000000000002,1.0,same_count_wrong_values,2088
+mixtral-8x22b-sqlbench:latest,Mixtral 8x22B,llama,pass5.query2,"v2,v3,v4",0,3,0.6044444444444445,row_count_mismatch,0,3,0.6044444444444445,0.6666666666666666,0.5333333333333333,0.5555555555555556,row_count_mismatch,2431
+mixtral-8x22b-sqlbench:latest,Mixtral 8x22B,llama,pass5.query3,"v2,v3,v4",0,3,0.61875,same_count_wrong_values,0,3,0.61875,0.75,0.3125,0.75,same_count_wrong_values,2751
+mixtral-8x22b-sqlbench:latest,Mixtral 8x22B,llama,pass5.query4,"v2,v3,v4",0,3,0.6999999999999998,same_count_wrong_values,0,3,0.6999999999999998,1.0,0.0,1.0,same_count_wrong_values,2317
+mixtral-8x22b-sqlbench:latest,Mixtral 8x22B,llama,pass5.query5,"v2,v3,v4",0,3,0.4749999999999999,row_count_mismatch,0,3,0.4749999999999999,0.6666666666666666,0.25,0.3333333333333333,row_count_mismatch,2542
+mixtral-8x22b-sqlbench:latest,Mixtral 8x22B,llama,pass5.query6,"v2,v3,v4",0,3,0.6999999999999998,same_count_wrong_values,0,3,0.6999999999999998,1.0,0.0,1.0,same_count_wrong_values,2337
+mixtral-8x22b-sqlbench:latest,Mixtral 8x22B,llama,pass5.query7,"v2,v3,v4",0,3,0.8249999999999998,same_count_wrong_values,0,3,0.8249999999999998,1.0,0.4166666666666667,1.0,same_count_wrong_values,2340
+mixtral-8x22b-sqlbench:latest,Mixtral 8x22B,llama,pass5.query8,"v2,v3,v4",0,3,0.852,same_count_wrong_values,0,3,0.852,1.0,0.5066666666666667,1.0,same_count_wrong_values,2464
+mixtral-8x22b-sqlbench:latest,Mixtral 8x22B,llama,pass5.query9,"v2,v3,v4",0,3,0.44722222222222224,same_count_wrong_values,0,3,0.44722222222222224,0.6666666666666666,0.08333333333333333,0.4444444444444444,same_count_wrong_values,2553
+mixtral-8x22b-sqlbench:latest,Mixtral 8x22B,llama,pass5.query10,"v2,v3,v4",0,3,0.5133333333333333,same_count_wrong_values,0,3,0.5133333333333333,1.0,0.0,0.06666666666666667,same_count_wrong_values,2369
 phi4-mini-sqlbench:latest,Phi-4 Mini,phi3,pass1.query1,"v2,v3,v4",0,9,0.8916666666666667,row_count_mismatch,0,3,0.875,0.875,0.875,0.875,row_count_mismatch,2398
 phi4-mini-sqlbench:latest,Phi-4 Mini,phi3,pass1.query2,"v2,v3,v4",0,9,0.6000771604938272,row_count_mismatch,0,3,0.7291666666666666,0.9166666666666666,0.7916666666666666,0.16666666666666666,row_count_mismatch,2422
 phi4-mini-sqlbench:latest,Phi-4 Mini,phi3,pass1.query3,"v2,v3,v4",0,9,0.8969135802469137,same_count_wrong_values,0,3,0.9166666666666666,1.0,0.7222222222222222,1.0,same_count_wrong_values,2157
@@ -449,106 +449,106 @@ phi4-mini-sqlbench:latest,Phi-4 Mini,phi3,pass5.query7,"v2,v3,v4",0,9,0.29166666
 phi4-mini-sqlbench:latest,Phi-4 Mini,phi3,pass5.query8,"v2,v3,v4",0,9,0.6835555555555556,same_count_wrong_values,0,3,0.7639999999999999,1.0,0.21333333333333335,1.0,same_count_wrong_values,2455
 phi4-mini-sqlbench:latest,Phi-4 Mini,phi3,pass5.query9,"v2,v3,v4",0,9,0.16574074074074074,row_count_mismatch,0,3,0.425,0.6666666666666666,0.08333333333333333,0.3333333333333333,same_count_wrong_values,2544
 phi4-mini-sqlbench:latest,Phi-4 Mini,phi3,pass5.query10,"v2,v3,v4",0,9,0.48444444444444446,row_count_mismatch,0,3,0.5800000000000001,1.0,0.0,0.4000000000000001,same_count_wrong_values,2360
-qwen2.5-72b-sqlbench:latest,Qwen 2.5 72B,qwen2,pass1.query1,"v2,v3,v4",3,6,0.9458333333333333,row_count_mismatch,3,3,1.0,1.0,1.0,1.0,none,2087
-qwen2.5-72b-sqlbench:latest,Qwen 2.5 72B,qwen2,pass1.query2,"v2,v3,v4",0,6,0.6645833333333333,row_count_mismatch,0,3,0.7291666666666666,0.9166666666666666,0.875,0.041666666666666664,same_count_wrong_values,2593
-qwen2.5-72b-sqlbench:latest,Qwen 2.5 72B,qwen2,pass1.query3,"v2,v3,v4",6,6,1.0,none,3,3,1.0,1.0,1.0,1.0,none,1760
-qwen2.5-72b-sqlbench:latest,Qwen 2.5 72B,qwen2,pass1.query4,"v2,v3,v4",6,6,1.0,none,3,3,1.0,1.0,1.0,1.0,none,2003
-qwen2.5-72b-sqlbench:latest,Qwen 2.5 72B,qwen2,pass1.query5,"v2,v3,v4",1,6,0.7666666666666666,row_count_mismatch,1,3,0.9047619047619048,0.9047619047619048,0.9047619047619048,0.9047619047619048,same_count_wrong_values,2448
-qwen2.5-72b-sqlbench:latest,Qwen 2.5 72B,qwen2,pass1.query6,"v2,v3,v4",0,6,0.8874999999999998,same_count_wrong_values,0,3,0.8874999999999998,1.0,0.625,1.0,same_count_wrong_values,2051
-qwen2.5-72b-sqlbench:latest,Qwen 2.5 72B,qwen2,pass1.query7,"v2,v3,v4",0,6,0.5916666666666667,row_count_mismatch,0,3,0.8000000000000002,1.0,0.3333333333333333,1.0,same_count_wrong_values,2567
-qwen2.5-72b-sqlbench:latest,Qwen 2.5 72B,qwen2,pass1.query8,"v2,v3,v4",0,6,0.8500000000000001,same_count_wrong_values,0,3,0.8500000000000001,1.0,0.5,1.0,same_count_wrong_values,2299
-qwen2.5-72b-sqlbench:latest,Qwen 2.5 72B,qwen2,pass1.query9,"v2,v3,v4",0,6,0.8555555555555555,same_count_wrong_values,0,3,0.8888888888888888,1.0,0.6296296296296297,1.0,same_count_wrong_values,2187
-qwen2.5-72b-sqlbench:latest,Qwen 2.5 72B,qwen2,pass1.query10,"v2,v3,v4",6,6,1.0,none,3,3,1.0,1.0,1.0,1.0,none,1744
-qwen2.5-72b-sqlbench:latest,Qwen 2.5 72B,qwen2,pass2.query1,"v2,v3,v4",3,6,0.7999999999999999,same_count_wrong_values,3,3,1.0,1.0,1.0,1.0,none,2198
-qwen2.5-72b-sqlbench:latest,Qwen 2.5 72B,qwen2,pass2.query2,"v2,v3,v4",6,6,1.0,none,3,3,1.0,1.0,1.0,1.0,none,1723
-qwen2.5-72b-sqlbench:latest,Qwen 2.5 72B,qwen2,pass2.query3,"v2,v3,v4",0,6,0.9816666666666668,same_count_wrong_values,0,3,1.0,1.0,1.0,1.0,same_count_wrong_values,1878
-qwen2.5-72b-sqlbench:latest,Qwen 2.5 72B,qwen2,pass2.query4,"v2,v3,v4",0,6,0.5916666666666667,row_count_mismatch,0,3,0.4666666666666666,0.5,0.6666666666666666,0.08333333333333333,row_count_mismatch,2501
-qwen2.5-72b-sqlbench:latest,Qwen 2.5 72B,qwen2,pass2.query5,"v2,v3,v4",0,6,0.6666666666666666,same_count_wrong_values,0,3,0.6666666666666666,1.0,0.3333333333333333,0.3333333333333333,same_count_wrong_values,2159
-qwen2.5-72b-sqlbench:latest,Qwen 2.5 72B,qwen2,pass2.query6,"v2,v3,v4",3,6,0.85,row_count_mismatch,3,3,1.0,1.0,1.0,1.0,none,2481
-qwen2.5-72b-sqlbench:latest,Qwen 2.5 72B,qwen2,pass2.query7,"v2,v3,v4",0,6,0.7399999999999999,same_count_wrong_values,0,3,0.7200000000000001,1.0,0.6,0.20000000000000004,same_count_wrong_values,2167
-qwen2.5-72b-sqlbench:latest,Qwen 2.5 72B,qwen2,pass2.query8,"v2,v3,v4",0,6,0.8222222222222223,same_count_wrong_values,0,3,0.8444444444444444,1.0,0.48148148148148145,1.0,same_count_wrong_values,2202
-qwen2.5-72b-sqlbench:latest,Qwen 2.5 72B,qwen2,pass2.query9,"v2,v3,v4",0,6,0.42777777777777776,row_count_mismatch,0,3,0.4888888888888889,0.6666666666666666,0.2222222222222222,0.4444444444444444,same_count_wrong_values,2704
-qwen2.5-72b-sqlbench:latest,Qwen 2.5 72B,qwen2,pass2.query10,"v2,v3,v4",0,6,0.9333333333333332,same_count_wrong_values,0,3,0.9066666666666666,1.0,0.6888888888888888,1.0,same_count_wrong_values,2074
-qwen2.5-72b-sqlbench:latest,Qwen 2.5 72B,qwen2,pass3.query1,"v2,v3,v4",4,6,1.0,same_count_wrong_values,3,3,1.0,1.0,1.0,1.0,none,1724
-qwen2.5-72b-sqlbench:latest,Qwen 2.5 72B,qwen2,pass3.query2,"v2,v3,v4",0,6,0.7218749999999999,same_count_wrong_values,0,3,0.65625,0.75,0.4375,0.75,same_count_wrong_values,2431
-qwen2.5-72b-sqlbench:latest,Qwen 2.5 72B,qwen2,pass3.query3,"v2,v3,v4",0,6,0.9249999999999999,same_count_wrong_values,0,3,0.94,1.0,0.8000000000000002,1.0,same_count_wrong_values,2190
-qwen2.5-72b-sqlbench:latest,Qwen 2.5 72B,qwen2,pass3.query4,"v2,v3,v4",0,6,0.6749999999999999,row_count_mismatch,0,3,0.9499999999999998,1.0,0.8333333333333334,1.0,same_count_wrong_values,2578
-qwen2.5-72b-sqlbench:latest,Qwen 2.5 72B,qwen2,pass3.query5,"v2,v3,v4",0,6,0.9700000000000001,same_count_wrong_values,0,3,0.96,1.0,0.8666666666666667,1.0,same_count_wrong_values,2038
-qwen2.5-72b-sqlbench:latest,Qwen 2.5 72B,qwen2,pass3.query6,"v2,v3,v4",0,6,0.8091666666666667,row_count_mismatch,0,3,0.9083333333333332,1.0,0.6944444444444445,1.0,same_count_wrong_values,2308
-qwen2.5-72b-sqlbench:latest,Qwen 2.5 72B,qwen2,pass3.query7,"v2,v3,v4",3,6,0.5,row_count_mismatch,3,3,1.0,1.0,1.0,1.0,none,2062
-qwen2.5-72b-sqlbench:latest,Qwen 2.5 72B,qwen2,pass3.query8,"v2,v3,v4",0,6,0.4777777777777777,same_count_wrong_values,0,3,0.4888888888888889,0.5555555555555555,0.3333333333333333,0.5555555555555555,same_count_wrong_values,2543
-qwen2.5-72b-sqlbench:latest,Qwen 2.5 72B,qwen2,pass3.query9,"v2,v3,v4",0,6,0.9250000000000002,same_count_wrong_values,0,3,0.9437500000000001,1.0,0.8125,1.0,same_count_wrong_values,2058
-qwen2.5-72b-sqlbench:latest,Qwen 2.5 72B,qwen2,pass3.query10,"v2,v3,v4",0,6,0.7541666666666668,same_count_wrong_values,0,3,0.7166666666666667,1.0,0.5,0.3333333333333333,same_count_wrong_values,2179
-qwen2.5-72b-sqlbench:latest,Qwen 2.5 72B,qwen2,pass4.query1,"v2,v3,v4",0,6,0.8937499999999999,same_count_wrong_values,0,3,0.9,1.0,0.6666666666666666,1.0,same_count_wrong_values,1539
-qwen2.5-72b-sqlbench:latest,Qwen 2.5 72B,qwen2,pass4.query2,"v2,v3,v4",0,6,0.42083333333333334,row_count_mismatch,0,3,0.4916666666666667,0.6666666666666666,0.08333333333333333,0.6666666666666666,same_count_wrong_values,2699
-qwen2.5-72b-sqlbench:latest,Qwen 2.5 72B,qwen2,pass4.query3,"v2,v3,v4",0,6,0.575,row_count_mismatch,0,3,0.8125,1.0,0.375,1.0,same_count_wrong_values,2816
-qwen2.5-72b-sqlbench:latest,Qwen 2.5 72B,qwen2,pass4.query4,"v2,v3,v4",0,6,0.6583333333333333,row_count_mismatch,0,3,0.7666666666666666,1.0,0.2222222222222222,1.0,same_count_wrong_values,2567
-qwen2.5-72b-sqlbench:latest,Qwen 2.5 72B,qwen2,pass4.query5,"v2,v3,v4",0,6,0.862,same_count_wrong_values,0,3,0.9199999999999999,1.0,0.7333333333333334,1.0,same_count_wrong_values,2552
-qwen2.5-72b-sqlbench:latest,Qwen 2.5 72B,qwen2,pass4.query6,"v2,v3,v4",0,6,0.745,same_count_wrong_values,0,3,0.7600000000000001,1.0,0.20000000000000004,1.0,same_count_wrong_values,2573
-qwen2.5-72b-sqlbench:latest,Qwen 2.5 72B,qwen2,pass4.query7,"v2,v3,v4",0,6,0.425,row_count_mismatch,0,3,0.85,1.0,1.0,0.5,same_count_wrong_values,2289
-qwen2.5-72b-sqlbench:latest,Qwen 2.5 72B,qwen2,pass4.query8,"v2,v3,v4",0,6,0.714404761904762,row_count_mismatch,0,3,0.8642857142857143,1.0,0.7142857142857143,0.75,same_count_wrong_values,2567
-qwen2.5-72b-sqlbench:latest,Qwen 2.5 72B,qwen2,pass4.query9,"v2,v3,v4",0,6,0.6166666666666666,row_count_mismatch,0,3,0.7875,1.0,0.2916666666666667,1.0,same_count_wrong_values,2587
-qwen2.5-72b-sqlbench:latest,Qwen 2.5 72B,qwen2,pass4.query10,"v2,v3,v4",6,6,1.0,none,3,3,1.0,1.0,1.0,1.0,none,1724
-qwen2.5-72b-sqlbench:latest,Qwen 2.5 72B,qwen2,pass5.query1,"v2,v3,v4",0,6,0.7075,same_count_wrong_values,0,3,0.71,1.0,0.03333333333333333,1.0,same_count_wrong_values,1926
-qwen2.5-72b-sqlbench:latest,Qwen 2.5 72B,qwen2,pass5.query2,"v2,v3,v4",0,6,0.7283333333333334,row_count_mismatch,0,3,0.9266666666666666,1.0,0.7555555555555555,1.0,same_count_wrong_values,2593
-qwen2.5-72b-sqlbench:latest,Qwen 2.5 72B,qwen2,pass5.query3,"v2,v3,v4",0,6,0.45125,row_count_mismatch,0,3,0.60625,0.75,0.4375,0.5,same_count_wrong_values,2589
-qwen2.5-72b-sqlbench:latest,Qwen 2.5 72B,qwen2,pass5.query4,"v2,v3,v4",0,6,0.6999999999999998,same_count_wrong_values,0,3,0.6999999999999998,1.0,0.0,1.0,same_count_wrong_values,2205
-qwen2.5-72b-sqlbench:latest,Qwen 2.5 72B,qwen2,pass5.query5,"v2,v3,v4",0,6,0.625,row_count_mismatch,0,3,0.75,1.0,0.16666666666666666,1.0,same_count_wrong_values,2704
-qwen2.5-72b-sqlbench:latest,Qwen 2.5 72B,qwen2,pass5.query6,"v2,v3,v4",0,6,0.64,same_count_wrong_values,0,3,0.6999999999999998,1.0,0.0,1.0,same_count_wrong_values,2448
-qwen2.5-72b-sqlbench:latest,Qwen 2.5 72B,qwen2,pass5.query7,"v2,v3,v4",0,6,0.7958333333333334,same_count_wrong_values,0,3,0.8083333333333332,1.0,0.3611111111111111,1.0,same_count_wrong_values,2228
-qwen2.5-72b-sqlbench:latest,Qwen 2.5 72B,qwen2,pass5.query8,"v2,v3,v4",0,6,0.79,same_count_wrong_values,0,3,0.844,1.0,0.48,1.0,same_count_wrong_values,2461
-qwen2.5-72b-sqlbench:latest,Qwen 2.5 72B,qwen2,pass5.query9,"v2,v3,v4",0,6,0.4261111111111111,row_count_mismatch,0,3,0.5222222222222221,0.7777777777777777,0.2222222222222222,0.3333333333333333,same_count_wrong_values,2664
-qwen2.5-72b-sqlbench:latest,Qwen 2.5 72B,qwen2,pass5.query10,"v2,v3,v4",0,6,0.6,same_count_wrong_values,0,3,0.62,1.0,0.0,0.6,same_count_wrong_values,2480
-qwen2.5-coder-32b-sqlbench:latest,Qwen 2.5 Coder 32B,qwen2,pass1.query1,"v2,v3,v4",3,6,0.9375,same_count_wrong_values,3,3,1.0,1.0,1.0,1.0,none,2116
-qwen2.5-coder-32b-sqlbench:latest,Qwen 2.5 Coder 32B,qwen2,pass1.query2,"v2,v3,v4",0,6,0.7125,row_count_mismatch,0,3,0.8250000000000001,1.0,1.0,0.125,order_only,2333
-qwen2.5-coder-32b-sqlbench:latest,Qwen 2.5 Coder 32B,qwen2,pass1.query3,"v2,v3,v4",6,6,1.0,none,3,3,1.0,1.0,1.0,1.0,none,1778
-qwen2.5-coder-32b-sqlbench:latest,Qwen 2.5 Coder 32B,qwen2,pass1.query4,"v2,v3,v4",0,6,0.9149999999999999,same_count_wrong_values,0,3,0.9099999999999998,1.0,0.6999999999999998,1.0,same_count_wrong_values,2185
-qwen2.5-coder-32b-sqlbench:latest,Qwen 2.5 Coder 32B,qwen2,pass1.query5,"v2,v3,v4",0,6,0.7428571428571429,row_count_mismatch,0,3,0.8571428571428572,0.8571428571428571,0.8571428571428571,0.8571428571428571,same_count_wrong_values,2361
-qwen2.5-coder-32b-sqlbench:latest,Qwen 2.5 Coder 32B,qwen2,pass1.query6,"v2,v3,v4",0,6,0.78125,row_count_mismatch,0,3,0.9250000000000002,1.0,0.75,1.0,same_count_wrong_values,2178
-qwen2.5-coder-32b-sqlbench:latest,Qwen 2.5 Coder 32B,qwen2,pass1.query7,"v2,v3,v4",0,6,0.6750000000000002,same_count_wrong_values,0,3,0.8000000000000002,1.0,0.3333333333333333,1.0,same_count_wrong_values,2286
-qwen2.5-coder-32b-sqlbench:latest,Qwen 2.5 Coder 32B,qwen2,pass1.query8,"v2,v3,v4",0,6,0.875,same_count_wrong_values,0,3,0.8999999999999999,1.0,0.6666666666666666,1.0,same_count_wrong_values,2426
-qwen2.5-coder-32b-sqlbench:latest,Qwen 2.5 Coder 32B,qwen2,pass1.query9,"v2,v3,v4",0,6,0.75,same_count_wrong_values,0,3,0.7666666666666666,1.0,0.2222222222222222,1.0,same_count_wrong_values,2314
-qwen2.5-coder-32b-sqlbench:latest,Qwen 2.5 Coder 32B,qwen2,pass1.query10,"v2,v3,v4",6,6,1.0,none,3,3,1.0,1.0,1.0,1.0,none,1762
-qwen2.5-coder-32b-sqlbench:latest,Qwen 2.5 Coder 32B,qwen2,pass2.query1,"v2,v3,v4",3,6,0.9027777777777778,same_count_wrong_values,3,3,1.0,1.0,1.0,1.0,none,2102
-qwen2.5-coder-32b-sqlbench:latest,Qwen 2.5 Coder 32B,qwen2,pass2.query2,"v2,v3,v4",6,6,1.0,none,3,3,1.0,1.0,1.0,1.0,none,1741
-qwen2.5-coder-32b-sqlbench:latest,Qwen 2.5 Coder 32B,qwen2,pass2.query3,"v2,v3,v4",3,6,0.94,row_count_mismatch,3,3,1.0,1.0,1.0,1.0,none,2058
-qwen2.5-coder-32b-sqlbench:latest,Qwen 2.5 Coder 32B,qwen2,pass2.query4,"v2,v3,v4",0,6,0.7583333333333334,row_count_mismatch,0,3,0.8333333333333335,0.8333333333333334,0.8333333333333334,0.8333333333333334,same_count_wrong_values,2456
-qwen2.5-coder-32b-sqlbench:latest,Qwen 2.5 Coder 32B,qwen2,pass2.query5,"v2,v3,v4",0,6,0.65,same_count_wrong_values,0,3,0.6999999999999998,1.0,0.0,1.0,same_count_wrong_values,2286
-qwen2.5-coder-32b-sqlbench:latest,Qwen 2.5 Coder 32B,qwen2,pass2.query6,"v2,v3,v4",0,6,0.5666666666666668,same_count_wrong_values,0,3,0.8500000000000001,1.0,0.5,1.0,same_count_wrong_values,2623
-qwen2.5-coder-32b-sqlbench:latest,Qwen 2.5 Coder 32B,qwen2,pass2.query7,"v2,v3,v4",0,6,0.7999999999999999,same_count_wrong_values,0,3,0.7399999999999999,1.0,0.4000000000000001,0.6,same_count_wrong_values,2344
-qwen2.5-coder-32b-sqlbench:latest,Qwen 2.5 Coder 32B,qwen2,pass2.query8,"v2,v3,v4",0,6,0.7999999999999999,same_count_wrong_values,0,3,0.6999999999999998,1.0,0.4444444444444444,0.3333333333333333,same_count_wrong_values,2438
-qwen2.5-coder-32b-sqlbench:latest,Qwen 2.5 Coder 32B,qwen2,pass2.query9,"v2,v3,v4",0,6,0.4666666666666666,row_count_mismatch,0,3,0.5666666666666667,0.6666666666666666,0.3333333333333333,0.6666666666666666,same_count_wrong_values,2608
-qwen2.5-coder-32b-sqlbench:latest,Qwen 2.5 Coder 32B,qwen2,pass2.query10,"v2,v3,v4",0,6,0.9199999999999999,same_count_wrong_values,0,3,0.9199999999999999,1.0,0.7333333333333333,1.0,same_count_wrong_values,2201
-qwen2.5-coder-32b-sqlbench:latest,Qwen 2.5 Coder 32B,qwen2,pass3.query1,"v2,v3,v4",4,6,1.0,same_count_wrong_values,3,3,1.0,1.0,1.0,1.0,none,1742
-qwen2.5-coder-32b-sqlbench:latest,Qwen 2.5 Coder 32B,qwen2,pass3.query2,"v2,v3,v4",0,6,0.84375,same_count_wrong_values,0,3,0.8687499999999999,1.0,0.5625,1.0,same_count_wrong_values,2473
-qwen2.5-coder-32b-sqlbench:latest,Qwen 2.5 Coder 32B,qwen2,pass3.query3,"v2,v3,v4",0,6,0.8350000000000001,same_count_wrong_values,0,3,0.8500000000000001,1.0,0.5,1.0,same_count_wrong_values,2426
-qwen2.5-coder-32b-sqlbench:latest,Qwen 2.5 Coder 32B,qwen2,pass3.query4,"v2,v3,v4",0,6,0.6916666666666668,row_count_mismatch,0,3,0.8333333333333334,1.0,0.4444444444444444,1.0,same_count_wrong_values,2482
-qwen2.5-coder-32b-sqlbench:latest,Qwen 2.5 Coder 32B,qwen2,pass3.query5,"v2,v3,v4",0,6,0.96,same_count_wrong_values,0,3,0.96,1.0,0.8666666666666667,1.0,same_count_wrong_values,2165
-qwen2.5-coder-32b-sqlbench:latest,Qwen 2.5 Coder 32B,qwen2,pass3.query6,"v2,v3,v4",0,6,0.8249999999999998,same_count_wrong_values,0,3,0.8249999999999998,1.0,0.4166666666666667,1.0,same_count_wrong_values,2406
-qwen2.5-coder-32b-sqlbench:latest,Qwen 2.5 Coder 32B,qwen2,pass3.query7,"v2,v3,v4",3,6,0.5,row_count_mismatch,3,3,1.0,1.0,1.0,1.0,none,2091
-qwen2.5-coder-32b-sqlbench:latest,Qwen 2.5 Coder 32B,qwen2,pass3.query8,"v2,v3,v4",0,6,0.3833333333333333,row_count_mismatch,0,3,0.4666666666666666,0.6666666666666666,0.0,0.6666666666666666,same_count_wrong_values,2720
-qwen2.5-coder-32b-sqlbench:latest,Qwen 2.5 Coder 32B,qwen2,pass3.query9,"v2,v3,v4",0,6,0.80625,same_count_wrong_values,0,3,0.9250000000000002,1.0,0.75,1.0,same_count_wrong_values,2294
-qwen2.5-coder-32b-sqlbench:latest,Qwen 2.5 Coder 32B,qwen2,pass3.query10,"v2,v3,v4",0,6,0.75,same_count_wrong_values,0,3,0.6499999999999999,1.0,0.27777777777777773,0.3333333333333333,same_count_wrong_values,2306
-qwen2.5-coder-32b-sqlbench:latest,Qwen 2.5 Coder 32B,qwen2,pass4.query1,"v2,v3,v4",0,6,0.8874999999999998,same_count_wrong_values,0,3,0.8874999999999998,1.0,0.625,1.0,same_count_wrong_values,1666
-qwen2.5-coder-32b-sqlbench:latest,Qwen 2.5 Coder 32B,qwen2,pass4.query2,"v2,v3,v4",0,6,0.46527777777777773,row_count_mismatch,0,3,0.5416666666666666,0.6666666666666666,0.25,0.6666666666666666,same_count_wrong_values,2553
-qwen2.5-coder-32b-sqlbench:latest,Qwen 2.5 Coder 32B,qwen2,pass4.query3,"v2,v3,v4",0,6,0.225,row_count_mismatch,0,3,0.0,0.0,0.0,0.0,same_count_wrong_values,2720
-qwen2.5-coder-32b-sqlbench:latest,Qwen 2.5 Coder 32B,qwen2,pass4.query4,"v2,v3,v4",0,6,0.625,row_count_mismatch,0,3,0.8000000000000002,1.0,0.3333333333333333,1.0,same_count_wrong_values,2471
-qwen2.5-coder-32b-sqlbench:latest,Qwen 2.5 Coder 32B,qwen2,pass4.query5,"v2,v3,v4",0,6,0.6859999999999999,row_count_mismatch,0,3,0.8919999999999999,1.0,0.64,1.0,same_count_wrong_values,2591
-qwen2.5-coder-32b-sqlbench:latest,Qwen 2.5 Coder 32B,qwen2,pass4.query6,"v2,v3,v4",0,6,0.7000000000000001,row_count_mismatch,0,3,0.75,1.0,0.16666666666666666,1.0,same_count_wrong_values,2368
-qwen2.5-coder-32b-sqlbench:latest,Qwen 2.5 Coder 32B,qwen2,pass4.query7,"v2,v3,v4",0,6,0.3666666666666667,row_count_mismatch,0,3,0.7333333333333334,0.8333333333333334,1.0,0.5,same_count_wrong_values,2193
-qwen2.5-coder-32b-sqlbench:latest,Qwen 2.5 Coder 32B,qwen2,pass4.query8,"v2,v3,v4",0,6,0.5898809523809524,row_count_mismatch,0,3,0.5333333333333333,0.5833333333333334,0.4166666666666667,0.5833333333333334,same_count_wrong_values,2471
-qwen2.5-coder-32b-sqlbench:latest,Qwen 2.5 Coder 32B,qwen2,pass4.query9,"v2,v3,v4",0,6,0.7312500000000001,same_count_wrong_values,0,3,0.8500000000000001,1.0,0.5,1.0,same_count_wrong_values,2306
-qwen2.5-coder-32b-sqlbench:latest,Qwen 2.5 Coder 32B,qwen2,pass4.query10,"v2,v3,v4",3,6,1.0,same_count_wrong_values,3,3,1.0,1.0,1.0,1.0,none,1843
-qwen2.5-coder-32b-sqlbench:latest,Qwen 2.5 Coder 32B,qwen2,pass5.query1,"v2,v3,v4",0,6,0.63,row_count_mismatch,0,3,0.6999999999999998,1.0,0.0,1.0,same_count_wrong_values,2103
-qwen2.5-coder-32b-sqlbench:latest,Qwen 2.5 Coder 32B,qwen2,pass5.query2,"v2,v3,v4",0,6,0.5716666666666667,row_count_mismatch,0,3,0.6333333333333333,0.8333333333333334,0.5,0.3333333333333333,same_count_wrong_values,2497
-qwen2.5-coder-32b-sqlbench:latest,Qwen 2.5 Coder 32B,qwen2,pass5.query3,"v2,v3,v4",0,6,0.45625,row_count_mismatch,0,3,0.5137499999999999,0.6,0.3125,0.6,row_count_mismatch,2715
-qwen2.5-coder-32b-sqlbench:latest,Qwen 2.5 Coder 32B,qwen2,pass5.query4,"v2,v3,v4",0,6,0.6999999999999998,same_count_wrong_values,0,3,0.6999999999999998,1.0,0.0,1.0,same_count_wrong_values,2332
-qwen2.5-coder-32b-sqlbench:latest,Qwen 2.5 Coder 32B,qwen2,pass5.query5,"v2,v3,v4",0,6,0.0,row_count_mismatch,0,3,0.0,0.0,0.0,0.0,row_count_mismatch,2557
-qwen2.5-coder-32b-sqlbench:latest,Qwen 2.5 Coder 32B,qwen2,pass5.query6,"v2,v3,v4",0,6,0.59,row_count_mismatch,0,3,0.6999999999999998,1.0,0.0,1.0,same_count_wrong_values,2352
-qwen2.5-coder-32b-sqlbench:latest,Qwen 2.5 Coder 32B,qwen2,pass5.query7,"v2,v3,v4",0,6,0.7916666666666666,same_count_wrong_values,0,3,0.8249999999999998,1.0,0.4166666666666667,1.0,same_count_wrong_values,2405
-qwen2.5-coder-32b-sqlbench:latest,Qwen 2.5 Coder 32B,qwen2,pass5.query8,"v2,v3,v4",0,6,0.786,same_count_wrong_values,0,3,0.8080000000000002,1.0,0.36000000000000004,1.0,same_count_wrong_values,2588
-qwen2.5-coder-32b-sqlbench:latest,Qwen 2.5 Coder 32B,qwen2,pass5.query9,"v2,v3,v4",0,6,0.37222222222222223,same_count_wrong_values,0,3,0.425,0.6666666666666666,0.08333333333333333,0.3333333333333333,same_count_wrong_values,2518
-qwen2.5-coder-32b-sqlbench:latest,Qwen 2.5 Coder 32B,qwen2,pass5.query10,"v2,v3,v4",0,6,0.5391666666666667,row_count_mismatch,0,3,0.5933333333333334,1.0,0.0,0.4666666666666666,same_count_wrong_values,2384
+qwen2.5-72b-sqlbench:latest,Qwen 2.5 72B,qwen2,pass1.query1,"v2,v3,v4",3,3,1.0,none,3,3,1.0,1.0,1.0,1.0,none,2087
+qwen2.5-72b-sqlbench:latest,Qwen 2.5 72B,qwen2,pass1.query2,"v2,v3,v4",0,3,0.7291666666666666,same_count_wrong_values,0,3,0.7291666666666666,0.9166666666666666,0.875,0.041666666666666664,same_count_wrong_values,2593
+qwen2.5-72b-sqlbench:latest,Qwen 2.5 72B,qwen2,pass1.query3,"v2,v3,v4",3,3,1.0,none,3,3,1.0,1.0,1.0,1.0,none,1760
+qwen2.5-72b-sqlbench:latest,Qwen 2.5 72B,qwen2,pass1.query4,"v2,v3,v4",3,3,1.0,none,3,3,1.0,1.0,1.0,1.0,none,2003
+qwen2.5-72b-sqlbench:latest,Qwen 2.5 72B,qwen2,pass1.query5,"v2,v3,v4",1,3,0.9047619047619048,same_count_wrong_values,1,3,0.9047619047619048,0.9047619047619048,0.9047619047619048,0.9047619047619048,same_count_wrong_values,2448
+qwen2.5-72b-sqlbench:latest,Qwen 2.5 72B,qwen2,pass1.query6,"v2,v3,v4",0,3,0.8874999999999998,same_count_wrong_values,0,3,0.8874999999999998,1.0,0.625,1.0,same_count_wrong_values,2051
+qwen2.5-72b-sqlbench:latest,Qwen 2.5 72B,qwen2,pass1.query7,"v2,v3,v4",0,3,0.8000000000000002,same_count_wrong_values,0,3,0.8000000000000002,1.0,0.3333333333333333,1.0,same_count_wrong_values,2567
+qwen2.5-72b-sqlbench:latest,Qwen 2.5 72B,qwen2,pass1.query8,"v2,v3,v4",0,3,0.8500000000000001,same_count_wrong_values,0,3,0.8500000000000001,1.0,0.5,1.0,same_count_wrong_values,2299
+qwen2.5-72b-sqlbench:latest,Qwen 2.5 72B,qwen2,pass1.query9,"v2,v3,v4",0,3,0.8888888888888888,same_count_wrong_values,0,3,0.8888888888888888,1.0,0.6296296296296297,1.0,same_count_wrong_values,2187
+qwen2.5-72b-sqlbench:latest,Qwen 2.5 72B,qwen2,pass1.query10,"v2,v3,v4",3,3,1.0,none,3,3,1.0,1.0,1.0,1.0,none,1744
+qwen2.5-72b-sqlbench:latest,Qwen 2.5 72B,qwen2,pass2.query1,"v2,v3,v4",3,3,1.0,none,3,3,1.0,1.0,1.0,1.0,none,2198
+qwen2.5-72b-sqlbench:latest,Qwen 2.5 72B,qwen2,pass2.query2,"v2,v3,v4",3,3,1.0,none,3,3,1.0,1.0,1.0,1.0,none,1723
+qwen2.5-72b-sqlbench:latest,Qwen 2.5 72B,qwen2,pass2.query3,"v2,v3,v4",0,3,1.0,same_count_wrong_values,0,3,1.0,1.0,1.0,1.0,same_count_wrong_values,1878
+qwen2.5-72b-sqlbench:latest,Qwen 2.5 72B,qwen2,pass2.query4,"v2,v3,v4",0,3,0.4666666666666666,row_count_mismatch,0,3,0.4666666666666666,0.5,0.6666666666666666,0.08333333333333333,row_count_mismatch,2501
+qwen2.5-72b-sqlbench:latest,Qwen 2.5 72B,qwen2,pass2.query5,"v2,v3,v4",0,3,0.6666666666666666,same_count_wrong_values,0,3,0.6666666666666666,1.0,0.3333333333333333,0.3333333333333333,same_count_wrong_values,2159
+qwen2.5-72b-sqlbench:latest,Qwen 2.5 72B,qwen2,pass2.query6,"v2,v3,v4",3,3,1.0,none,3,3,1.0,1.0,1.0,1.0,none,2481
+qwen2.5-72b-sqlbench:latest,Qwen 2.5 72B,qwen2,pass2.query7,"v2,v3,v4",0,3,0.7200000000000001,same_count_wrong_values,0,3,0.7200000000000001,1.0,0.6,0.20000000000000004,same_count_wrong_values,2167
+qwen2.5-72b-sqlbench:latest,Qwen 2.5 72B,qwen2,pass2.query8,"v2,v3,v4",0,3,0.8444444444444444,same_count_wrong_values,0,3,0.8444444444444444,1.0,0.48148148148148145,1.0,same_count_wrong_values,2202
+qwen2.5-72b-sqlbench:latest,Qwen 2.5 72B,qwen2,pass2.query9,"v2,v3,v4",0,3,0.4888888888888889,same_count_wrong_values,0,3,0.4888888888888889,0.6666666666666666,0.2222222222222222,0.4444444444444444,same_count_wrong_values,2704
+qwen2.5-72b-sqlbench:latest,Qwen 2.5 72B,qwen2,pass2.query10,"v2,v3,v4",0,3,0.9066666666666666,same_count_wrong_values,0,3,0.9066666666666666,1.0,0.6888888888888888,1.0,same_count_wrong_values,2074
+qwen2.5-72b-sqlbench:latest,Qwen 2.5 72B,qwen2,pass3.query1,"v2,v3,v4",3,3,1.0,none,3,3,1.0,1.0,1.0,1.0,none,1724
+qwen2.5-72b-sqlbench:latest,Qwen 2.5 72B,qwen2,pass3.query2,"v2,v3,v4",0,3,0.65625,same_count_wrong_values,0,3,0.65625,0.75,0.4375,0.75,same_count_wrong_values,2431
+qwen2.5-72b-sqlbench:latest,Qwen 2.5 72B,qwen2,pass3.query3,"v2,v3,v4",0,3,0.94,same_count_wrong_values,0,3,0.94,1.0,0.8000000000000002,1.0,same_count_wrong_values,2190
+qwen2.5-72b-sqlbench:latest,Qwen 2.5 72B,qwen2,pass3.query4,"v2,v3,v4",0,3,0.9499999999999998,same_count_wrong_values,0,3,0.9499999999999998,1.0,0.8333333333333334,1.0,same_count_wrong_values,2578
+qwen2.5-72b-sqlbench:latest,Qwen 2.5 72B,qwen2,pass3.query5,"v2,v3,v4",0,3,0.96,same_count_wrong_values,0,3,0.96,1.0,0.8666666666666667,1.0,same_count_wrong_values,2038
+qwen2.5-72b-sqlbench:latest,Qwen 2.5 72B,qwen2,pass3.query6,"v2,v3,v4",0,3,0.9083333333333332,same_count_wrong_values,0,3,0.9083333333333332,1.0,0.6944444444444445,1.0,same_count_wrong_values,2308
+qwen2.5-72b-sqlbench:latest,Qwen 2.5 72B,qwen2,pass3.query7,"v2,v3,v4",3,3,1.0,none,3,3,1.0,1.0,1.0,1.0,none,2062
+qwen2.5-72b-sqlbench:latest,Qwen 2.5 72B,qwen2,pass3.query8,"v2,v3,v4",0,3,0.4888888888888889,same_count_wrong_values,0,3,0.4888888888888889,0.5555555555555555,0.3333333333333333,0.5555555555555555,same_count_wrong_values,2543
+qwen2.5-72b-sqlbench:latest,Qwen 2.5 72B,qwen2,pass3.query9,"v2,v3,v4",0,3,0.9437500000000001,same_count_wrong_values,0,3,0.9437500000000001,1.0,0.8125,1.0,same_count_wrong_values,2058
+qwen2.5-72b-sqlbench:latest,Qwen 2.5 72B,qwen2,pass3.query10,"v2,v3,v4",0,3,0.7166666666666667,same_count_wrong_values,0,3,0.7166666666666667,1.0,0.5,0.3333333333333333,same_count_wrong_values,2179
+qwen2.5-72b-sqlbench:latest,Qwen 2.5 72B,qwen2,pass4.query1,"v2,v3,v4",0,3,0.9,same_count_wrong_values,0,3,0.9,1.0,0.6666666666666666,1.0,same_count_wrong_values,1539
+qwen2.5-72b-sqlbench:latest,Qwen 2.5 72B,qwen2,pass4.query2,"v2,v3,v4",0,3,0.4916666666666667,same_count_wrong_values,0,3,0.4916666666666667,0.6666666666666666,0.08333333333333333,0.6666666666666666,same_count_wrong_values,2699
+qwen2.5-72b-sqlbench:latest,Qwen 2.5 72B,qwen2,pass4.query3,"v2,v3,v4",0,3,0.8125,same_count_wrong_values,0,3,0.8125,1.0,0.375,1.0,same_count_wrong_values,2816
+qwen2.5-72b-sqlbench:latest,Qwen 2.5 72B,qwen2,pass4.query4,"v2,v3,v4",0,3,0.7666666666666666,same_count_wrong_values,0,3,0.7666666666666666,1.0,0.2222222222222222,1.0,same_count_wrong_values,2567
+qwen2.5-72b-sqlbench:latest,Qwen 2.5 72B,qwen2,pass4.query5,"v2,v3,v4",0,3,0.9199999999999999,same_count_wrong_values,0,3,0.9199999999999999,1.0,0.7333333333333334,1.0,same_count_wrong_values,2552
+qwen2.5-72b-sqlbench:latest,Qwen 2.5 72B,qwen2,pass4.query6,"v2,v3,v4",0,3,0.7600000000000001,same_count_wrong_values,0,3,0.7600000000000001,1.0,0.20000000000000004,1.0,same_count_wrong_values,2573
+qwen2.5-72b-sqlbench:latest,Qwen 2.5 72B,qwen2,pass4.query7,"v2,v3,v4",0,3,0.85,same_count_wrong_values,0,3,0.85,1.0,1.0,0.5,same_count_wrong_values,2289
+qwen2.5-72b-sqlbench:latest,Qwen 2.5 72B,qwen2,pass4.query8,"v2,v3,v4",0,3,0.8642857142857143,same_count_wrong_values,0,3,0.8642857142857143,1.0,0.7142857142857143,0.75,same_count_wrong_values,2567
+qwen2.5-72b-sqlbench:latest,Qwen 2.5 72B,qwen2,pass4.query9,"v2,v3,v4",0,3,0.7875,same_count_wrong_values,0,3,0.7875,1.0,0.2916666666666667,1.0,same_count_wrong_values,2587
+qwen2.5-72b-sqlbench:latest,Qwen 2.5 72B,qwen2,pass4.query10,"v2,v3,v4",3,3,1.0,none,3,3,1.0,1.0,1.0,1.0,none,1724
+qwen2.5-72b-sqlbench:latest,Qwen 2.5 72B,qwen2,pass5.query1,"v2,v3,v4",0,3,0.71,same_count_wrong_values,0,3,0.71,1.0,0.03333333333333333,1.0,same_count_wrong_values,1926
+qwen2.5-72b-sqlbench:latest,Qwen 2.5 72B,qwen2,pass5.query2,"v2,v3,v4",0,3,0.9266666666666666,same_count_wrong_values,0,3,0.9266666666666666,1.0,0.7555555555555555,1.0,same_count_wrong_values,2593
+qwen2.5-72b-sqlbench:latest,Qwen 2.5 72B,qwen2,pass5.query3,"v2,v3,v4",0,3,0.60625,same_count_wrong_values,0,3,0.60625,0.75,0.4375,0.5,same_count_wrong_values,2589
+qwen2.5-72b-sqlbench:latest,Qwen 2.5 72B,qwen2,pass5.query4,"v2,v3,v4",0,3,0.6999999999999998,same_count_wrong_values,0,3,0.6999999999999998,1.0,0.0,1.0,same_count_wrong_values,2205
+qwen2.5-72b-sqlbench:latest,Qwen 2.5 72B,qwen2,pass5.query5,"v2,v3,v4",0,3,0.75,same_count_wrong_values,0,3,0.75,1.0,0.16666666666666666,1.0,same_count_wrong_values,2704
+qwen2.5-72b-sqlbench:latest,Qwen 2.5 72B,qwen2,pass5.query6,"v2,v3,v4",0,3,0.6999999999999998,same_count_wrong_values,0,3,0.6999999999999998,1.0,0.0,1.0,same_count_wrong_values,2448
+qwen2.5-72b-sqlbench:latest,Qwen 2.5 72B,qwen2,pass5.query7,"v2,v3,v4",0,3,0.8083333333333332,same_count_wrong_values,0,3,0.8083333333333332,1.0,0.3611111111111111,1.0,same_count_wrong_values,2228
+qwen2.5-72b-sqlbench:latest,Qwen 2.5 72B,qwen2,pass5.query8,"v2,v3,v4",0,3,0.844,same_count_wrong_values,0,3,0.844,1.0,0.48,1.0,same_count_wrong_values,2461
+qwen2.5-72b-sqlbench:latest,Qwen 2.5 72B,qwen2,pass5.query9,"v2,v3,v4",0,3,0.5222222222222221,same_count_wrong_values,0,3,0.5222222222222221,0.7777777777777777,0.2222222222222222,0.3333333333333333,same_count_wrong_values,2664
+qwen2.5-72b-sqlbench:latest,Qwen 2.5 72B,qwen2,pass5.query10,"v2,v3,v4",0,3,0.62,same_count_wrong_values,0,3,0.62,1.0,0.0,0.6,same_count_wrong_values,2480
+qwen2.5-coder-32b-sqlbench:latest,Qwen 2.5 Coder 32B,qwen2,pass1.query1,"v2,v3,v4",3,3,1.0,none,3,3,1.0,1.0,1.0,1.0,none,2116
+qwen2.5-coder-32b-sqlbench:latest,Qwen 2.5 Coder 32B,qwen2,pass1.query2,"v2,v3,v4",0,3,0.8250000000000001,order_only,0,3,0.8250000000000001,1.0,1.0,0.125,order_only,2333
+qwen2.5-coder-32b-sqlbench:latest,Qwen 2.5 Coder 32B,qwen2,pass1.query3,"v2,v3,v4",3,3,1.0,none,3,3,1.0,1.0,1.0,1.0,none,1778
+qwen2.5-coder-32b-sqlbench:latest,Qwen 2.5 Coder 32B,qwen2,pass1.query4,"v2,v3,v4",0,3,0.9099999999999998,same_count_wrong_values,0,3,0.9099999999999998,1.0,0.6999999999999998,1.0,same_count_wrong_values,2185
+qwen2.5-coder-32b-sqlbench:latest,Qwen 2.5 Coder 32B,qwen2,pass1.query5,"v2,v3,v4",0,3,0.8571428571428572,same_count_wrong_values,0,3,0.8571428571428572,0.8571428571428571,0.8571428571428571,0.8571428571428571,same_count_wrong_values,2361
+qwen2.5-coder-32b-sqlbench:latest,Qwen 2.5 Coder 32B,qwen2,pass1.query6,"v2,v3,v4",0,3,0.9250000000000002,same_count_wrong_values,0,3,0.9250000000000002,1.0,0.75,1.0,same_count_wrong_values,2178
+qwen2.5-coder-32b-sqlbench:latest,Qwen 2.5 Coder 32B,qwen2,pass1.query7,"v2,v3,v4",0,3,0.8000000000000002,same_count_wrong_values,0,3,0.8000000000000002,1.0,0.3333333333333333,1.0,same_count_wrong_values,2286
+qwen2.5-coder-32b-sqlbench:latest,Qwen 2.5 Coder 32B,qwen2,pass1.query8,"v2,v3,v4",0,3,0.8999999999999999,same_count_wrong_values,0,3,0.8999999999999999,1.0,0.6666666666666666,1.0,same_count_wrong_values,2426
+qwen2.5-coder-32b-sqlbench:latest,Qwen 2.5 Coder 32B,qwen2,pass1.query9,"v2,v3,v4",0,3,0.7666666666666666,same_count_wrong_values,0,3,0.7666666666666666,1.0,0.2222222222222222,1.0,same_count_wrong_values,2314
+qwen2.5-coder-32b-sqlbench:latest,Qwen 2.5 Coder 32B,qwen2,pass1.query10,"v2,v3,v4",3,3,1.0,none,3,3,1.0,1.0,1.0,1.0,none,1762
+qwen2.5-coder-32b-sqlbench:latest,Qwen 2.5 Coder 32B,qwen2,pass2.query1,"v2,v3,v4",3,3,1.0,none,3,3,1.0,1.0,1.0,1.0,none,2102
+qwen2.5-coder-32b-sqlbench:latest,Qwen 2.5 Coder 32B,qwen2,pass2.query2,"v2,v3,v4",3,3,1.0,none,3,3,1.0,1.0,1.0,1.0,none,1741
+qwen2.5-coder-32b-sqlbench:latest,Qwen 2.5 Coder 32B,qwen2,pass2.query3,"v2,v3,v4",3,3,1.0,none,3,3,1.0,1.0,1.0,1.0,none,2058
+qwen2.5-coder-32b-sqlbench:latest,Qwen 2.5 Coder 32B,qwen2,pass2.query4,"v2,v3,v4",0,3,0.8333333333333335,same_count_wrong_values,0,3,0.8333333333333335,0.8333333333333334,0.8333333333333334,0.8333333333333334,same_count_wrong_values,2456
+qwen2.5-coder-32b-sqlbench:latest,Qwen 2.5 Coder 32B,qwen2,pass2.query5,"v2,v3,v4",0,3,0.6999999999999998,same_count_wrong_values,0,3,0.6999999999999998,1.0,0.0,1.0,same_count_wrong_values,2286
+qwen2.5-coder-32b-sqlbench:latest,Qwen 2.5 Coder 32B,qwen2,pass2.query6,"v2,v3,v4",0,3,0.8500000000000001,same_count_wrong_values,0,3,0.8500000000000001,1.0,0.5,1.0,same_count_wrong_values,2623
+qwen2.5-coder-32b-sqlbench:latest,Qwen 2.5 Coder 32B,qwen2,pass2.query7,"v2,v3,v4",0,3,0.7399999999999999,same_count_wrong_values,0,3,0.7399999999999999,1.0,0.4000000000000001,0.6,same_count_wrong_values,2344
+qwen2.5-coder-32b-sqlbench:latest,Qwen 2.5 Coder 32B,qwen2,pass2.query8,"v2,v3,v4",0,3,0.6999999999999998,same_count_wrong_values,0,3,0.6999999999999998,1.0,0.4444444444444444,0.3333333333333333,same_count_wrong_values,2438
+qwen2.5-coder-32b-sqlbench:latest,Qwen 2.5 Coder 32B,qwen2,pass2.query9,"v2,v3,v4",0,3,0.5666666666666667,same_count_wrong_values,0,3,0.5666666666666667,0.6666666666666666,0.3333333333333333,0.6666666666666666,same_count_wrong_values,2608
+qwen2.5-coder-32b-sqlbench:latest,Qwen 2.5 Coder 32B,qwen2,pass2.query10,"v2,v3,v4",0,3,0.9199999999999999,same_count_wrong_values,0,3,0.9199999999999999,1.0,0.7333333333333333,1.0,same_count_wrong_values,2201
+qwen2.5-coder-32b-sqlbench:latest,Qwen 2.5 Coder 32B,qwen2,pass3.query1,"v2,v3,v4",3,3,1.0,none,3,3,1.0,1.0,1.0,1.0,none,1742
+qwen2.5-coder-32b-sqlbench:latest,Qwen 2.5 Coder 32B,qwen2,pass3.query2,"v2,v3,v4",0,3,0.8687499999999999,same_count_wrong_values,0,3,0.8687499999999999,1.0,0.5625,1.0,same_count_wrong_values,2473
+qwen2.5-coder-32b-sqlbench:latest,Qwen 2.5 Coder 32B,qwen2,pass3.query3,"v2,v3,v4",0,3,0.8500000000000001,same_count_wrong_values,0,3,0.8500000000000001,1.0,0.5,1.0,same_count_wrong_values,2426
+qwen2.5-coder-32b-sqlbench:latest,Qwen 2.5 Coder 32B,qwen2,pass3.query4,"v2,v3,v4",0,3,0.8333333333333334,same_count_wrong_values,0,3,0.8333333333333334,1.0,0.4444444444444444,1.0,same_count_wrong_values,2482
+qwen2.5-coder-32b-sqlbench:latest,Qwen 2.5 Coder 32B,qwen2,pass3.query5,"v2,v3,v4",0,3,0.96,same_count_wrong_values,0,3,0.96,1.0,0.8666666666666667,1.0,same_count_wrong_values,2165
+qwen2.5-coder-32b-sqlbench:latest,Qwen 2.5 Coder 32B,qwen2,pass3.query6,"v2,v3,v4",0,3,0.8249999999999998,same_count_wrong_values,0,3,0.8249999999999998,1.0,0.4166666666666667,1.0,same_count_wrong_values,2406
+qwen2.5-coder-32b-sqlbench:latest,Qwen 2.5 Coder 32B,qwen2,pass3.query7,"v2,v3,v4",3,3,1.0,none,3,3,1.0,1.0,1.0,1.0,none,2091
+qwen2.5-coder-32b-sqlbench:latest,Qwen 2.5 Coder 32B,qwen2,pass3.query8,"v2,v3,v4",0,3,0.4666666666666666,same_count_wrong_values,0,3,0.4666666666666666,0.6666666666666666,0.0,0.6666666666666666,same_count_wrong_values,2720
+qwen2.5-coder-32b-sqlbench:latest,Qwen 2.5 Coder 32B,qwen2,pass3.query9,"v2,v3,v4",0,3,0.9250000000000002,same_count_wrong_values,0,3,0.9250000000000002,1.0,0.75,1.0,same_count_wrong_values,2294
+qwen2.5-coder-32b-sqlbench:latest,Qwen 2.5 Coder 32B,qwen2,pass3.query10,"v2,v3,v4",0,3,0.6499999999999999,same_count_wrong_values,0,3,0.6499999999999999,1.0,0.27777777777777773,0.3333333333333333,same_count_wrong_values,2306
+qwen2.5-coder-32b-sqlbench:latest,Qwen 2.5 Coder 32B,qwen2,pass4.query1,"v2,v3,v4",0,3,0.8874999999999998,same_count_wrong_values,0,3,0.8874999999999998,1.0,0.625,1.0,same_count_wrong_values,1666
+qwen2.5-coder-32b-sqlbench:latest,Qwen 2.5 Coder 32B,qwen2,pass4.query2,"v2,v3,v4",0,3,0.5416666666666666,same_count_wrong_values,0,3,0.5416666666666666,0.6666666666666666,0.25,0.6666666666666666,same_count_wrong_values,2553
+qwen2.5-coder-32b-sqlbench:latest,Qwen 2.5 Coder 32B,qwen2,pass4.query3,"v2,v3,v4",0,3,0.0,same_count_wrong_values,0,3,0.0,0.0,0.0,0.0,same_count_wrong_values,2720
+qwen2.5-coder-32b-sqlbench:latest,Qwen 2.5 Coder 32B,qwen2,pass4.query4,"v2,v3,v4",0,3,0.8000000000000002,same_count_wrong_values,0,3,0.8000000000000002,1.0,0.3333333333333333,1.0,same_count_wrong_values,2471
+qwen2.5-coder-32b-sqlbench:latest,Qwen 2.5 Coder 32B,qwen2,pass4.query5,"v2,v3,v4",0,3,0.8919999999999999,same_count_wrong_values,0,3,0.8919999999999999,1.0,0.64,1.0,same_count_wrong_values,2591
+qwen2.5-coder-32b-sqlbench:latest,Qwen 2.5 Coder 32B,qwen2,pass4.query6,"v2,v3,v4",0,3,0.75,same_count_wrong_values,0,3,0.75,1.0,0.16666666666666666,1.0,same_count_wrong_values,2368
+qwen2.5-coder-32b-sqlbench:latest,Qwen 2.5 Coder 32B,qwen2,pass4.query7,"v2,v3,v4",0,3,0.7333333333333334,same_count_wrong_values,0,3,0.7333333333333334,0.8333333333333334,1.0,0.5,same_count_wrong_values,2193
+qwen2.5-coder-32b-sqlbench:latest,Qwen 2.5 Coder 32B,qwen2,pass4.query8,"v2,v3,v4",0,3,0.5333333333333333,same_count_wrong_values,0,3,0.5333333333333333,0.5833333333333334,0.4166666666666667,0.5833333333333334,same_count_wrong_values,2471
+qwen2.5-coder-32b-sqlbench:latest,Qwen 2.5 Coder 32B,qwen2,pass4.query9,"v2,v3,v4",0,3,0.8500000000000001,same_count_wrong_values,0,3,0.8500000000000001,1.0,0.5,1.0,same_count_wrong_values,2306
+qwen2.5-coder-32b-sqlbench:latest,Qwen 2.5 Coder 32B,qwen2,pass4.query10,"v2,v3,v4",3,3,1.0,none,3,3,1.0,1.0,1.0,1.0,none,1843
+qwen2.5-coder-32b-sqlbench:latest,Qwen 2.5 Coder 32B,qwen2,pass5.query1,"v2,v3,v4",0,3,0.6999999999999998,same_count_wrong_values,0,3,0.6999999999999998,1.0,0.0,1.0,same_count_wrong_values,2103
+qwen2.5-coder-32b-sqlbench:latest,Qwen 2.5 Coder 32B,qwen2,pass5.query2,"v2,v3,v4",0,3,0.6333333333333333,same_count_wrong_values,0,3,0.6333333333333333,0.8333333333333334,0.5,0.3333333333333333,same_count_wrong_values,2497
+qwen2.5-coder-32b-sqlbench:latest,Qwen 2.5 Coder 32B,qwen2,pass5.query3,"v2,v3,v4",0,3,0.5137499999999999,row_count_mismatch,0,3,0.5137499999999999,0.6,0.3125,0.6,row_count_mismatch,2715
+qwen2.5-coder-32b-sqlbench:latest,Qwen 2.5 Coder 32B,qwen2,pass5.query4,"v2,v3,v4",0,3,0.6999999999999998,same_count_wrong_values,0,3,0.6999999999999998,1.0,0.0,1.0,same_count_wrong_values,2332
+qwen2.5-coder-32b-sqlbench:latest,Qwen 2.5 Coder 32B,qwen2,pass5.query5,"v2,v3,v4",0,3,0.0,row_count_mismatch,0,3,0.0,0.0,0.0,0.0,row_count_mismatch,2557
+qwen2.5-coder-32b-sqlbench:latest,Qwen 2.5 Coder 32B,qwen2,pass5.query6,"v2,v3,v4",0,3,0.6999999999999998,same_count_wrong_values,0,3,0.6999999999999998,1.0,0.0,1.0,same_count_wrong_values,2352
+qwen2.5-coder-32b-sqlbench:latest,Qwen 2.5 Coder 32B,qwen2,pass5.query7,"v2,v3,v4",0,3,0.8249999999999998,same_count_wrong_values,0,3,0.8249999999999998,1.0,0.4166666666666667,1.0,same_count_wrong_values,2405
+qwen2.5-coder-32b-sqlbench:latest,Qwen 2.5 Coder 32B,qwen2,pass5.query8,"v2,v3,v4",0,3,0.8080000000000002,same_count_wrong_values,0,3,0.8080000000000002,1.0,0.36000000000000004,1.0,same_count_wrong_values,2588
+qwen2.5-coder-32b-sqlbench:latest,Qwen 2.5 Coder 32B,qwen2,pass5.query9,"v2,v3,v4",0,3,0.425,same_count_wrong_values,0,3,0.425,0.6666666666666666,0.08333333333333333,0.3333333333333333,same_count_wrong_values,2518
+qwen2.5-coder-32b-sqlbench:latest,Qwen 2.5 Coder 32B,qwen2,pass5.query10,"v2,v3,v4",0,3,0.5933333333333334,same_count_wrong_values,0,3,0.5933333333333334,1.0,0.0,0.4666666666666666,same_count_wrong_values,2384
 qwen3-coder-30b-sqlbench:latest,Qwen3 Coder 30B,qwen3moe,pass1.query1,"v2,v3,v4",3,9,0.6333333333333333,row_count_mismatch,3,3,1.0,1.0,1.0,1.0,none,2472
 qwen3-coder-30b-sqlbench:latest,Qwen3 Coder 30B,qwen3moe,pass1.query2,"v2,v3,v4",0,9,0.625,same_count_wrong_values,0,3,0.55,0.6666666666666666,0.6666666666666666,0.08333333333333333,order_only,2705
 qwen3-coder-30b-sqlbench:latest,Qwen3 Coder 30B,qwen3moe,pass1.query3,"v2,v3,v4",4,9,0.4444444444444444,type_only,1,3,0.3333333333333333,0.3333333333333333,0.3333333333333333,0.3333333333333333,type_only,2549

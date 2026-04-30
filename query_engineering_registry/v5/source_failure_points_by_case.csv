@@ -1,187 +1,187 @@
 case_id,issue_code,issue_label,runs,attempts_with_issue,v2_attempts_with_issue,v3_attempts_with_issue,v4_attempts_with_issue,source_category
-pass1.query1,q1_dropped_call9,Dropped call_id 9 even though sample S2 exists and should survive the sample join,"v2,v3,v4",24,3,15,6,under_inclusion
-pass1.query1,q1_included_orphan_s999,Included orphan sample row S999/call_id 8 that should disappear under the inner join,"v2,v3,v4",39,9,27,3,over_inclusion
-pass1.query1,q1_attribute_leakage,Leaked tissue or condition values across rows instead of preserving sample attributes,"v2,v3,v4",13,1,9,3,attribute_mapping
-pass1.query2,q2_wrong_sort,"Returned the matched row set but not in `qual DESC, call_id ASC` order","v2,v3,v4",69,12,19,38,sort
-pass1.query2,q2_dropped_matched_calls,Dropped valid matched calls from the joined result,"v2,v3,v4",30,6,20,4,under_inclusion
-pass1.query2,q2_included_v999,Included call_id 9 / V999 despite the required inner join to `variant_dim`,"v2,v3",39,12,27,0,over_inclusion
-pass1.query3,q3_bad_unmatched_row,Did not preserve the unmatched `S999` row cleanly in the left join output,"v2,v3,v4",23,3,11,9,generic
-pass1.query3,q3_attribute_mixup,Mixed condition values into tissue/batch fields or used the wrong expression values,"v2,v3,v4",20,3,11,6,attribute_mapping
+pass1.query1,q1_dropped_call9,Dropped call_id 9 even though sample S2 exists and should survive the sample join,"v2,v3,v4",15,3,6,6,under_inclusion
+pass1.query1,q1_included_orphan_s999,Included orphan sample row S999/call_id 8 that should disappear under the inner join,"v2,v3,v4",18,9,6,3,over_inclusion
+pass1.query1,q1_attribute_leakage,Leaked tissue or condition values across rows instead of preserving sample attributes,"v2,v4",4,1,0,3,attribute_mapping
+pass1.query2,q2_wrong_sort,"Returned the matched row set but not in `qual DESC, call_id ASC` order","v2,v3,v4",57,12,7,38,sort
+pass1.query2,q2_dropped_matched_calls,Dropped valid matched calls from the joined result,"v2,v3,v4",18,6,8,4,under_inclusion
+pass1.query2,q2_included_v999,Included call_id 9 / V999 despite the required inner join to `variant_dim`,"v2,v3",24,12,12,0,over_inclusion
+pass1.query3,q3_bad_unmatched_row,Did not preserve the unmatched `S999` row cleanly in the left join output,"v2,v3,v4",15,3,3,9,generic
+pass1.query3,q3_attribute_mixup,Mixed condition values into tissue/batch fields or used the wrong expression values,"v2,v3,v4",12,3,3,6,attribute_mapping
 pass1.query3,q3_type_only,Matched the table semantically but serialized numbers/nulls with the wrong types,"v2,v4",5,3,0,2,null_key_type
-pass1.query4,q4_s2_avg_wrong,"Computed the `S2` average incorrectly, often from the wrong row set or over-rounded output","v2,v3,v4",76,10,33,33,numeric
-pass1.query4,q4_s2_undercounted,"Undercounted `S2` by missing one fact row, usually call_id 9","v2,v3,v4",39,6,15,18,numeric
-pass1.query5,q5_dropped_matched_rows,Dropped valid matched rows while traversing the fact -> variant -> gene chain,"v2,v3,v4",51,2,22,27,under_inclusion
-pass1.query5,q5_kept_call6,Kept call_id 6 / V5 after the second inner join instead of dropping the incomplete chain,"v2,v3,v4",74,16,34,24,over_inclusion
-pass1.query5,q5_kept_call9,Kept unmatched call_id 9 / V999 even though the chain join should remove it,"v2,v3,v4",41,13,20,8,over_inclusion
-pass1.query6,q6_avg_wrong,Used the wrong row set for average quality per impact bucket,"v2,v3,v4",99,18,39,42,numeric
-pass1.query6,q6_high_undercount,Under-counted high-impact calls by not aggregating both V2 and V3 duplicates,"v2,v3,v4",87,18,27,42,numeric
+pass1.query4,q4_s2_avg_wrong,"Computed the `S2` average incorrectly, often from the wrong row set or over-rounded output","v2,v3,v4",55,10,12,33,numeric
+pass1.query4,q4_s2_undercounted,"Undercounted `S2` by missing one fact row, usually call_id 9","v2,v3,v4",30,6,6,18,numeric
+pass1.query5,q5_dropped_matched_rows,Dropped valid matched rows while traversing the fact -> variant -> gene chain,"v2,v3,v4",35,2,6,27,under_inclusion
+pass1.query5,q5_kept_call6,Kept call_id 6 / V5 after the second inner join instead of dropping the incomplete chain,"v2,v3,v4",55,16,15,24,over_inclusion
+pass1.query5,q5_kept_call9,Kept unmatched call_id 9 / V999 even though the chain join should remove it,"v2,v3,v4",29,13,8,8,over_inclusion
+pass1.query6,q6_avg_wrong,Used the wrong row set for average quality per impact bucket,"v2,v3,v4",75,18,15,42,numeric
+pass1.query6,q6_high_undercount,Under-counted high-impact calls by not aggregating both V2 and V3 duplicates,"v2,v3,v4",75,18,15,42,numeric
 pass1.query6,q6_missing_categories,Dropped one or more impact categories such as `modifier` or `low`,v4,7,0,0,7,under_inclusion
-pass1.query6,q6_moderate_undercount,Under-counted the two moderate V1 calls,"v2,v3",29,6,23,0,numeric
-pass1.query7,q7_misweighted_avg,Computed tissue averages from the wrong grain instead of fact-call-weighted quality values,"v2,v3,v4",102,18,42,42,numeric
-pass1.query7,q7_wrong_extrema,Minimum or maximum quality per tissue came from the wrong row set,"v2,v3,v4",95,15,41,39,numeric
-pass1.query7,q7_included_root,Included `root` / `S5` even though the task required an inner join to fact rows only,"v2,v3",28,6,22,0,over_inclusion
-pass1.query8,q8_expr_misweighted,Averaged expression at the wrong grain instead of call-weighting by joined fact rows,"v2,v3,v4",102,18,42,42,attribute_mapping
-pass1.query8,q8_sample_counts,Used sample counts instead of fact-call counts for one or more conditions,"v2,v3,v4",96,18,42,36,numeric
-pass1.query8,q8_high_light_leak,"Leaked `S5` / `high_light` into the aggregate, inflating the high-light bucket","v2,v3,v4",38,12,23,3,grouping
-pass1.query9,q9_high_impact_miss,Missed the high-impact filter/count after joining to `variant_dim`,"v2,v3,v4",100,18,40,42,numeric
-pass1.query9,q9_wrong_total_calls,"Used the wrong total-call counts, usually from sample-level counting or leaked rows","v2,v3,v4",89,15,41,33,numeric
-pass1.query9,q9_high_light_leak,Inflated the high-light bucket by leaking unmatched or extra rows,"v2,v3,v4",58,10,33,15,grouping
-pass1.query10,q10_false_missing_variant,Marked matched variants as `MISSING_VARIANT` instead of `MATCHED`,"v2,v3,v4",21,3,12,6,under_inclusion
-pass1.query10,q10_type_only,Matched the audit semantically but serialized identifiers with the wrong types,"v2,v4",4,3,0,1,null_key_type
-pass1.query10,q10_nullified_v999,Nullified `variant_id` for call_id 9 instead of preserving `V999` from the fact table,"v2,v3",5,2,3,0,null_key_type
+pass1.query6,q6_moderate_undercount,Under-counted the two moderate V1 calls,"v2,v3",17,6,11,0,numeric
+pass1.query7,q7_misweighted_avg,Computed tissue averages from the wrong grain instead of fact-call-weighted quality values,"v2,v3,v4",78,18,18,42,numeric
+pass1.query7,q7_wrong_extrema,Minimum or maximum quality per tissue came from the wrong row set,"v2,v3,v4",71,15,17,39,numeric
+pass1.query7,q7_included_root,Included `root` / `S5` even though the task required an inner join to fact rows only,"v2,v3",10,6,4,0,over_inclusion
+pass1.query8,q8_expr_misweighted,Averaged expression at the wrong grain instead of call-weighting by joined fact rows,"v2,v3,v4",78,18,18,42,attribute_mapping
+pass1.query8,q8_sample_counts,Used sample counts instead of fact-call counts for one or more conditions,"v2,v3,v4",72,18,18,36,numeric
+pass1.query8,q8_high_light_leak,"Leaked `S5` / `high_light` into the aggregate, inflating the high-light bucket","v2,v3,v4",24,12,9,3,grouping
+pass1.query9,q9_high_impact_miss,Missed the high-impact filter/count after joining to `variant_dim`,"v2,v3,v4",78,18,18,42,numeric
+pass1.query9,q9_wrong_total_calls,"Used the wrong total-call counts, usually from sample-level counting or leaked rows","v2,v3,v4",65,15,17,33,numeric
+pass1.query9,q9_high_light_leak,Inflated the high-light bucket by leaking unmatched or extra rows,"v2,v3,v4",36,10,11,15,grouping
+pass1.query10,q10_false_missing_variant,Marked matched variants as `MISSING_VARIANT` instead of `MATCHED`,"v2,v3,v4",12,3,3,6,under_inclusion
+pass1.query10,q10_type_only,Matched the audit semantically but serialized identifiers with the wrong types,"v2,v3,v4",5,3,1,1,null_key_type
 pass1.query10,q10_dropped_call9,Dropped the unmatched call_id 9 row despite the required left join,v3,2,0,2,0,under_inclusion
+pass1.query10,q10_nullified_v999,Nullified `variant_id` for call_id 9 instead of preserving `V999` from the fact table,v2,2,2,0,0,null_key_type
 pass2.query1,q1_wrong_gene_or_impact,Mapped a valid call to the wrong gene or impact value,v4,17,0,0,17,attribute_mapping
-pass2.query1,q1_kept_call6,Kept call_id 6 / V5 even though the complete four-table inner join should remove it,"v2,v3,v4",65,15,39,11,over_inclusion
-pass2.query1,q1_dropped_valid_calls,Dropped one or more valid complete-chain calls,"v3,v4",33,0,23,10,under_inclusion
-pass2.query1,q1_kept_call8,Kept call_id 8 / S999 even though the sample dimension is missing,"v2,v3",31,9,22,0,over_inclusion
+pass2.query1,q1_kept_call6,Kept call_id 6 / V5 even though the complete four-table inner join should remove it,"v2,v3,v4",41,15,15,11,over_inclusion
+pass2.query1,q1_dropped_valid_calls,Dropped one or more valid complete-chain calls,"v3,v4",22,0,12,10,under_inclusion
+pass2.query1,q1_kept_call8,Kept call_id 8 / S999 even though the sample dimension is missing,"v2,v3",12,9,3,0,over_inclusion
 pass2.query1,q1_kept_call9,Kept call_id 9 / V999 even though the variant/gene chain is incomplete,v2,7,7,0,0,over_inclusion
-pass2.query2,q2_wrong_gene_mapping,Mapped matched variants to the wrong gene symbol or dropped a valid gene symbol,"v2,v3,v4",36,3,18,15,attribute_mapping
-pass2.query2,q2_bad_sample_nulls,Filled sample attributes for S999 instead of leaving dimension fields null,"v2,v3,v4",29,6,14,9,null_key_type
-pass2.query2,q2_bad_chain_nulls,Failed to leave gene_symbol null for incomplete V5/V999 chain rows,"v3,v4",7,0,4,3,null_key_type
-pass2.query3,q3_wrong_impact,Assigned an incorrect impact value in the full outer result,"v3,v4",36,0,21,15,generic
-pass2.query3,q3_missing_v6,Dropped the variant-only V6 row from the full outer join,"v2,v3,v4",22,3,16,3,under_inclusion
-pass2.query3,q3_missing_v999,Dropped the fact-only V999 row from the full outer join,"v2,v3",20,3,17,0,under_inclusion
+pass2.query2,q2_wrong_gene_mapping,Mapped matched variants to the wrong gene symbol or dropped a valid gene symbol,"v2,v3,v4",21,3,3,15,attribute_mapping
+pass2.query2,q2_bad_sample_nulls,Filled sample attributes for S999 instead of leaving dimension fields null,"v2,v3,v4",20,6,5,9,null_key_type
+pass2.query2,q2_bad_chain_nulls,Failed to leave gene_symbol null for incomplete V5/V999 chain rows,v4,3,0,0,3,null_key_type
+pass2.query2,q2_dropped_fact_rows,Did not preserve all nine fact rows in the left-join snowflake,v3,1,0,1,0,under_inclusion
+pass2.query3,q3_wrong_impact,Assigned an incorrect impact value in the full outer result,"v3,v4",19,0,4,15,generic
+pass2.query3,q3_missing_v6,Dropped the variant-only V6 row from the full outer join,"v2,v3,v4",10,3,4,3,under_inclusion
+pass2.query3,q3_missing_v999,Dropped the fact-only V999 row from the full outer join,"v2,v3",6,3,3,0,under_inclusion
 pass2.query3,q3_bad_coalesced_key,Failed to preserve the coalesced variant_id key for fact-only or matched rows,v2,2,2,0,0,null_key_type
-pass2.query4,q4_avg_wrong,Computed one or more condition-impact average qualities from the wrong row set,"v2,v3,v4",92,18,38,36,numeric
-pass2.query4,q4_control_high_wrong,"Miscomputed the control/high bucket, especially the two-call count and average","v2,v3,v4",87,15,36,36,numeric
-pass2.query4,q4_wrong_group_set,Returned the wrong condition-impact group set,"v2,v3,v4",85,15,37,33,grouping
-pass2.query5,q5_wrong_vaf,Computed average VAF from the wrong numerator/denominator or row set,"v2,v3,v4",102,18,42,42,numeric
-pass2.query5,q5_wrong_max_qual,Computed max_qual from the wrong rows,"v2,v3,v4",93,12,39,42,numeric
-pass2.query5,q5_leaked_unmatched_gene,Included incomplete-chain or non-gold genes such as NDHT/PGR1B,"v2,v3",24,12,12,0,over_inclusion
-pass2.query6,q6_wrong_expr_average,Computed avg_expr_ndhb over samples instead of complete-chain joined calls,"v2,v3,v4",73,9,31,33,numeric
-pass2.query6,q6_wrong_distinct_genes,Computed distinct gene counts from the wrong join grain,"v2,v3,v4",60,11,35,14,numeric
-pass2.query6,q6_included_root,Included root/S5 even though complete inner joins should remove it,"v2,v3",31,10,21,0,over_inclusion
-pass2.query7,q7_wrong_alt_average,Averaged alt_reads over the wrong subset of rows,"v2,v3,v4",96,15,42,39,numeric
-pass2.query7,q7_missed_zero_alt_high,Missed the zero-alt high-impact call for S4,"v2,v3,v4",87,15,42,30,numeric
-pass2.query7,q7_counted_non_high,"Counted non-high or incomplete rows as high-impact calls, often inflating S3","v2,v3,v4",63,9,24,30,numeric
-pass2.query8,q8_wrong_avg_qual,Computed avg_qual from the wrong row set,"v2,v3,v4",99,18,39,42,numeric
-pass2.query8,q8_wrong_alt_total,Computed total_alt_reads from the wrong row set,"v2,v3,v4",81,12,33,36,numeric
-pass2.query8,q8_dropped_gene,Dropped one of the expected gene symbols,"v2,v3",12,3,9,0,under_inclusion
-pass2.query9,q9_wrong_vaf,Computed mean VAF from the wrong row set,"v2,v3,v4",102,18,42,42,numeric
-pass2.query9,q9_wrong_counts,Miscomputed call_count or distinct_samples,"v2,v3,v4",97,15,42,40,numeric
-pass2.query9,q9_wrong_group_set,Returned the wrong condition-pathway group set,"v2,v3,v4",76,12,34,30,grouping
-pass2.query10,q10_wrong_chain_counts,Misclassified complete vs incomplete chain calls,"v2,v3,v4",87,15,36,36,numeric
-pass2.query10,q10_wrong_total_calls,Miscomputed total fact calls per sample,"v2,v3,v4",42,6,9,27,numeric
-pass2.query10,q10_missing_s5,Dropped zero-call sample S5 from the sample-preserving coverage screen,v3,7,0,7,0,under_inclusion
-pass3.query1,q1_complete_chain_status_wrong,Misclassified one or more complete-chain calls,"v2,v3,v4",30,3,18,9,classification
-pass3.query1,q1_call8_status_wrong,Misclassified call_id 8 / S999; it should be MISSING_SAMPLE,"v3,v4",14,0,11,3,classification
-pass3.query1,q1_call9_status_wrong,Misclassified call_id 9 / V999; it should be MISSING_VARIANT,"v2,v4",9,6,0,3,classification
-pass3.query1,q1_call6_status_wrong,Misclassified call_id 6 / V5; it should be MISSING_GENE,"v2,v3",23,9,14,0,classification
-pass3.query2,q2_wrong_counts_or_alt,Miscomputed call_count or sum_alt_reads,"v2,v3,v4",96,18,36,42,numeric
-pass3.query2,q2_wrong_vaf,Computed avg_vaf from the wrong numerator/denominator or row set,"v3,v4",78,0,36,42,numeric
+pass2.query4,q4_avg_wrong,Computed one or more condition-impact average qualities from the wrong row set,"v2,v3,v4",69,18,15,36,numeric
+pass2.query4,q4_control_high_wrong,"Miscomputed the control/high bucket, especially the two-call count and average","v2,v3,v4",66,15,15,36,numeric
+pass2.query4,q4_wrong_group_set,Returned the wrong condition-impact group set,"v2,v3,v4",61,15,13,33,grouping
+pass2.query5,q5_wrong_vaf,Computed average VAF from the wrong numerator/denominator or row set,"v2,v3,v4",78,18,18,42,numeric
+pass2.query5,q5_wrong_max_qual,Computed max_qual from the wrong rows,"v2,v3,v4",72,12,18,42,numeric
+pass2.query5,q5_leaked_unmatched_gene,Included incomplete-chain or non-gold genes such as NDHT/PGR1B,"v2,v3",18,12,6,0,over_inclusion
+pass2.query6,q6_wrong_expr_average,Computed avg_expr_ndhb over samples instead of complete-chain joined calls,"v2,v3,v4",54,9,12,33,numeric
+pass2.query6,q6_wrong_distinct_genes,Computed distinct gene counts from the wrong join grain,"v2,v3,v4",39,11,14,14,numeric
+pass2.query6,q6_included_root,Included root/S5 even though complete inner joins should remove it,"v2,v3",16,10,6,0,over_inclusion
+pass2.query7,q7_wrong_alt_average,Averaged alt_reads over the wrong subset of rows,"v2,v3,v4",72,15,18,39,numeric
+pass2.query7,q7_missed_zero_alt_high,Missed the zero-alt high-impact call for S4,"v2,v3,v4",63,15,18,30,numeric
+pass2.query7,q7_counted_non_high,"Counted non-high or incomplete rows as high-impact calls, often inflating S3","v2,v3,v4",45,9,6,30,numeric
+pass2.query8,q8_wrong_avg_qual,Computed avg_qual from the wrong row set,"v2,v3,v4",78,18,18,42,numeric
+pass2.query8,q8_wrong_alt_total,Computed total_alt_reads from the wrong row set,"v2,v3,v4",60,12,12,36,numeric
+pass2.query8,q8_dropped_gene,Dropped one of the expected gene symbols,v2,3,3,0,0,under_inclusion
+pass2.query8,q8_leaked_unmatched_gene,Included incomplete-chain genes that should not appear,v3,3,0,3,0,over_inclusion
+pass2.query9,q9_wrong_vaf,Computed mean VAF from the wrong row set,"v2,v3,v4",78,18,18,42,numeric
+pass2.query9,q9_wrong_counts,Miscomputed call_count or distinct_samples,"v2,v3,v4",73,15,18,40,numeric
+pass2.query9,q9_wrong_group_set,Returned the wrong condition-pathway group set,"v2,v3,v4",55,12,13,30,grouping
+pass2.query10,q10_wrong_chain_counts,Misclassified complete vs incomplete chain calls,"v2,v3,v4",63,15,12,36,numeric
+pass2.query10,q10_wrong_total_calls,Miscomputed total fact calls per sample,"v2,v3,v4",36,6,3,27,numeric
+pass3.query1,q1_complete_chain_status_wrong,Misclassified one or more complete-chain calls,"v2,v3,v4",15,3,3,9,classification
+pass3.query1,q1_call9_status_wrong,Misclassified call_id 9 / V999; it should be MISSING_VARIANT,"v2,v3,v4",12,6,3,3,classification
+pass3.query1,q1_call8_status_wrong,Misclassified call_id 8 / S999; it should be MISSING_SAMPLE,v4,3,0,0,3,classification
+pass3.query1,q1_call6_status_wrong,Misclassified call_id 6 / V5; it should be MISSING_GENE,"v2,v3",12,9,3,0,classification
+pass3.query2,q2_wrong_counts_or_alt,Miscomputed call_count or sum_alt_reads,"v2,v3,v4",75,18,15,42,numeric
+pass3.query2,q2_wrong_vaf,Computed avg_vaf from the wrong numerator/denominator or row set,"v3,v4",57,0,15,42,numeric
 pass3.query2,q2_wrong_max_qual,Computed max_qual from the wrong rows,v4,33,0,0,33,numeric
-pass3.query2,q2_wrong_group_set,Returned the wrong tissue-gene group set for complete-chain matched rows,"v2,v3",49,18,31,0,grouping
+pass3.query2,q2_wrong_group_set,Returned the wrong tissue-gene group set for complete-chain matched rows,"v2,v3",33,18,15,0,grouping
 pass3.query2,q2_leaked_incomplete_or_root,Leaked incomplete-chain or non-gold tissue/gene groups such as root/NDHT,v2,18,18,0,0,grouping
-pass3.query3,q3_wrong_total_alt,Miscomputed total_alt_reads for one or more genes,"v2,v3,v4",98,18,38,42,numeric
-pass3.query3,q3_wrong_observed_count,Miscomputed observed_call_count for one or more genes,"v2,v3,v4",98,18,41,39,numeric
-pass3.query3,q3_leaked_unknown_gene,Included a non-gold gene such as G999,"v2,v3",12,2,10,0,over_inclusion
-pass3.query4,q4_control_bucket_wrong,Miscomputed the control high-impact bucket,"v2,v3,v4",93,15,42,36,grouping
+pass3.query3,q3_wrong_total_alt,Miscomputed total_alt_reads for one or more genes,"v2,v3,v4",75,18,15,42,numeric
+pass3.query3,q3_wrong_observed_count,Miscomputed observed_call_count for one or more genes,"v2,v3,v4",75,18,18,39,numeric
+pass3.query3,q3_leaked_unknown_gene,Included a non-gold gene such as G999,v2,2,2,0,0,over_inclusion
+pass3.query4,q4_control_bucket_wrong,Miscomputed the control high-impact bucket,"v2,v3,v4",69,15,18,36,grouping
 pass3.query4,q4_high_light_bucket_wrong,Miscomputed the high_light high-impact bucket,"v2,v4",36,12,0,24,grouping
-pass3.query4,q4_wrong_group_set,Returned the wrong set of high-impact condition rows,"v2,v3,v4",53,15,37,1,grouping
-pass3.query4,q4_included_non_high_condition,"Included a condition that has no high-impact joined calls, usually drought",v3,35,0,35,0,attribute_mapping
-pass3.query5,q5_counted_reference_or_wrong_class,Counted reference calls or put genotypes into the wrong class,"v2,v3,v4",85,12,36,37,numeric
-pass3.query5,q5_s2_nonref_wrong,Miscomputed S2 heterozygous calls or non-reference mean quality,"v2,v3,v4",84,12,36,36,numeric
-pass3.query5,q5_included_s999,Included S999 even though sample_dim is the preserving table,"v2,v3",15,3,12,0,over_inclusion
-pass3.query6,q6_wrong_totals_or_vaf,Miscomputed total_alt_reads or avg_vaf,"v2,v3,v4",87,15,33,39,numeric
-pass3.query6,q6_wrong_group_set,Returned the wrong tissue-gene group set before ranking,"v2,v3,v4",77,17,32,28,grouping
-pass3.query6,q6_leaked_root_or_incomplete,"Leaked root, incomplete-chain, or non-gold genes into the ranking","v2,v3,v4",66,17,21,28,grouping
-pass3.query7,q7_missing_expected_object,"Dropped or mislabeled one of G4, G5, S5, or V6 in the anti-join audit","v2,v3,v4",57,15,39,3,classification
-pass3.query7,q7_extra_object,Included a non-gold unused object such as G999,v4,3,0,0,3,over_inclusion
-pass3.query7,q7_object_type_labels_wrong,Used dimension-table labels such as gene_dim/sample_dim instead of gene/sample/variant,"v2,v3",54,15,39,0,classification
-pass3.query7,q7_g4_reason_wrong,Assigned the wrong reason to G4; it should be no_fact_calls_through_variants,"v2,v3",43,12,31,0,classification
-pass3.query8,q8_wrong_vaf,Computed mean_vaf from the wrong row set,"v2,v3,v4",87,15,35,37,numeric
-pass3.query8,q8_leaked_reference_or_incomplete,"Leaked reference calls, incomplete chains, or non-gold roles into the non-reference summary","v2,v3,v4",83,18,35,30,attribute_mapping
-pass3.query8,q8_wrong_group_set,Returned the wrong condition-gene_role groups,"v2,v3,v4",83,18,35,30,grouping
-pass3.query9,q9_wrong_complete_counts,Miscomputed complete_chain_calls by condition group,"v2,v3,v4",102,18,42,42,numeric
-pass3.query9,q9_wrong_missing_status_counts,"Miscomputed missing_sample, missing_variant, or missing_gene counts","v2,v3,v4",96,15,42,39,numeric
-pass3.query9,q9_missing_condition_group,"Dropped one of UNMATCHED_SAMPLE, control, drought, or high_light","v3,v4",7,0,5,2,grouping
-pass3.query10,q10_wrong_decision_score,Computed decision_score incorrectly from avg_vaf and matched expression,"v2,v3,v4",102,18,42,42,numeric
-pass3.query10,q10_wrong_vaf,Computed avg_vaf from the wrong non-reference row set,"v2,v3,v4",102,18,42,42,numeric
-pass3.query10,q10_wrong_expression,Mapped matched expression counts incorrectly,"v2,v3,v4",92,18,32,42,numeric
-pass4.query1,q1_missing_status_wrong,Miscounted one or more missing sample/variant/gene fact-row categories,"v2,v3,v4",68,6,28,34,numeric
-pass4.query1,q1_unused_dimension_wrong,"Miscounted unused samples, unused variants, or genes with no variants","v2,v3,v4",81,18,33,30,numeric
-pass4.query1,q1_complete_chain_wrong,Miscounted complete_chain_rows in the reconciliation summary,"v2,v3,v4",62,12,22,28,numeric
-pass4.query2,q2_wrong_counts_or_alt,Miscomputed call_count or total_alt_reads,"v2,v3,v4",102,18,42,42,numeric
-pass4.query2,q2_wrong_quality,Miscomputed mean_qual,"v2,v3,v4",102,18,42,42,numeric
-pass4.query2,q2_wrong_expression,Mapped or averaged expr_ndhb incorrectly,"v2,v3,v4",97,15,42,40,attribute_mapping
-pass4.query3,q3_wrong_counts_or_quality,Miscomputed non_reference_calls or avg_qual,"v3,v4",74,0,36,38,numeric
-pass4.query3,q3_wrong_expr,Mapped or averaged expr_pgr5 incorrectly,"v2,v4",56,18,0,38,attribute_mapping
+pass3.query4,q4_wrong_group_set,Returned the wrong set of high-impact condition rows,"v2,v3,v4",29,15,13,1,grouping
+pass3.query4,q4_included_non_high_condition,"Included a condition that has no high-impact joined calls, usually drought",v3,13,0,13,0,attribute_mapping
+pass3.query5,q5_counted_reference_or_wrong_class,Counted reference calls or put genotypes into the wrong class,"v2,v3,v4",61,12,12,37,numeric
+pass3.query5,q5_s2_nonref_wrong,Miscomputed S2 heterozygous calls or non-reference mean quality,"v2,v3,v4",60,12,12,36,numeric
+pass3.query5,q5_included_s999,Included S999 even though sample_dim is the preserving table,"v2,v3",6,3,3,0,over_inclusion
+pass3.query6,q6_wrong_totals_or_vaf,Miscomputed total_alt_reads or avg_vaf,"v2,v3,v4",69,15,15,39,numeric
+pass3.query6,q6_wrong_group_set,Returned the wrong tissue-gene group set before ranking,"v2,v3,v4",60,17,15,28,grouping
+pass3.query6,q6_leaked_root_or_incomplete,"Leaked root, incomplete-chain, or non-gold genes into the ranking","v2,v3,v4",54,17,9,28,grouping
+pass3.query7,q7_missing_expected_object,"Dropped or mislabeled one of G4, G5, S5, or V6 in the anti-join audit","v2,v3,v4",33,15,15,3,classification
+pass3.query7,q7_extra_object,Included a non-gold unused object such as G999,"v3,v4",14,0,11,3,over_inclusion
+pass3.query7,q7_object_type_labels_wrong,Used dimension-table labels such as gene_dim/sample_dim instead of gene/sample/variant,"v2,v3",30,15,15,0,classification
+pass3.query7,q7_g4_reason_wrong,Assigned the wrong reason to G4; it should be no_fact_calls_through_variants,v2,12,12,0,0,classification
+pass3.query8,q8_wrong_vaf,Computed mean_vaf from the wrong row set,"v2,v3,v4",70,15,18,37,numeric
+pass3.query8,q8_leaked_reference_or_incomplete,"Leaked reference calls, incomplete chains, or non-gold roles into the non-reference summary","v2,v3,v4",63,18,15,30,attribute_mapping
+pass3.query8,q8_wrong_group_set,Returned the wrong condition-gene_role groups,"v2,v3,v4",63,18,15,30,grouping
+pass3.query9,q9_wrong_complete_counts,Miscomputed complete_chain_calls by condition group,"v2,v3,v4",78,18,18,42,numeric
+pass3.query9,q9_wrong_missing_status_counts,"Miscomputed missing_sample, missing_variant, or missing_gene counts","v2,v3,v4",72,15,18,39,numeric
+pass3.query9,q9_missing_condition_group,"Dropped one of UNMATCHED_SAMPLE, control, drought, or high_light","v3,v4",5,0,3,2,grouping
+pass3.query10,q10_wrong_decision_score,Computed decision_score incorrectly from avg_vaf and matched expression,"v2,v3,v4",78,18,18,42,numeric
+pass3.query10,q10_wrong_vaf,Computed avg_vaf from the wrong non-reference row set,"v2,v3,v4",78,18,18,42,numeric
+pass3.query10,q10_wrong_expression,Mapped matched expression counts incorrectly,"v2,v3,v4",70,18,10,42,numeric
+pass4.query1,q1_missing_status_wrong,Miscounted one or more missing sample/variant/gene fact-row categories,"v2,v3,v4",44,6,4,34,numeric
+pass4.query1,q1_unused_dimension_wrong,"Miscounted unused samples, unused variants, or genes with no variants","v2,v3,v4",60,18,12,30,numeric
+pass4.query1,q1_complete_chain_wrong,Miscounted complete_chain_rows in the reconciliation summary,"v2,v3,v4",47,12,7,28,numeric
+pass4.query2,q2_wrong_counts_or_alt,Miscomputed call_count or total_alt_reads,"v2,v3,v4",78,18,18,42,numeric
+pass4.query2,q2_wrong_quality,Miscomputed mean_qual,"v2,v3,v4",78,18,18,42,numeric
+pass4.query2,q2_wrong_expression,Mapped or averaged expr_ndhb incorrectly,"v2,v3,v4",73,15,18,40,attribute_mapping
+pass4.query3,q3_wrong_expr,Mapped or averaged expr_pgr5 incorrectly,"v2,v3,v4",71,18,15,38,attribute_mapping
+pass4.query3,q3_wrong_counts_or_quality,Miscomputed non_reference_calls or avg_qual,"v3,v4",53,0,15,38,numeric
 pass4.query3,q3_wrong_vaf,Miscomputed max_vaf,v4,25,0,0,25,numeric
-pass4.query3,q3_leaked_extra_group,"Leaked reference, incomplete-chain, or non-gold batch/role groups","v2,v3",52,18,34,0,grouping
-pass4.query3,q3_wrong_group_set,Returned the wrong batch-gene_role group set,"v2,v3",52,18,34,0,grouping
-pass4.query4,q4_wrong_counts,Miscomputed control_calls or non_control_calls,"v3,v4",54,0,20,34,numeric
+pass4.query3,q3_wrong_group_set,Returned the wrong batch-gene_role group set,"v2,v3",28,18,10,0,grouping
+pass4.query3,q3_leaked_extra_group,"Leaked reference, incomplete-chain, or non-gold batch/role groups",v2,18,18,0,0,grouping
 pass4.query4,q4_wrong_total_alt,Miscomputed total_alt_reads,"v2,v4",46,12,0,34,numeric
-pass4.query4,q4_wrong_gene_set,Returned the wrong shared gene set,"v2,v3,v4",69,18,42,9,grouping
-pass4.query4,q4_leaked_non_shared_gene,Included genes that are not observed in both control and non-control complete-chain rows,"v2,v3",60,18,42,0,over_inclusion
-pass4.query5,q5_wrong_expression,Mapped or averaged matched expression incorrectly,"v2,v3,v4",97,18,37,42,attribute_mapping
-pass4.query5,q5_wrong_sample_or_tissue_count,Miscomputed distinct matched sample or tissue counts,"v2,v3,v4",97,18,37,42,numeric
-pass4.query5,q5_wrong_variant_or_call_count,Miscomputed variant_count or call_count,"v2,v3,v4",93,18,34,41,numeric
-pass4.query6,q6_wrong_log2_expr,Miscomputed mean_log2_marker_expr,"v2,v3,v4",102,18,42,42,numeric
-pass4.query6,q6_wrong_burden,Miscomputed burden_genes,"v2,v3,v4",101,18,41,42,numeric
-pass4.query6,q6_missing_sample,"Dropped one or more sample_dim rows, usually S5","v2,v3",20,1,19,0,under_inclusion
-pass4.query7,q7_wrong_orphan_row_set,Returned the wrong orphan-key row set,"v2,v3,v4",102,18,42,42,null_key_type
-pass4.query7,q7_wrong_orphan_type,Returned incorrect orphan_type labels,"v2,v3,v4",102,18,42,42,classification
+pass4.query4,q4_wrong_counts,Miscomputed control_calls or non_control_calls,"v3,v4",44,0,10,34,numeric
+pass4.query4,q4_wrong_gene_set,Returned the wrong shared gene set,"v2,v3,v4",45,18,18,9,grouping
+pass4.query4,q4_leaked_non_shared_gene,Included genes that are not observed in both control and non-control complete-chain rows,"v2,v3",36,18,18,0,over_inclusion
+pass4.query5,q5_wrong_expression,Mapped or averaged matched expression incorrectly,"v2,v3,v4",78,18,18,42,attribute_mapping
+pass4.query5,q5_wrong_sample_or_tissue_count,Miscomputed distinct matched sample or tissue counts,"v2,v3,v4",78,18,18,42,numeric
+pass4.query5,q5_wrong_variant_or_call_count,Miscomputed variant_count or call_count,"v2,v3,v4",74,18,15,41,numeric
+pass4.query6,q6_wrong_burden,Miscomputed burden_genes,"v2,v3,v4",78,18,18,42,numeric
+pass4.query6,q6_wrong_log2_expr,Miscomputed mean_log2_marker_expr,"v2,v3,v4",78,18,18,42,numeric
+pass4.query6,q6_missing_sample,"Dropped one or more sample_dim rows, usually S5","v2,v3",3,1,2,0,under_inclusion
+pass4.query7,q7_wrong_orphan_row_set,Returned the wrong orphan-key row set,"v2,v3,v4",78,18,18,42,null_key_type
+pass4.query7,q7_wrong_orphan_type,Returned incorrect orphan_type labels,"v2,v3,v4",78,18,18,42,classification
 pass4.query7,q7_extra_or_duplicate_rows,Included extra or duplicate orphan rows,v4,5,0,0,5,over_inclusion
-pass4.query7,q7_wrong_source_table,Used imprecise source_table labels such as fact_calls instead of fact_calls.sample_id or fact_calls.variant_id,"v2,v3",60,18,42,0,classification
-pass4.query8,q8_wrong_expression_or_log,Mapped matched_expr_count or log2_matched_expr incorrectly,"v2,v3,v4",96,16,38,42,numeric
-pass4.query8,q8_wrong_row_set,Returned the wrong non-reference complete-chain call set,"v2,v3,v4",80,18,38,24,over_inclusion
-pass4.query8,q8_leaked_reference_or_incomplete,"Leaked reference, incomplete-chain, or orphan fact rows","v2,v3,v4",76,18,34,24,over_inclusion
-pass4.query9,q9_wrong_expression,Miscomputed mean_matched_expr,"v2,v3,v4",102,18,42,42,numeric
-pass4.query9,q9_wrong_vaf,Miscomputed mean_vaf,"v2,v3,v4",102,18,42,42,numeric
-pass4.query9,q9_wrong_counts_or_rate,Miscomputed call_count or non_reference_rate,"v2,v3,v4",99,18,42,39,numeric
-pass4.query10,q10_repairable_flags_wrong,Set repairable_by_human incorrectly for complete-chain or missing rows,"v2,v3,v4",39,3,24,12,classification
-pass4.query10,q10_call6_status_wrong,Misclassified call_id 6 / V5; it should be MISSING_GENE and repairable,"v2,v3,v4",35,15,17,3,classification
-pass4.query10,q10_call9_repairability_wrong,Misclassified call_id 9 / V999 repairability; MISSING_VARIANT is not human-repairable,"v3,v4",13,0,10,3,classification
-pass4.query10,q10_call8_status_wrong,Misclassified call_id 8 / S999; it should be MISSING_SAMPLE and repairable,v2,3,3,0,0,classification
-pass5.query1,q1_wrong_log2_transform,Miscomputed one or more log2(expr + 1) marker features,"v2,v3,v4",99,18,39,42,generic
-pass5.query1,q1_wrong_ratio,Miscomputed ndh_module_ratio,"v2,v3,v4",99,18,39,42,generic
+pass4.query7,q7_wrong_source_table,Used imprecise source_table labels such as fact_calls instead of fact_calls.sample_id or fact_calls.variant_id,"v2,v3",36,18,18,0,classification
+pass4.query8,q8_wrong_expression_or_log,Mapped matched_expr_count or log2_matched_expr incorrectly,"v2,v3,v4",72,16,14,42,numeric
+pass4.query8,q8_wrong_row_set,Returned the wrong non-reference complete-chain call set,"v2,v3,v4",57,18,15,24,over_inclusion
+pass4.query8,q8_leaked_reference_or_incomplete,"Leaked reference, incomplete-chain, or orphan fact rows","v2,v3,v4",56,18,14,24,over_inclusion
+pass4.query9,q9_wrong_expression,Miscomputed mean_matched_expr,"v2,v3,v4",78,18,18,42,numeric
+pass4.query9,q9_wrong_vaf,Miscomputed mean_vaf,"v2,v3,v4",78,18,18,42,numeric
+pass4.query9,q9_wrong_counts_or_rate,Miscomputed call_count or non_reference_rate,"v2,v3,v4",75,18,18,39,numeric
+pass4.query10,q10_repairable_flags_wrong,Set repairable_by_human incorrectly for complete-chain or missing rows,"v2,v3,v4",21,3,6,12,classification
+pass4.query10,q10_call6_status_wrong,Misclassified call_id 6 / V5; it should be MISSING_GENE and repairable,"v2,v3,v4",24,15,6,3,classification
+pass4.query10,q10_call9_repairability_wrong,Misclassified call_id 9 / V999 repairability; MISSING_VARIANT is not human-repairable,v4,3,0,0,3,classification
+pass4.query10,q10_call8_status_wrong,Misclassified call_id 8 / S999; it should be MISSING_SAMPLE and repairable,"v2,v3",6,3,3,0,classification
+pass5.query1,q1_wrong_log2_transform,Miscomputed one or more log2(expr + 1) marker features,"v2,v3,v4",78,18,18,42,generic
+pass5.query1,q1_wrong_ratio,Miscomputed ndh_module_ratio,"v2,v3,v4",78,18,18,42,generic
 pass5.query1,q1_wrong_tissue,Mismapped sample tissue labels,v4,3,0,0,3,classification
-pass5.query1,q1_wrong_sample_set,Returned the wrong sample set for sample_dim-only feature engineering,v3,10,0,10,0,generic
-pass5.query2,q2_wrong_expr_mapping,Mapped matched_expr_count or log2_matched_expr incorrectly,"v2,v3,v4",99,18,39,42,numeric
-pass5.query2,q2_wrong_weighted_vaf,Miscomputed expr_weighted_vaf,"v2,v3,v4",99,18,39,42,numeric
-pass5.query2,q2_wrong_call_set,Returned the wrong complete-chain matched call set,"v2,v3,v4",84,18,42,24,generic
-pass5.query2,q2_leaked_incomplete_or_orphan,"Leaked incomplete-chain, orphan, or non-gold calls into the weighted VAF table","v2,v3,v4",72,18,31,23,numeric
-pass5.query2,q2_wrong_vaf,Miscomputed VAF,"v2,v3,v4",20,3,8,9,numeric
-pass5.query3,q3_wrong_mean_or_median,Miscomputed mean or median matched expression,"v2,v3,v4",99,18,39,42,numeric
-pass5.query3,q3_wrong_pop_std,Miscomputed population standard deviation,"v2,v3,v4",95,16,37,42,generic
-pass5.query3,q3_wrong_count,Miscomputed n_calls,"v2,v3,v4",93,15,37,41,numeric
-pass5.query3,q3_wrong_group_set,Returned the wrong condition-gene group set,"v2,v3,v4",89,18,38,33,grouping
-pass5.query3,q3_leaked_incomplete_or_orphan,"Leaked incomplete-chain, orphan, or non-gold groups into condition-gene statistics","v2,v3,v4",86,18,35,33,grouping
-pass5.query3,q3_wrong_sort,Returned condition-gene statistics in the wrong order,"v3,v4",7,0,4,3,sort
-pass5.query4,q4_wrong_delta,Miscomputed stress-minus-control delta,"v2,v3,v4",102,18,42,42,generic
-pass5.query4,q4_wrong_stress_or_control_mean,Miscomputed stress/control mean log2 expression,"v2,v3,v4",102,18,42,42,numeric
-pass5.query5,q5_wrong_burden,Miscomputed burden_score,"v2,v3,v4",88,18,34,36,numeric
-pass5.query5,q5_wrong_log2_expr,Miscomputed mean_log2_matched_expr,"v2,v3,v4",88,18,34,36,numeric
-pass5.query5,q5_wrong_vaf,Miscomputed mean_vaf,"v2,v3,v4",85,18,33,34,numeric
-pass5.query5,q5_wrong_count,Miscomputed non_reference_calls,"v2,v3,v4",60,9,20,31,numeric
-pass5.query5,q5_wrong_group_set,Returned the wrong pathway-tissue group set,"v2,v3,v4",64,15,37,12,grouping
-pass5.query5,q5_leaked_ref_or_incomplete,"Leaked reference, incomplete-chain, or orphan rows into pathway burden","v2,v3,v4",61,15,34,12,numeric
-pass5.query6,q6_wrong_z_mean,Miscomputed photosynthesis_expr_z_mean,"v2,v3,v4",99,18,39,42,numeric
-pass5.query6,q6_wrong_zscore,"Miscomputed marker z-scores, usually from ddof or denominator errors","v2,v3,v4",99,18,39,42,numeric
-pass5.query6,q6_wrong_sort,Returned z-score rows in the wrong order,"v2,v3,v4",26,4,7,15,sort
-pass5.query6,q6_wrong_sample_set,Returned the wrong sample set for z-score ranking,"v2,v3,v4",28,5,22,1,numeric
-pass5.query7,q7_wrong_cv,Miscomputed cv_matched_expr,"v2,v3,v4",98,17,39,42,generic
-pass5.query7,q7_wrong_mean_expr,Miscomputed mean_matched_expr,"v2,v3,v4",98,17,39,42,numeric
-pass5.query7,q7_wrong_vaf,Miscomputed mean_vaf,"v2,v3,v4",98,17,39,42,numeric
-pass5.query7,q7_wrong_gene_count,Miscomputed distinct_genes_observed,"v2,v3,v4",85,17,35,33,numeric
+pass5.query2,q2_wrong_expr_mapping,Mapped matched_expr_count or log2_matched_expr incorrectly,"v2,v3,v4",78,18,18,42,numeric
+pass5.query2,q2_wrong_weighted_vaf,Miscomputed expr_weighted_vaf,"v2,v3,v4",78,18,18,42,numeric
+pass5.query2,q2_wrong_call_set,Returned the wrong complete-chain matched call set,"v2,v3,v4",60,18,18,24,generic
+pass5.query2,q2_leaked_incomplete_or_orphan,"Leaked incomplete-chain, orphan, or non-gold calls into the weighted VAF table","v2,v3,v4",53,18,12,23,numeric
+pass5.query2,q2_wrong_vaf,Miscomputed VAF,"v2,v3,v4",15,3,3,9,numeric
+pass5.query3,q3_wrong_mean_or_median,Miscomputed mean or median matched expression,"v2,v3,v4",78,18,18,42,numeric
+pass5.query3,q3_wrong_pop_std,Miscomputed population standard deviation,"v2,v3,v4",74,16,16,42,generic
+pass5.query3,q3_wrong_count,Miscomputed n_calls,"v2,v3,v4",72,15,16,41,numeric
+pass5.query3,q3_leaked_incomplete_or_orphan,"Leaked incomplete-chain, orphan, or non-gold groups into condition-gene statistics","v2,v3,v4",66,18,15,33,grouping
+pass5.query3,q3_wrong_group_set,Returned the wrong condition-gene group set,"v2,v3,v4",66,18,15,33,grouping
+pass5.query3,q3_wrong_sort,Returned condition-gene statistics in the wrong order,"v3,v4",6,0,3,3,sort
+pass5.query4,q4_wrong_delta,Miscomputed stress-minus-control delta,"v2,v3,v4",78,18,18,42,generic
+pass5.query4,q4_wrong_stress_or_control_mean,Miscomputed stress/control mean log2 expression,"v2,v3,v4",78,18,18,42,numeric
+pass5.query5,q5_wrong_burden,Miscomputed burden_score,"v2,v3,v4",70,18,16,36,numeric
+pass5.query5,q5_wrong_log2_expr,Miscomputed mean_log2_matched_expr,"v2,v3,v4",70,18,16,36,numeric
+pass5.query5,q5_wrong_vaf,Miscomputed mean_vaf,"v2,v3,v4",67,18,15,34,numeric
+pass5.query5,q5_wrong_count,Miscomputed non_reference_calls,"v2,v3,v4",52,9,12,31,numeric
+pass5.query5,q5_leaked_ref_or_incomplete,"Leaked reference, incomplete-chain, or orphan rows into pathway burden","v2,v3,v4",42,15,15,12,numeric
+pass5.query5,q5_wrong_group_set,Returned the wrong pathway-tissue group set,"v2,v3,v4",42,15,15,12,grouping
+pass5.query6,q6_wrong_z_mean,Miscomputed photosynthesis_expr_z_mean,"v2,v3,v4",78,18,18,42,numeric
+pass5.query6,q6_wrong_zscore,"Miscomputed marker z-scores, usually from ddof or denominator errors","v2,v3,v4",78,18,18,42,numeric
+pass5.query6,q6_wrong_sort,Returned z-score rows in the wrong order,"v2,v3,v4",22,4,3,15,sort
+pass5.query6,q6_wrong_sample_set,Returned the wrong sample set for z-score ranking,"v2,v3,v4",9,5,3,1,numeric
+pass5.query7,q7_wrong_cv,Miscomputed cv_matched_expr,"v2,v3,v4",74,17,15,42,generic
+pass5.query7,q7_wrong_mean_expr,Miscomputed mean_matched_expr,"v2,v3,v4",74,17,15,42,numeric
+pass5.query7,q7_wrong_vaf,Miscomputed mean_vaf,"v2,v3,v4",74,17,15,42,numeric
+pass5.query7,q7_wrong_gene_count,Miscomputed distinct_genes_observed,"v2,v3,v4",65,17,15,33,numeric
 pass5.query7,q7_wrong_condition_set,Returned the wrong condition set,"v2,v3,v4",12,3,3,6,attribute_mapping
-pass5.query7,q7_wrong_sort,Returned condition CV rows in the wrong order,"v3,v4",4,0,3,1,sort
-pass5.query8,q8_wrong_marker_expr,Miscomputed total_marker_expr or log2_total_marker_expr,"v2,v3,v4",101,18,41,42,numeric
-pass5.query8,q8_wrong_pressure,Miscomputed photosynthesis_variant_pressure,"v2,v3,v4",101,18,41,42,generic
-pass5.query8,q8_wrong_counts,Miscomputed non-reference or high/moderate call counts,"v2,v3,v4",87,18,33,36,numeric
-pass5.query8,q8_wrong_sort,Returned sample pressure rows in the wrong order,"v2,v3,v4",40,9,21,10,sort
-pass5.query8,q8_wrong_sample_set,Returned the wrong sample set for the preserving sample-level burden table,"v2,v3,v4",21,3,10,8,numeric
-pass5.query8,q8_missing_zero_call_sample,Dropped one or more zero-call sample_dim rows,"v3,v4",10,0,8,2,under_inclusion
-pass5.query8,q8_included_orphan_sample,Included orphan sample rows such as S999,"v2,v3",6,3,3,0,over_inclusion
-pass5.query9,q9_wrong_log2_expr,Miscomputed mean_log2_matched_expr,"v2,v3,v4",92,15,36,41,numeric
-pass5.query9,q9_wrong_signal,Miscomputed expression_weighted_signal,"v2,v3,v4",92,15,36,41,attribute_mapping
-pass5.query9,q9_wrong_vaf,Miscomputed mean_vaf,"v2,v3,v4",88,12,35,41,numeric
-pass5.query9,q9_wrong_group_set,Returned the wrong condition-gene signal group set,"v2,v3,v4",89,18,34,37,grouping
-pass5.query9,q9_leaked_ref_or_incomplete,"Leaked reference, incomplete-chain, or orphan groups into signal ranking","v2,v3,v4",86,18,31,37,grouping
-pass5.query9,q9_wrong_count,Miscomputed non_reference_calls,"v2,v3,v4",68,8,26,34,numeric
-pass5.query9,q9_wrong_sort,Returned signal rows in the wrong order,"v3,v4",6,0,5,1,sort
-pass5.query10,q10_wrong_imbalance,Miscomputed marker_imbalance,"v2,v3,v4",99,18,42,39,generic
-pass5.query10,q10_wrong_shares,Miscomputed one or more marker composition shares,"v2,v3,v4",99,18,42,39,generic
-pass5.query10,q10_wrong_sort,Returned marker-share rows in the wrong order,"v2,v3,v4",74,15,25,34,sort
-pass5.query10,q10_wrong_sample_set,Returned the wrong sample set for marker composition shares,"v2,v3,v4",23,3,17,3,generic
-pass5.query10,q10_wrong_condition,Mismapped sample condition labels,"v3,v4",5,0,2,3,classification
+pass5.query7,q7_wrong_sort,Returned condition CV rows in the wrong order,v4,1,0,0,1,sort
+pass5.query8,q8_wrong_marker_expr,Miscomputed total_marker_expr or log2_total_marker_expr,"v2,v3,v4",77,18,17,42,numeric
+pass5.query8,q8_wrong_pressure,Miscomputed photosynthesis_variant_pressure,"v2,v3,v4",77,18,17,42,generic
+pass5.query8,q8_wrong_counts,Miscomputed non-reference or high/moderate call counts,"v2,v3,v4",66,18,12,36,numeric
+pass5.query8,q8_wrong_sort,Returned sample pressure rows in the wrong order,"v2,v3,v4",31,9,12,10,sort
+pass5.query8,q8_wrong_sample_set,Returned the wrong sample set for the preserving sample-level burden table,"v2,v3,v4",12,3,1,8,numeric
+pass5.query8,q8_missing_zero_call_sample,Dropped one or more zero-call sample_dim rows,"v3,v4",3,0,1,2,under_inclusion
+pass5.query8,q8_included_orphan_sample,Included orphan sample rows such as S999,v2,3,3,0,0,over_inclusion
+pass5.query9,q9_wrong_log2_expr,Miscomputed mean_log2_matched_expr,"v2,v3,v4",73,15,17,41,numeric
+pass5.query9,q9_wrong_signal,Miscomputed expression_weighted_signal,"v2,v3,v4",73,15,17,41,attribute_mapping
+pass5.query9,q9_wrong_vaf,Miscomputed mean_vaf,"v2,v3,v4",70,12,17,41,numeric
+pass5.query9,q9_leaked_ref_or_incomplete,"Leaked reference, incomplete-chain, or orphan groups into signal ranking","v2,v3,v4",70,18,15,37,grouping
+pass5.query9,q9_wrong_group_set,Returned the wrong condition-gene signal group set,"v2,v3,v4",70,18,15,37,grouping
+pass5.query9,q9_wrong_count,Miscomputed non_reference_calls,"v2,v3,v4",52,8,10,34,numeric
+pass5.query9,q9_wrong_sort,Returned signal rows in the wrong order,v4,1,0,0,1,sort
+pass5.query10,q10_wrong_imbalance,Miscomputed marker_imbalance,"v2,v3,v4",75,18,18,39,generic
+pass5.query10,q10_wrong_shares,Miscomputed one or more marker composition shares,"v2,v3,v4",75,18,18,39,generic
+pass5.query10,q10_wrong_sort,Returned marker-share rows in the wrong order,"v2,v3,v4",64,15,15,34,sort
+pass5.query10,q10_wrong_sample_set,Returned the wrong sample set for marker composition shares,"v2,v3,v4",9,3,3,3,generic
+pass5.query10,q10_wrong_condition,Mismapped sample condition labels,"v3,v4",4,0,1,3,classification
