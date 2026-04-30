@@ -23,20 +23,12 @@ from jsonschema import Draft202012Validator
 BASE = "http://127.0.0.1:11434/api"
 
 DEFAULT_MODELS = [
-    "mixtral-8x22b-sqlbench:latest",
     "gemma4-26b-sqlbench:latest",
     "phi4-mini-sqlbench:latest",
-    "qwen2.5-72b-sqlbench:latest",
-    "codellama-70b-sqlbench:latest",
-    "llama3-70b-sqlbench:latest",
-    "dbrx-sqlbench:latest",
-    "deepseek-coder-33b-sqlbench:latest",
     "gemma4-31b-sqlbench:latest",
-    "qwen2.5-coder-32b-sqlbench:latest",
     "qwen3-coder-30b-sqlbench:latest",
     "qwen3.6-sqlbench:latest",
     "qwen3.6-27b-sqlbench:latest",
-    "command-r-plus-sqlbench:latest",
 ]
 
 DEFAULT_OPTIONS = {

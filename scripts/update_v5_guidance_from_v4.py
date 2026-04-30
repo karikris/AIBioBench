@@ -280,6 +280,12 @@ def update_manifest() -> None:
     write_json(path, manifest)
 
 
+def active_models() -> list[str]:
+    manifest = load_json(REPO_ROOT / "benchmark_manifest.json")
+    models = manifest.get("default_models", [])
+    return [str(model) for model in models]
+
+
 def update_registry_readme() -> None:
     path = REPO_ROOT / "query_engineering_registry" / "README.md"
     text = "\n".join(
@@ -335,7 +341,13 @@ def main() -> None:
     prompt_parts_rows: list[dict[str, Any]] = []
     summary_rows: list[dict[str, Any]] = []
 
-    guidance_by_model = registry["guidance_by_model"]
+    selected_models = active_models()
+    guidance_by_model = {
+        model: registry["guidance_by_model"][model]
+        for model in selected_models
+        if model in registry["guidance_by_model"]
+    }
+    registry["guidance_by_model"] = guidance_by_model
     for model in sorted(guidance_by_model, key=base.canonical_model_name):
         model_entry = guidance_by_model[model]
         model_entry["model_profile_v4"] = v4_model_profiles.get(model, {})
@@ -410,6 +422,7 @@ def main() -> None:
     registry["strategy"] = "compose prompt as shared v2/v3 base query plus model-specific v5 addendum updated with v4 evidence"
     registry["non_leakage_policy"] = "Runtime addenda use failure modes, component weaknesses, prompt-derived guardrails, and sanitized failure categories; they do not include gold answer rows, expected row counts, or row identifiers."
     registry["source_runs"] = list(SOURCE_RUNS)
+    registry["active_models"] = selected_models
     registry["v4_update_policy"] = "Preserve existing v2/v3 guidance, remove only exact-success reuse wording when v4 had zero exact attempts, then append v4 model/case evidence and best-practice checks."
 
     write_json(GUIDANCE_FILE, registry)
