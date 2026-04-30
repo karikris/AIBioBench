@@ -741,6 +741,104 @@ def render_query_delta_comparison(comparisons: dict[str, list[dict]], out_base: 
     plt.close(fig)
 
 
+def render_exact_trajectory(comparisons: dict[str, list[dict]], out_base: Path) -> None:
+    pass_rows = [r for r in comparisons["pass_comparison"] if r["scope"] in PASSES]
+    total = next(r for r in comparisons["pass_comparison"] if r["scope"] == "total")
+    x = list(range(len(RUN_LABELS)))
+    pass_colors = {"1": base.BLUE_PALE, "2": base.BLUE_LIGHT, "3": base.BLUE_MID}
+    pass_markers = {"1": "o", "2": "^", "3": "s"}
+
+    fig = plt.figure(figsize=(20, 10.5), facecolor=base.PAGE_BG, constrained_layout=True)
+    gs = fig.add_gridspec(1, 2, width_ratios=[1.1, 0.9])
+    fig.suptitle(
+        f"{SCOPE_TITLE} v2 vs v3 vs v4: Exact Answer Development by Pass",
+        color=base.TEXT,
+        fontsize=21,
+        fontweight="bold",
+    )
+
+    ax1 = fig.add_subplot(gs[0, 0])
+    pass_attempt_values = []
+    for row in pass_rows:
+        scope = row["scope"]
+        values = [int(row[f"{run}_exact_attempts"]) for run in RUN_LABELS]
+        pass_attempt_values.extend(values)
+        ax1.plot(
+            x,
+            values,
+            color=pass_colors[scope],
+            marker=pass_markers[scope],
+            linewidth=3.0,
+            markersize=9,
+            label=row["scope_label"],
+        )
+        for run_idx, value in enumerate(values):
+            ax1.text(run_idx, value + 2.0, str(value), color=base.TEXT, ha="center", va="bottom", fontsize=10, fontweight="bold")
+
+    total_values = [int(total[f"{run}_exact_attempts"]) for run in RUN_LABELS]
+    ax1.set_xticks(x, RUN_LABELS)
+    ax1.set_ylabel("Exact attempts")
+    ax1.set_title("Exact Attempts by Pass Across Runs", fontweight="bold")
+    ax1.grid(axis="y", color=base.GRID, linewidth=0.8, alpha=0.75)
+    ax1.legend(frameon=False, labelcolor=base.TEXT, loc="upper left")
+    y_max = max(pass_attempt_values) * 1.18
+    ax1.set_ylim(0, y_max)
+    ax1.text(
+        0.98,
+        0.06,
+        f"Total exact: v2 {total_values[0]} -> v3 {total_values[1]} -> v4 {total_values[2]}",
+        transform=ax1.transAxes,
+        color=base.BLUE_PALE,
+        ha="right",
+        va="bottom",
+        fontsize=10,
+        fontweight="bold",
+        bbox={"facecolor": base.PANEL_BG, "edgecolor": base.GRID, "alpha": 0.9, "pad": 6},
+    )
+    style_axis(ax1)
+
+    ax2 = fig.add_subplot(gs[0, 1])
+    width = 0.22
+    offsets = {"1": -width, "2": 0.0, "3": width}
+    pass_rate_values = []
+    for row in pass_rows:
+        scope = row["scope"]
+        rates = [row[f"{run}_exact_attempt_rate"] * 100 for run in RUN_LABELS]
+        pass_rate_values.extend(rates)
+        positions = [idx + offsets[scope] for idx in x]
+        bars = ax2.bar(
+            positions,
+            rates,
+            width=width,
+            color=pass_colors[scope],
+            label=row["scope_label"],
+            edgecolor=base.PANEL_BG,
+        )
+        for bar, rate in zip(bars, rates):
+            ax2.text(
+                bar.get_x() + bar.get_width() / 2,
+                bar.get_height() + 0.8,
+                f"{rate:.1f}%",
+                color=base.TEXT,
+                ha="center",
+                va="bottom",
+                fontsize=9,
+                fontweight="bold",
+            )
+
+    ax2.set_xticks(x, RUN_LABELS)
+    ax2.set_ylabel("Exact attempt rate (%)")
+    ax2.set_title("Exact Conversion Rate by Pass", fontweight="bold")
+    ax2.grid(axis="y", color=base.GRID, linewidth=0.8, alpha=0.75)
+    ax2.legend(frameon=False, labelcolor=base.TEXT, loc="upper left")
+    ax2.set_ylim(0, max(pass_rate_values) * 1.25)
+    style_axis(ax2)
+
+    fig.savefig(out_base.with_suffix(".png"), dpi=220, facecolor=fig.get_facecolor())
+    fig.savefig(out_base.with_suffix(".svg"), facecolor=fig.get_facecolor())
+    plt.close(fig)
+
+
 def write_report(path: Path, comparisons: dict[str, list[dict]], dirs_by_run: dict[str, Path]) -> None:
     pass_rows = comparisons["pass_comparison"]
     model_rows = comparisons["model_comparison"]
@@ -863,6 +961,7 @@ def run_comparison(v2_dir: Path, v3_dir: Path, v4_dir: Path, out_dir: Path, outp
     render_speed_score_comparison(comparisons, out_dir / f"{output_prefix}_speed_score_comparison")
     render_cpu_gpu_time_scatter(comparisons, out_dir / f"{output_prefix}_cpu_gpu_time_scatter")
     render_query_delta_comparison(comparisons, out_dir / f"{output_prefix}_query_delta_comparison")
+    render_exact_trajectory(comparisons, out_dir / f"{output_prefix}_exact_trajectory")
     write_report(out_dir / f"{output_prefix}_comparison_report.md", comparisons, dirs_by_run)
 
     return out_dir
