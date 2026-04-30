@@ -624,12 +624,16 @@ def assign_model_groups(model_summary: list[dict], model_query_rows: list[dict])
     for row in model_query_rows:
         matrix[row["model"]][row["case_id"]] = row
     groups = []
+    def mean_available(model: str, case_ids: list[str]) -> float:
+        scores = [matrix[model][case]["mean_score"] for case in case_ids if case in matrix[model]]
+        return mean(scores) if scores else 0.0
+
     for item in model_summary:
         model = item["model"]
         audit_cases = ["pass4.query1", "pass4.query7", "pass4.query10"]
         analytical_cases = ["pass4.query2", "pass4.query3", "pass4.query4", "pass4.query5", "pass4.query6", "pass4.query8", "pass4.query9"]
-        audit_score = mean(matrix[model][case]["mean_score"] for case in audit_cases)
-        analytical_score = mean(matrix[model][case]["mean_score"] for case in analytical_cases)
+        audit_score = mean_available(model, audit_cases)
+        analytical_score = mean_available(model, analytical_cases)
         if item["exact_attempts"] > 0:
             group = "Only exact converter"
             reason = "Only model group with any exact pass-4 conversion, limited to the repairability audit."
