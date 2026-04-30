@@ -119,8 +119,8 @@
     "enabled": true,
     "registry_id": "photosynthesis_snowflake_v5_model_query_guidance",
     "registry_file": "query_engineering_registry/v5/model_query_guidance.json",
-    "strategy": "base_v2_v3_query_plus_model_specific_v5_addendum",
+    "strategy": "base_v2_v3_query_plus_model_specific_v5_addendum_with_v4_updates",
     "base_query_source": "v2/v3 benchmark_cases prompt text",
-    "addendum_source": "v2 and v3 raw results plus per-pass failure-point analyses"
+    "addendum_source": "v2, v3, and v4 raw results plus per-pass failure-point analyses"
   }
 }

@@ -13,7 +13,7 @@ def main() -> int:
     comparison.PASSES = ("1",)
     comparison.PASS_LABELS = {"1": "Pass 1", "total": "Total"}
     comparison.SCOPE_TITLE = "Pass 1"
-    comparison.SCOPE_DESCRIPTION = "Pass 1 only; 10 SQL tasks, 14 models, and 420 attempts per run."
+    comparison.SCOPE_DESCRIPTION = "Pass 1 only; 10 SQL tasks with 3 repeats per retained model. Runs may contain different model sets after filtering."
     comparison.RUNTIME_SCOPE_LABEL = "for Pass 1"
 
     v2_dir = Path(sys.argv[1]).resolve()

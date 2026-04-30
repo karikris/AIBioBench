@@ -20,7 +20,7 @@ import pass4_analysis as base
 PASSES = ("1", "2", "3")
 PASS_LABELS = {"1": "Pass 1", "2": "Pass 2", "3": "Pass 3", "total": "Total"}
 SCOPE_TITLE = "Passes 1-3"
-SCOPE_DESCRIPTION = "Passes 1, 2, and 3 only; 30 SQL tasks, 14 models, and 1,260 attempts per run."
+SCOPE_DESCRIPTION = "Passes 1, 2, and 3 only; 30 SQL tasks with 3 repeats per retained model. Runs may contain different model sets after filtering."
 RUNTIME_SCOPE_LABEL = "across Passes 1-3"
 DEFAULT_OUTPUT_PREFIX = "pass123_v2_v3"
 RUN_LABELS = ("v2", "v3")
@@ -819,7 +819,7 @@ def write_report(path: Path, comparisons: dict[str, list[dict]], v2_dir: Path, v
             "",
             "- The comparison separates total pass-level movement from per-pass movement because the v3 instruction changes were not uniform across task types.",
             "- The model-level view should be read as a stability and improvement screen: positive deltas indicate better deterministic scoring under the revised instructions, not general model superiority.",
-            "- Runtime and generation-speed panels provide execution context for the same 14 models; they are not treated as quality metrics.",
+            "- Runtime and generation-speed panels provide execution context for the retained model rows in each run; they are not treated as quality metrics.",
         ]
     )
 
