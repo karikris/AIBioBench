@@ -1574,6 +1574,81 @@ def write_jsonl(path: Path, rows: List[dict]) -> None:
             f.write(json.dumps(json_safe(row), ensure_ascii=False) + "\n")
 
 
+OUTPUT_FILE_SPECS: Dict[str, Tuple[str, str]] = {
+    "detailed_csv": ("detailed_results", ".csv"),
+    "detailed_jsonl": ("detailed_results", ".jsonl"),
+    "run_results_jsonl": ("run_results", ".jsonl"),
+    "model_summary_csv": ("summary_by_model", ".csv"),
+    "model_pass_summary_csv": ("summary_by_model_pass", ".csv"),
+    "failure_primary_summary_csv": ("summary_by_failure_family_primary", ".csv"),
+    "failure_exploded_summary_csv": ("summary_by_failure_family_exploded", ".csv"),
+    "model_failure_primary_summary_csv": ("summary_by_model_failure_family_primary", ".csv"),
+    "repeatability_csv": ("summary_repeatability_by_model_case", ".csv"),
+    "model_repeatability_csv": ("summary_repeatability_by_model", ".csv"),
+    "run_meta_json": ("run_meta", ".json"),
+}
+
+
+def run_version_identifier(manifest: dict) -> str:
+    benchmark_id = str(manifest.get("benchmark_id", ""))
+    match = re.search(r"(?:^|_)(v\d+(?:[._-]\d+)*)$", benchmark_id, flags=re.IGNORECASE)
+    if match:
+        return re.sub(r"[^A-Za-z0-9]+", "_", match.group(1)).strip("_").lower()
+
+    version = str(manifest.get("version", "")).strip()
+    if version:
+        identifier = re.sub(r"[^A-Za-z0-9]+", "_", version).strip("_").lower()
+        if identifier and not identifier.startswith("v"):
+            identifier = f"v{identifier}"
+        if identifier:
+            return identifier
+
+    return "run"
+
+
+def build_output_file_paths(output_dir: Path, version_id: str) -> Tuple[Dict[str, Path], Dict[str, Path]]:
+    versioned: Dict[str, Path] = {}
+    legacy: Dict[str, Path] = {}
+    for key, (stem, suffix) in OUTPUT_FILE_SPECS.items():
+        versioned[key] = output_dir / f"{stem}_{version_id}{suffix}"
+        legacy[key] = output_dir / f"{stem}{suffix}"
+    return versioned, legacy
+
+
+def load_jsonl_prefer_versioned(versioned_path: Path, legacy_path: Path) -> Tuple[List[dict], Optional[Path]]:
+    if versioned_path.exists():
+        return load_jsonl(versioned_path), versioned_path
+    if legacy_path.exists():
+        return load_jsonl(legacy_path), legacy_path
+    return [], None
+
+
+def load_json_prefer_versioned(versioned_path: Path, legacy_path: Path) -> Tuple[Optional[dict], Optional[Path]]:
+    path = versioned_path if versioned_path.exists() else legacy_path
+    if not path.exists():
+        return None, None
+    return json.loads(path.read_text(encoding="utf-8")), path
+
+
+def write_csv_with_legacy_alias(versioned_path: Path, legacy_path: Path, rows: List[dict]) -> None:
+    write_csv(versioned_path, rows)
+    if legacy_path != versioned_path:
+        write_csv(legacy_path, rows)
+
+
+def write_jsonl_with_legacy_alias(versioned_path: Path, legacy_path: Path, rows: List[dict]) -> None:
+    write_jsonl(versioned_path, rows)
+    if legacy_path != versioned_path:
+        write_jsonl(legacy_path, rows)
+
+
+def write_json_with_legacy_alias(versioned_path: Path, legacy_path: Path, payload: dict) -> None:
+    text = json.dumps(payload, indent=2)
+    versioned_path.write_text(text, encoding="utf-8")
+    if legacy_path != versioned_path:
+        legacy_path.write_text(text, encoding="utf-8")
+
+
 def resolve_default_manifest() -> Path:
     script_dir = Path(__file__).resolve().parent
     candidates = [
@@ -1691,6 +1766,9 @@ def build_run_meta(
     run_id: str,
     run_started_at_utc: str,
     merged_rows: List[dict],
+    output_version_identifier: str,
+    output_files: Dict[str, str],
+    legacy_output_aliases: Dict[str, str],
 ) -> dict:
     base_meta = dict(existing_meta or {})
     bundle_run_id = base_meta.get("run_id") or run_id
@@ -1727,6 +1805,9 @@ def build_run_meta(
         "latest_run_cases": latest_case_ids,
         "latest_run_repeats": repeats,
         "output_dir": str(output_dir),
+        "output_version_identifier": output_version_identifier,
+        "output_files": output_files,
+        "legacy_output_aliases": legacy_output_aliases,
         "repo_root": str(repo_root),
         "reporting_views": manifest.get("reporting_views", {}),
         "repairable_near_miss_examples": manifest.get("repairable_near_miss_examples", []),
@@ -1846,11 +1927,16 @@ def main() -> None:
         append_output=args.append_output,
         bundle_dir_name=args.bundle_dir_name,
     )
+    output_version_id = run_version_identifier(manifest)
+    output_files, legacy_output_aliases = build_output_file_paths(output_dir, output_version_id)
+    output_file_names = {key: path.name for key, path in output_files.items()}
+    legacy_output_alias_names = {key: path.name for key, path in legacy_output_aliases.items()}
 
     log(f"Manifest: {args.manifest}")
     log(f"Benchmark: {manifest['benchmark_id']} v{manifest['version']}")
     log(f"Selected cases: {len(selected_cases)} | Repeats per case: {repeats} | Models: {len(models)}")
     log(f"Output directory: {output_dir}")
+    log(f"Output file version identifier: {output_version_id}")
     if query_engineering_registry:
         log(
             "Query engineering registry: "
@@ -1956,17 +2042,26 @@ def main() -> None:
     duplicate_result_rows = 0
 
     if args.append_output:
-        detailed_jsonl = output_dir / "detailed_results.jsonl"
-        run_results_jsonl = output_dir / "run_results.jsonl"
-        run_meta_json = output_dir / "run_meta.json"
-        existing_all_rows = load_jsonl(detailed_jsonl)
-        existing_result_rows = load_jsonl(run_results_jsonl)
-        if run_meta_json.exists():
-            existing_meta = json.loads(run_meta_json.read_text(encoding="utf-8"))
+        existing_all_rows, raw_source_path = load_jsonl_prefer_versioned(
+            output_files["detailed_jsonl"],
+            legacy_output_aliases["detailed_jsonl"],
+        )
+        existing_result_rows, result_source_path = load_jsonl_prefer_versioned(
+            output_files["run_results_jsonl"],
+            legacy_output_aliases["run_results_jsonl"],
+        )
+        existing_meta, meta_source_path = load_json_prefer_versioned(
+            output_files["run_meta_json"],
+            legacy_output_aliases["run_meta_json"],
+        )
         if existing_all_rows or existing_result_rows:
             log(
                 f"Appending into existing bundle: {len(existing_all_rows)} raw rows, "
                 f"{len(existing_result_rows)} result rows already present"
+            )
+            log(
+                "Append sources: "
+                f"raw={raw_source_path or '-'} results={result_source_path or '-'} meta={meta_source_path or '-'}"
             )
 
     merged_all_rows, duplicate_raw_rows = merge_by_key(existing_all_rows, all_rows, ["model", "case_id", "attempt_index"])
@@ -1979,28 +2074,44 @@ def main() -> None:
     repeatability_rows = build_repeatability_summary(merged_all_rows)
     model_repeatability_rows = build_model_repeatability_summary(repeatability_rows)
 
-    detailed_csv = output_dir / "detailed_results.csv"
-    detailed_jsonl = output_dir / "detailed_results.jsonl"
-    run_results_jsonl = output_dir / "run_results.jsonl"
-    model_summary_csv = output_dir / "summary_by_model.csv"
-    model_pass_summary_csv = output_dir / "summary_by_model_pass.csv"
-    failure_primary_summary_csv = output_dir / "summary_by_failure_family_primary.csv"
-    failure_exploded_summary_csv = output_dir / "summary_by_failure_family_exploded.csv"
-    model_failure_primary_summary_csv = output_dir / "summary_by_model_failure_family_primary.csv"
-    repeatability_csv = output_dir / "summary_repeatability_by_model_case.csv"
-    model_repeatability_csv = output_dir / "summary_repeatability_by_model.csv"
-    run_meta_json = output_dir / "run_meta.json"
+    detailed_csv = output_files["detailed_csv"]
+    detailed_jsonl = output_files["detailed_jsonl"]
+    run_results_jsonl = output_files["run_results_jsonl"]
+    model_summary_csv = output_files["model_summary_csv"]
+    model_pass_summary_csv = output_files["model_pass_summary_csv"]
+    failure_primary_summary_csv = output_files["failure_primary_summary_csv"]
+    failure_exploded_summary_csv = output_files["failure_exploded_summary_csv"]
+    model_failure_primary_summary_csv = output_files["model_failure_primary_summary_csv"]
+    repeatability_csv = output_files["repeatability_csv"]
+    model_repeatability_csv = output_files["model_repeatability_csv"]
+    run_meta_json = output_files["run_meta_json"]
 
-    write_csv(detailed_csv, merged_all_rows)
-    write_jsonl(detailed_jsonl, merged_all_rows)
-    write_jsonl(run_results_jsonl, merged_result_rows)
-    write_csv(model_summary_csv, aggregate_rows(merged_all_rows, ["model"]))
-    write_csv(model_pass_summary_csv, aggregate_rows(merged_all_rows, ["model", "pass", "language", "difficulty"]))
-    write_csv(failure_primary_summary_csv, aggregate_rows(merged_all_rows, ["failure_family_primary_case"]))
-    write_csv(model_failure_primary_summary_csv, aggregate_rows(merged_all_rows, ["model", "failure_family_primary_case"]))
-    write_csv(failure_exploded_summary_csv, aggregate_rows(explode_failure_family_rows(merged_all_rows), ["failure_family"]))
-    write_csv(repeatability_csv, repeatability_rows)
-    write_csv(model_repeatability_csv, model_repeatability_rows)
+    write_csv_with_legacy_alias(detailed_csv, legacy_output_aliases["detailed_csv"], merged_all_rows)
+    write_jsonl_with_legacy_alias(detailed_jsonl, legacy_output_aliases["detailed_jsonl"], merged_all_rows)
+    write_jsonl_with_legacy_alias(run_results_jsonl, legacy_output_aliases["run_results_jsonl"], merged_result_rows)
+    write_csv_with_legacy_alias(model_summary_csv, legacy_output_aliases["model_summary_csv"], aggregate_rows(merged_all_rows, ["model"]))
+    write_csv_with_legacy_alias(
+        model_pass_summary_csv,
+        legacy_output_aliases["model_pass_summary_csv"],
+        aggregate_rows(merged_all_rows, ["model", "pass", "language", "difficulty"]),
+    )
+    write_csv_with_legacy_alias(
+        failure_primary_summary_csv,
+        legacy_output_aliases["failure_primary_summary_csv"],
+        aggregate_rows(merged_all_rows, ["failure_family_primary_case"]),
+    )
+    write_csv_with_legacy_alias(
+        model_failure_primary_summary_csv,
+        legacy_output_aliases["model_failure_primary_summary_csv"],
+        aggregate_rows(merged_all_rows, ["model", "failure_family_primary_case"]),
+    )
+    write_csv_with_legacy_alias(
+        failure_exploded_summary_csv,
+        legacy_output_aliases["failure_exploded_summary_csv"],
+        aggregate_rows(explode_failure_family_rows(merged_all_rows), ["failure_family"]),
+    )
+    write_csv_with_legacy_alias(repeatability_csv, legacy_output_aliases["repeatability_csv"], repeatability_rows)
+    write_csv_with_legacy_alias(model_repeatability_csv, legacy_output_aliases["model_repeatability_csv"], model_repeatability_rows)
 
     run_meta = build_run_meta(
         existing_meta=existing_meta,
@@ -2016,8 +2127,11 @@ def main() -> None:
         run_id=run_id,
         run_started_at_utc=run_started_at_utc,
         merged_rows=merged_all_rows,
+        output_version_identifier=output_version_id,
+        output_files=output_file_names,
+        legacy_output_aliases=legacy_output_alias_names,
     )
-    run_meta_json.write_text(json.dumps(run_meta, indent=2), encoding="utf-8")
+    write_json_with_legacy_alias(run_meta_json, legacy_output_aliases["run_meta_json"], run_meta)
 
     log(f"Detailed CSV written to: {detailed_csv}")
     log(f"Detailed JSONL written to: {detailed_jsonl}")
@@ -2029,6 +2143,7 @@ def main() -> None:
     log(f"Repeatability by model/case CSV written to: {repeatability_csv}")
     log(f"Repeatability by model CSV written to: {model_repeatability_csv}")
     log(f"Run metadata JSON written to: {run_meta_json}")
+    log("Legacy compatibility aliases also written without the run version suffix.")
     if args.append_output:
         log(
             f"Bundle totals after merge: attempts={len(merged_all_rows)} models={len(run_meta['models'])} "
