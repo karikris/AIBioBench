@@ -771,7 +771,7 @@ def render_visual_report(model_summary, case_summary, model_query_rows, family_s
     im2 = ax3.imshow(score_matrix, aspect="auto", cmap=score_cmap, vmin=0, vmax=1)
     ax3.set_xticks(range(len(cases)), case_labels)
     ax3.set_yticks(range(len(models)), model_labels)
-    ax3.set_title("Mean Score by Model and Query", fontweight="bold")
+    ax3.set_title("Weighted Mean Score by Model and Query", fontweight="bold")
     for i in range(len(models)):
         for j in range(len(cases)):
             val = score_matrix[i][j]
@@ -810,7 +810,7 @@ def render_visual_report(model_summary, case_summary, model_query_rows, family_s
     im3 = ax5.imshow(family_matrix, aspect="auto", cmap=score_cmap, vmin=0, vmax=1)
     ax5.set_xticks(range(len(family_order)), [family_short[f] for f in family_order])
     ax5.set_yticks(range(len(models)), model_labels)
-    ax5.set_title("Capability View: Mean Score by Failure Family", fontweight="bold")
+    ax5.set_title("Capability View: Weighted Mean Score by Failure Family", fontweight="bold")
     for i in range(len(models)):
         for j in range(len(family_order)):
             val = family_matrix[i][j]

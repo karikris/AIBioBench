@@ -561,6 +561,7 @@ def build_summaries(rows: list[dict], case_meta: dict):
                     "case_id": case_id,
                     "query": query_name(case_id),
                     "exact_attempts": sum(base.as_bool(r["exact_match"]) for r in items),
+                    "exact_rate": mean(base.as_bool(r["exact_match"]) for r in items),
                     "mean_score": mean(base.as_float(r["score"]) for r in items),
                     "mean_aligned_cell_accuracy": mean(base.as_float(r["aligned_cell_accuracy"]) for r in items),
                     "mean_row_set_correctness": mean(base.as_float(r["row_set_correctness_score"]) for r in items),
@@ -677,19 +678,35 @@ def style_dark_axis(ax):
     ax.yaxis.label.set_color(base.TEXT)
 
 
-def render_visual_report(model_summary, case_summary, model_query_rows, rows, out_base: Path) -> None:
+def render_visual_report(model_summary, case_summary, model_query_rows, family_rows, out_base: Path) -> None:
     models = [m["model"] for m in model_summary]
     model_labels = [base.wrap_display_name(m["display_model"]) for m in model_summary]
     cases = [c["case_id"] for c in case_summary]
     case_labels = [QUERY_LABELS[c] for c in cases]
-    total_attempts_per_query = max(c["total_attempts"] for c in case_summary)
     mq = {(r["model"], r["case_id"]): r for r in model_query_rows}
+    exact_matrix = [[mq[(model, case)]["exact_rate"] for case in cases] for model in models]
     score_matrix = [[mq[(model, case)]["mean_score"] for case in cases] for model in models]
-    cell_matrix = [[mq[(model, case)]["mean_aligned_cell_accuracy"] for case in cases] for model in models]
-    total_exact = sum(c["exact_attempts"] for c in case_summary)
+    total_exact = sum(m["exact_attempts"] for m in model_summary)
+
+    family_order = ["expression_transform", "statistical_summary", "decision_support", "ranking_and_priority", "repeatability_probe"]
+    family_short = {
+        "expression_transform": "Expression\ntransform",
+        "statistical_summary": "Statistical\nsummary",
+        "decision_support": "Decision\nsupport",
+        "ranking_and_priority": "Ranking\npriority",
+        "repeatability_probe": "Repeatability\nprobe",
+    }
+    family_lookup = {(r["model"], r["family"]): r for r in family_rows}
+    family_matrix = [
+        [
+            family_lookup[(model, family)]["mean_score"] if (model, family) in family_lookup else float("nan")
+            for family in family_order
+        ]
+        for model in models
+    ]
 
     fig = plt.figure(figsize=(21, 16), facecolor=base.PAGE_BG, constrained_layout=True)
-    gs = fig.add_gridspec(3, 2, height_ratios=[1.0, 1.35, 1.0])
+    gs = fig.add_gridspec(3, 2, height_ratios=[1.0, 1.25, 1.0])
     fig.suptitle(
         "AIBioBench Pass 5: Extreme-Hard Expression Transforms and Statistical Decision Signals",
         fontsize=23,
@@ -699,104 +716,113 @@ def render_visual_report(model_summary, case_summary, model_query_rows, rows, ou
 
     ax1 = fig.add_subplot(gs[0, 0])
     y = list(range(len(model_summary)))
-    scores = [m["mean_score"] for m in model_summary]
-    bar_colors = [base.BLUE_PALE if s >= 0.60 else base.BLUE_LIGHT if s >= 0.55 else base.BLUE_MID if s >= 0.49 else base.BLUE_DARK for s in scores]
-    bars = ax1.barh(y, scores, color=bar_colors)
+    exacts = [m["exact_attempts"] for m in model_summary]
+    colors = [base.BLUE_PALE if x > 0 else base.BLUE_DARK for x in exacts]
+    bars = ax1.barh(y, exacts, color=colors)
     ax1.set_yticks(y, model_labels)
     ax1.invert_yaxis()
-    ax1.set_xlim(0, 1.0)
-    ax1.set_xlabel("Mean score across 30 attempts")
-    ax1.set_title(f"Model Partial-Credit Performance ({total_exact} Exact Attempts Overall)", fontweight="bold")
+    ax1.set_xlim(0, 30)
+    ax1.set_xlabel("Exact attempts out of 30")
+    ax1.set_title("Exact Match Conversion by Model", fontweight="bold")
     ax1.grid(axis="x", color=base.GRID, linewidth=0.8, alpha=0.75)
     for bar, item in zip(bars, model_summary):
-        ax1.text(bar.get_width() + 0.012, bar.get_y() + bar.get_height() / 2, f"{item['mean_score']:.3f}", va="center", color=base.TEXT, fontsize=10)
+        ax1.text(
+            min(bar.get_width() + 0.35, 29.4),
+            bar.get_y() + bar.get_height() / 2,
+            f"{item['exact_attempts']}/30  |  {item['exact_query_coverage_any']}/10 queries",
+            va="center",
+            color=base.TEXT,
+            fontsize=9,
+        )
     style_dark_axis(ax1)
 
+    score_cmap = LinearSegmentedColormap.from_list("professional_blues_score", [base.BLUE_DARK, base.BLUE, base.BLUE_LIGHT, base.BLUE_PALE])
     ax2 = fig.add_subplot(gs[0, 1])
-    ax2.scatter(
-        [m["mean_row_set_correctness"] for m in model_summary],
-        [m["mean_numeric_correctness"] for m in model_summary],
-        s=[140 + 360 * m["mean_score"] for m in model_summary],
-        color=base.BLUE_LIGHT,
-        edgecolors=base.BLUE_PALE,
-        linewidth=1.2,
-        alpha=0.82,
-    )
-    for m in model_summary:
-        ax2.annotate(m["display_model"].replace(" ", "\n", 1), (m["mean_row_set_correctness"], m["mean_numeric_correctness"]), xytext=(6, 5), textcoords="offset points", fontsize=8, color=base.TEXT)
-    ax2.set_xlabel("Mean row-set correctness")
-    ax2.set_ylabel("Mean numeric correctness")
-    ax2.set_title("Row Recovery vs Numeric Derivation", fontweight="bold")
-    ax2.set_xlim(0.45, 1.0)
-    ax2.set_ylim(0.15, 0.75)
-    ax2.grid(color=base.GRID, linewidth=0.8, alpha=0.75)
     style_dark_axis(ax2)
+    im1 = ax2.imshow(exact_matrix, aspect="auto", cmap=score_cmap, vmin=0, vmax=1)
+    ax2.set_xticks(range(len(cases)), case_labels)
+    ax2.set_yticks(range(len(models)), model_labels)
+    ax2.set_title("Exact Rate by Model and Query (3 repeats)", fontweight="bold")
+    for i in range(len(models)):
+        for j in range(len(cases)):
+            val = exact_matrix[i][j]
+            ax2.text(j, i, f"{val:.0%}", ha="center", va="center", color=base.PAGE_BG if val >= 0.67 else base.TEXT, fontsize=8, fontweight="bold" if val > 0 else "normal")
+    cbar1 = fig.colorbar(im1, ax=ax2, fraction=0.028, pad=0.02)
+    cbar1.ax.tick_params(labelsize=8, colors=base.TEXT)
+    cbar1.outline.set_edgecolor(base.GRID)
 
     ax3 = fig.add_subplot(gs[1, 0])
-    score_cmap = LinearSegmentedColormap.from_list("professional_blues_score", [base.BLUE_DARK, base.BLUE, base.BLUE_LIGHT, base.BLUE_PALE])
-    im = ax3.imshow(score_matrix, aspect="auto", cmap=score_cmap, vmin=0, vmax=1)
+    style_dark_axis(ax3)
+    im2 = ax3.imshow(score_matrix, aspect="auto", cmap=score_cmap, vmin=0, vmax=1)
     ax3.set_xticks(range(len(cases)), case_labels)
     ax3.set_yticks(range(len(models)), model_labels)
-    ax3.set_title("Mean Score Heatmap by Model and Query", fontweight="bold")
+    ax3.set_title("Weighted Mean Score by Model and Query", fontweight="bold")
     for i in range(len(models)):
         for j in range(len(cases)):
             val = score_matrix[i][j]
-            ax3.text(j, i, f"{val:.2f}", ha="center", va="center", color=base.PAGE_BG if val > 0.63 else base.TEXT, fontsize=8)
-    cbar = fig.colorbar(im, ax=ax3, fraction=0.025, pad=0.02)
-    cbar.ax.tick_params(labelsize=8, colors=base.TEXT)
-    style_dark_axis(ax3)
+            ax3.text(j, i, f"{val:.2f}", ha="center", va="center", color=base.PAGE_BG if val >= 0.83 else base.TEXT, fontsize=8, fontweight="bold" if val >= 0.95 else "normal")
+    cbar2 = fig.colorbar(im2, ax=ax3, fraction=0.028, pad=0.02)
+    cbar2.ax.tick_params(labelsize=8, colors=base.TEXT)
+    cbar2.outline.set_edgecolor(base.GRID)
 
     ax4 = fig.add_subplot(gs[1, 1])
-    cell_cmap = LinearSegmentedColormap.from_list("professional_blues_cell", [base.BLUE_DARK, base.BLUE, base.BLUE_LIGHT, base.BLUE_PALE])
-    im2 = ax4.imshow(cell_matrix, aspect="auto", cmap=cell_cmap, vmin=0, vmax=1)
-    ax4.set_xticks(range(len(cases)), case_labels)
-    ax4.set_yticks(range(len(models)), model_labels)
-    ax4.set_title("Aligned Cell Accuracy: Correct Values Within Rows", fontweight="bold")
-    for i in range(len(models)):
-        for j in range(len(cases)):
-            val = cell_matrix[i][j]
-            ax4.text(j, i, f"{val:.0%}", ha="center", va="center", color=base.PAGE_BG if val > 0.55 else base.TEXT, fontsize=8)
-    cbar2 = fig.colorbar(im2, ax=ax4, fraction=0.025, pad=0.02)
-    cbar2.ax.tick_params(labelsize=8, colors=base.TEXT)
     style_dark_axis(ax4)
-
-    ax5 = fig.add_subplot(gs[2, 0])
     mode_order = [
-        ("same_count_wrong_values", "Same count, wrong values", base.BLUE_PALE),
-        ("row_count_mismatch", "Wrong row count", base.BLUE_LIGHT),
-        ("order_only", "Correct rows, wrong order", base.BLUE),
+        ("exact", "Exact", base.BLUE_PALE),
+        ("order_only", "Right rows, wrong order", base.BLUE_LIGHT),
         ("type_only", "Type only", base.BLUE_MID),
         ("column_error", "Column/schema error", base.FAIL_PALE),
+        ("same_count_wrong_values", "Same count, wrong values", base.FAIL_LIGHT),
+        ("row_count_mismatch", "Wrong row count", base.BLUE_DARK),
         ("invalid_json_or_error", "Invalid JSON/error", base.TEXT),
     ]
     bottoms = [0] * len(cases)
     for mode, label, color in mode_order:
-        vals = [sum(1 for r in rows if r["case_id"] == case and r["_failure_mode"] == mode) for case in cases]
-        ax5.bar(range(len(cases)), vals, bottom=bottoms, label=label, color=color, edgecolor=base.PANEL_BG)
+        vals = [sum(1 for row in model_query_rows if row["case_id"] == case and row["dominant_failure_mode"] == mode) for case in cases]
+        ax4.bar(range(len(cases)), vals, bottom=bottoms, label=label, color=color, edgecolor=base.PANEL_BG)
         bottoms = [b + v for b, v in zip(bottoms, vals)]
-    ax5.set_xticks(range(len(cases)), [query_name(c) for c in cases])
-    ax5.set_ylim(0, total_attempts_per_query)
-    ax5.set_ylabel("Attempts")
-    ax5.set_title(f"Failure Mode by Query ({total_attempts_per_query} Attempts Each)", fontweight="bold")
-    ax5.legend(loc="upper center", bbox_to_anchor=(0.5, -0.12), ncol=2, frameon=False, fontsize=9, labelcolor=base.TEXT)
-    ax5.grid(axis="y", color=base.GRID, linewidth=0.8, alpha=0.75)
+    ax4.set_xticks(range(len(cases)), [c.split(".")[-1].upper() for c in cases])
+    ax4.set_ylim(0, len(models))
+    ax4.set_ylabel("Models")
+    ax4.set_title("Dominant Failure Mode by Query", fontweight="bold")
+    ax4.grid(axis="y", color=base.GRID, linewidth=0.8, alpha=0.75)
+    leg = ax4.legend(loc="upper center", bbox_to_anchor=(0.5, -0.12), ncol=2, frameon=False, fontsize=9)
+    for text in leg.get_texts():
+        text.set_color(base.TEXT)
+
+    ax5 = fig.add_subplot(gs[2, 0])
     style_dark_axis(ax5)
+    im3 = ax5.imshow(family_matrix, aspect="auto", cmap=score_cmap, vmin=0, vmax=1)
+    ax5.set_xticks(range(len(family_order)), [family_short[f] for f in family_order])
+    ax5.set_yticks(range(len(models)), model_labels)
+    ax5.set_title("Capability View: Weighted Mean Score by Failure Family", fontweight="bold")
+    for i in range(len(models)):
+        for j in range(len(family_order)):
+            val = family_matrix[i][j]
+            if val == val:
+                ax5.text(j, i, f"{val:.2f}", ha="center", va="center", color=base.PAGE_BG if val >= 0.83 else base.TEXT, fontsize=8)
+    cbar3 = fig.colorbar(im3, ax=ax5, fraction=0.028, pad=0.02)
+    cbar3.ax.tick_params(labelsize=8, colors=base.TEXT)
+    cbar3.outline.set_edgecolor(base.GRID)
 
     ax6 = fig.add_subplot(gs[2, 1])
+    style_dark_axis(ax6)
     query_scores = [c["mean_score"] for c in case_summary]
-    query_cells = [c["mean_aligned_cell_accuracy"] for c in case_summary]
+    query_exacts = [c["exact_attempt_rate"] for c in case_summary]
+    x = list(range(len(cases)))
     ax6.plot(range(len(cases)), query_scores, color=base.BLUE_PALE, linewidth=2.8, marker="o", markersize=8, label="Mean score")
-    ax6.plot(range(len(cases)), query_cells, color=base.BLUE_MID, linewidth=2.2, marker="s", markersize=7, label="Mean cell accuracy")
-    ax6.fill_between(range(len(cases)), query_scores, color=base.BLUE_LIGHT, alpha=0.18)
+    ax6.plot(range(len(cases)), query_exacts, color=base.BLUE_MID, linewidth=2.2, marker="s", markersize=7, label="Exact rate")
+    ax6.fill_between(x, query_scores, color=base.BLUE_LIGHT, alpha=0.18)
     for idx, case in enumerate(case_summary):
-        ax6.text(idx, min(query_scores[idx] + 0.04, 1.02), f"{case['exact_attempts']}/{case['total_attempts']}", ha="center", color=base.TEXT, fontsize=9)
+        ax6.text(idx, min(query_scores[idx] + 0.04, 1.02), f"{case['exact_attempts']}/{case['total_attempts']} exact", ha="center", va="bottom", color=base.TEXT, fontsize=8)
     ax6.set_xticks(range(len(cases)), [query_name(c) for c in cases])
     ax6.set_ylim(0, 1.05)
-    ax6.set_ylabel("Score")
-    ax6.set_title("Query Solvability: Exact Counts vs Partial Credit", fontweight="bold")
-    ax6.legend(frameon=False, loc="upper right", labelcolor=base.TEXT)
+    ax6.set_ylabel("Rate / score")
+    ax6.set_title("Which Pass-5 Questions Broke the Models", fontweight="bold")
+    leg = ax6.legend(frameon=False, loc="lower left", fontsize=9)
+    for text in leg.get_texts():
+        text.set_color(base.TEXT)
     ax6.grid(axis="y", color=base.GRID, linewidth=0.8, alpha=0.75)
-    style_dark_axis(ax6)
 
     fig.savefig(out_base.with_suffix(".png"), dpi=220, facecolor=fig.get_facecolor())
     fig.savefig(out_base.with_suffix(".svg"), facecolor=fig.get_facecolor())
@@ -1022,6 +1048,7 @@ def main() -> int:
             "case_id",
             "query",
             "exact_attempts",
+            "exact_rate",
             "mean_score",
             "mean_aligned_cell_accuracy",
             "mean_row_set_correctness",
@@ -1062,7 +1089,7 @@ def main() -> int:
         ["case_id", "query", "short_name", "issue_code", "issue_label", "attempts_with_issue", "attempt_pct", "example_models"],
     )
 
-    render_visual_report(model_summary, case_summary, model_query_rows, rows, out_dir / "pass5_visual_report")
+    render_visual_report(model_summary, case_summary, model_query_rows, family_rows, out_dir / "pass5_visual_report")
     render_model_groups(model_groups, out_dir / "pass5_model_groups")
     write_notes(out_dir / "pass5_analysis_notes.md", results_dir, model_summary, case_summary, query_failure_rows, model_groups)
     print(out_dir)
