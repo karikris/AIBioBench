@@ -3,8 +3,8 @@
 
 v5 keeps the shared standard instructions at the shorter v2/v4 wording and
 keeps every case prompt's first part byte-for-byte aligned to the v2/v3 base
-query text.  Model-specific guidance is stored in a registry and appended by
-the runner at request time.
+query text.  Model-specific guidance is stored in a registry and composed by
+the runner into the five-part runtime prompt.
 """
 
 from __future__ import annotations
@@ -422,10 +422,19 @@ def build_guidance_registry(v5_cases: list[dict[str, Any]]) -> dict[str, Any]:
                     "model": model,
                     "display_model": addendum["display_model"],
                     "case_id": case_id,
+                    "prompt_part_names": [
+                        "standard_base_instructions",
+                        "standard_model_instruction",
+                        "query_base_context",
+                        "query_model_guidance",
+                        "query_model_footer",
+                    ],
                     "base_prompt_source": "v2/v3",
-                    "base_prompt": case["prompt"],
+                    "query_base_context": case["prompt"],
                     "addendum_id": addendum["addendum_id"],
-                    "addendum_text": addendum["text"],
+                    "query_model_guidance": addendum["text"],
+                    "standard_model_instruction_source": "runtime model profile",
+                    "query_model_footer_source": "runtime model profile",
                 }
             )
         guidance_by_model[model] = model_entry
@@ -434,7 +443,7 @@ def build_guidance_registry(v5_cases: list[dict[str, Any]]) -> dict[str, Any]:
         "registry_id": REGISTRY_ID,
         "benchmark_id": BENCHMARK_ID,
         "created_by": "scripts/prepare_v5_queries.py",
-        "strategy": "compose prompt as shared v2/v3 base query plus model-specific v5 addendum",
+        "strategy": "compose five prompt parts: standard base, standard model instruction, query context, model/query guidance, and model query footer",
         "non_leakage_policy": "Runtime addenda use failure modes, component weaknesses, and sanitized failure categories; they do not include gold answer rows, expected row counts, or row identifiers.",
         "source_runs": ["photosynthesis_snowflake_v2", "photosynthesis_snowflake_v3"],
         "base_query_source": "query_engineering_registry/runs/v2/queries.jsonl and runs/v3/queries.jsonl",
@@ -519,7 +528,7 @@ def update_queries_markdown(cases: list[dict[str, Any]]) -> None:
         "",
         f"Benchmark: `{BENCHMARK_ID}`",
         "",
-        "Prompt strategy: v5 uses the v2/v3 base query text in this file plus model-specific runtime addenda from `query_engineering_registry/v5/model_query_guidance.json`.",
+        "Prompt strategy: v5 uses a five-part runtime prompt: shared standard instructions, a small model-specific standard instruction, the v2/v3 base query text, model/query-specific guidance, and a model-specific footer.",
         "",
         f"Total queries: {len(cases)}",
         "",
@@ -589,14 +598,14 @@ def write_registry_readme(registry: dict[str, Any]) -> None:
         "- `runs/v4/`: v4 case/query snapshot with task-specific prompt guidance.",
         "- `runs/v5/`: v5 shared base query snapshot; prompts match v2/v3 base query wording.",
         "",
-        "## v5 Runtime Addenda",
+        "## v5 Runtime Prompt Parts",
         "",
         "- `v5/model_query_guidance.json`: model-specific addenda keyed by model and case.",
-        "- `v5/prompt_parts_preview.jsonl`: base query and addendum parts without dataset tables.",
+        "- `v5/prompt_parts_preview.jsonl`: five-part prompt preview without dataset tables.",
         "- `v5/model_query_guidance_summary.csv`: compact audit table.",
         "- `v5/source_failure_points_by_case.csv`: combined v2/v3 failure-point source table.",
         "",
-        "The runner appends the addendum after the base task text only when the manifest enables `query_engineering`.",
+        "When the manifest enables `query_engineering`, the runner builds five prompt parts: standard base instructions, standard model-specific instruction, query-specific context, model/query-specific guidance, and model-specific query footer.",
         "Addenda are derived from v2/v3 failures and avoid embedding complete gold answer rows, expected row counts, or row identifiers.",
         "The source failure-point CSV keeps detailed audit labels; those labels are sanitized before becoming runtime guidance.",
         "",

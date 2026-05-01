@@ -514,40 +514,128 @@ def load_query_engineering_registry(repo_root: Path, manifest: dict, args: argpa
     return registry
 
 
-def model_guidance_entry(registry: dict, model: str, case_id: str) -> Optional[dict]:
+def model_registry_entry(registry: dict, model: str) -> Optional[dict]:
     if not registry:
         return None
     guidance_by_model = registry.get("guidance_by_model", {})
     model_entry = guidance_by_model.get(model)
     if model_entry is None and model.endswith(":latest"):
         model_entry = guidance_by_model.get(model[:-7])
+    return model_entry
+
+
+def model_guidance_entry(registry: dict, model: str, case_id: str) -> Optional[dict]:
+    model_entry = model_registry_entry(registry, model)
     if model_entry is None:
         return None
     return (model_entry.get("cases") or {}).get(case_id)
 
 
-def build_case_prompt(
+def base_model_name(model: str) -> str:
+    return model[:-7] if model.endswith(":latest") else model
+
+
+def clean_instruction_text(value: Any) -> str:
+    if value is None:
+        return ""
+    if isinstance(value, str):
+        return value.strip()
+    if isinstance(value, dict):
+        return str(value.get("text", "")).strip()
+    return str(value).strip()
+
+
+def dominant_mode_hint(mode: str) -> str:
+    hints = {
+        "same_count_wrong_values": "fix the row set first, then recompute every requested value from the shown CSV rows rather than using plausible shortcuts",
+        "row_count_mismatch": "identify the preserving table, join type, filter boundary, and grouping grain before calculating values",
+        "order_only": "treat final ordering as part of correctness and apply every requested tie-breaker exactly",
+        "type_only": "preserve JSON value types and use JSON null for missing values",
+        "column_error": "return only the requested columns in the requested order, with no helper or explanatory columns",
+        "invalid_json_or_error": "keep the final answer as schema-valid JSON only",
+    }
+    return hints.get(mode or "", "self-check row set, numeric values, output types, and sort order before returning JSON")
+
+
+def model_standard_instruction(model_entry: Optional[dict], model: str) -> str:
+    if not model_entry:
+        return ""
+    explicit = clean_instruction_text(
+        model_entry.get("standard_model_instruction")
+        or model_entry.get("standard_guidance")
+        or model_entry.get("model_standard_guidance")
+    )
+    if explicit:
+        return explicit
+
+    display_model = model_entry.get("display_model") or base_model_name(model)
+    profile = model_entry.get("model_profile_v4") or model_entry.get("model_profile") or {}
+    mode = profile.get("dominant_non_exact_failure_mode") or profile.get("dominant_failure_mode") or ""
+    exact_attempts = int(profile.get("exact_attempts", 0) or 0)
+    attempts = int(profile.get("attempts", 0) or 0)
+    exact_rate = safe_div(exact_attempts, attempts)
+    tone = "Keep the solution concise and literal" if exact_rate >= 0.15 else "Be conservative and verify each boundary"
+    return (
+        f"- {display_model}: {tone}; historical non-exact risk is `{mode or 'mixed'}`.\n"
+        f"- Model-specific standard check: {dominant_mode_hint(mode)}."
+    )
+
+
+def model_query_footer(model_entry: Optional[dict], model_guidance: Optional[dict], model: str) -> str:
+    explicit = clean_instruction_text(
+        (model_guidance or {}).get("footer_text")
+        or (model_guidance or {}).get("model_footer")
+        or (model_guidance or {}).get("query_footer")
+        or (model_entry or {}).get("query_model_footer")
+        or (model_entry or {}).get("model_query_footer")
+    )
+    if explicit:
+        return explicit
+
+    display_model = (model_entry or {}).get("display_model") or (model_guidance or {}).get("display_model") or base_model_name(model)
+    family = (model_entry or {}).get("model_family") or (model_guidance or {}).get("model_family") or ""
+    family_text = f" (`{family}` family)" if family else ""
+    return (
+        f"- Final {display_model}{family_text} footer: before returning, compare the requested row identities, numeric fields, NULL handling, column order, and sort order against the task.\n"
+        "- Return only the JSON object. Do not include markdown, reasoning, code, helper columns, or explanatory text."
+    )
+
+
+def make_prompt_part(name: str, title: str, text: str) -> dict:
+    return {
+        "name": name,
+        "title": title,
+        "text": text.strip(),
+    }
+
+
+def render_prompt_parts(parts: List[dict]) -> str:
+    rendered = []
+    for part in parts:
+        text = str(part.get("text", "")).strip()
+        if not text:
+            continue
+        title = str(part.get("title", "")).strip()
+        rendered.append(f"{title}\n{text}" if title else text)
+    return "\n\n".join(rendered).strip() + "\n"
+
+
+def build_case_prompt_parts(
     case: dict,
     dataset: dict,
     instruction_lookup: Dict[str, dict],
     answer_columns: List[str],
+    model: str,
+    model_entry: Optional[dict] = None,
     model_guidance: Optional[dict] = None,
-) -> str:
+) -> List[dict]:
     inst = instruction_lookup[case["standard_instructions_id"]]["text"].strip()
     table_blocks = []
     for table_name, table in dataset["tables"].items():
         table_blocks.append(f"{table_name}:\n{make_csv_text(table_name, table)}")
 
     output_columns_text = ", ".join(answer_columns)
-    model_guidance_text = ""
-    if model_guidance and model_guidance.get("text"):
-        heading = model_guidance.get("heading") or "Model-specific guidance for v5"
-        model_guidance_text = (
-            f"{heading}:\n"
-            f"{str(model_guidance['text']).strip()}\n\n"
-        )
-
-    return (
+    standard_base = (
         "/no_think\n"
         "You are benchmarking a local model on data analysis accuracy.\n\n"
         f"{inst}\n\n"
@@ -556,7 +644,9 @@ def build_case_prompt(
         'The JSON must be: {"columns": [...], "rows": [[...], ...]}\n'
         "Use JSON null for NULL values.\n"
         "Preserve exact column order and row order requested by the task.\n"
-        "Do not include markdown. Do not include commentary.\n\n"
+        "Do not include markdown. Do not include commentary."
+    )
+    query_base = (
         f"Benchmark ID: {case['benchmark_id']}\n"
         f"Case ID: {case['case_id']}\n"
         f"Pass: {case['pass']}\n"
@@ -567,9 +657,31 @@ def build_case_prompt(
         + "\n\n".join(table_blocks)
         + "\n\n"
         f"Task:\n{case['prompt']}\n\n"
-        + model_guidance_text
         + f"Return these columns in this exact order:\n{output_columns_text}\n"
     )
+    guidance_text = clean_instruction_text((model_guidance or {}).get("text"))
+    guidance_heading = (model_guidance or {}).get("heading") or "Model- and query-specific guidance"
+    footer_text = model_query_footer(model_entry, model_guidance, model) if (model_entry or model_guidance) else ""
+
+    return [
+        make_prompt_part("standard_base_instructions", "Part 1 - Standard base instructions", standard_base),
+        make_prompt_part("standard_model_instruction", "Part 2 - Standard model-specific instruction", model_standard_instruction(model_entry, model)),
+        make_prompt_part("query_base_context", "Part 3 - Query-specific context", query_base),
+        make_prompt_part("query_model_guidance", f"Part 4 - {guidance_heading}", guidance_text),
+        make_prompt_part("query_model_footer", "Part 5 - Model-specific query footer", footer_text),
+    ]
+
+
+def build_case_prompt(
+    case: dict,
+    dataset: dict,
+    instruction_lookup: Dict[str, dict],
+    answer_columns: List[str],
+    model: str,
+    model_entry: Optional[dict] = None,
+    model_guidance: Optional[dict] = None,
+) -> str:
+    return render_prompt_parts(build_case_prompt_parts(case, dataset, instruction_lookup, answer_columns, model, model_entry, model_guidance))
 
 
 def load_json(path: Path) -> Any:
@@ -958,8 +1070,11 @@ def run_case(
 ) -> dict:
     case_id = case["case_id"]
     answer_columns = gold["columns"]
+    model_entry = model_registry_entry(query_engineering_registry, model)
     guidance = model_guidance_entry(query_engineering_registry, model, case_id)
-    prompt = build_case_prompt(case, dataset, instruction_lookup, answer_columns, guidance)
+    prompt_parts = build_case_prompt_parts(case, dataset, instruction_lookup, answer_columns, model, model_entry, guidance)
+    active_prompt_parts = [part for part in prompt_parts if str(part.get("text", "")).strip()]
+    prompt = render_prompt_parts(active_prompt_parts)
 
     if cold_start:
         log(f"{model} {case_id} attempt={attempt_index}: cold start requested; stopping loaded copy first")
@@ -1151,7 +1266,11 @@ def run_case(
         "query_engineering_model_family": guidance.get("model_family", "") if guidance else "",
         "query_engineering_source_runs": json.dumps(guidance.get("source_runs", []), ensure_ascii=False) if guidance else "[]",
         "query_engineering_addendum_chars": len(guidance.get("text", "")) if guidance else 0,
-        "query_engineering_prompt_parts": 2 if guidance else 1,
+        "query_engineering_standard_model_chars": sum(len(part["text"]) for part in active_prompt_parts if part["name"] == "standard_model_instruction"),
+        "query_engineering_query_guidance_chars": sum(len(part["text"]) for part in active_prompt_parts if part["name"] == "query_model_guidance"),
+        "query_engineering_query_footer_chars": sum(len(part["text"]) for part in active_prompt_parts if part["name"] == "query_model_footer"),
+        "query_engineering_prompt_parts": len(active_prompt_parts),
+        "query_engineering_prompt_part_names": json.dumps([part["name"] for part in active_prompt_parts], ensure_ascii=False),
         "ps_context": ps.get("context_length"),
         "ps_loaded_gib": ps_loaded_gib,
         "ps_vram_gib": ps_vram_gib,
@@ -1615,6 +1734,8 @@ def build_run_meta(
         "bundle_dir_name": args.bundle_dir_name or bundle_dir_basename(manifest["benchmark_id"]),
         "query_engineering_enabled": bool(getattr(args, "query_engineering", True) and manifest.get("query_engineering")),
         "query_engineering_registry": str(args.query_engineering_registry) if getattr(args, "query_engineering_registry", None) else (manifest.get("query_engineering", {}) or {}).get("registry_file", ""),
+        "query_engineering_strategy": (manifest.get("query_engineering", {}) or {}).get("strategy", ""),
+        "query_engineering_prompt_parts": (manifest.get("query_engineering", {}) or {}).get("prompt_parts", []),
         "merged_model_count": len(merged_models),
         "merged_attempt_count": len(merged_rows),
         "merged_source_run_ids": source_run_ids,
@@ -1740,6 +1861,14 @@ def main() -> None:
         for case in selected_cases:
             guidance_count = sum(1 for model in models if model_guidance_entry(query_engineering_registry, model, case["case_id"]))
             suffix = f" guidance_models={guidance_count}/{len(models)}" if query_engineering_registry else ""
+            if query_engineering_registry and models:
+                model = models[0]
+                entry = model_registry_entry(query_engineering_registry, model)
+                guidance = model_guidance_entry(query_engineering_registry, model, case["case_id"])
+                answer_columns = gold_lookup[case["case_id"]]["columns"]
+                parts = build_case_prompt_parts(case, dataset, instruction_lookup, answer_columns, model, entry, guidance)
+                active_parts = [part for part in parts if str(part.get("text", "")).strip()]
+                suffix += f" prompt_parts_sample={len(active_parts)}"
             log(f"DRY RUN case={case['case_id']} pass={case['pass']} lang={case['language']} difficulty={case['difficulty']}{suffix}")
         return
 

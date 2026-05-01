@@ -1,10 +1,11 @@
 #!/usr/bin/env python3
 """Append v4-derived model/case guidance to the v5 query registry.
 
-The active v5 benchmark keeps base case prompts unchanged and appends
-model-specific query-engineering addenda at runtime.  This script updates those
-addenda with run-v4 evidence while preserving the existing v2/v3 guidance unless
-the old wording would now conflict with the v4 result pattern.
+The active v5 benchmark keeps base case prompts unchanged and composes
+model-specific query-engineering guidance into a five-part runtime prompt. This
+script updates the query guidance part with run-v4 evidence while preserving the
+existing v2/v3 guidance unless the old wording would now conflict with the v4
+result pattern.
 """
 
 from __future__ import annotations
@@ -276,7 +277,14 @@ def update_manifest() -> None:
     manifest = load_json(path)
     qe = manifest.setdefault("query_engineering", {})
     qe["addendum_source"] = "v2, v3, and v4 raw results plus per-pass failure-point analyses"
-    qe["strategy"] = "base_v2_v3_query_plus_model_specific_v5_addendum_with_v4_updates"
+    qe["strategy"] = "five_part_standard_and_query_context_with_model_specific_guidance"
+    qe["prompt_parts"] = [
+        "standard_base_instructions",
+        "standard_model_instruction",
+        "query_base_context",
+        "query_model_guidance",
+        "query_model_footer",
+    ]
     write_json(path, manifest)
 
 
@@ -301,14 +309,14 @@ def update_registry_readme() -> None:
             "- `runs/v4/`: v4 case/query snapshot with task-specific prompt guidance.",
             "- `runs/v5/`: v5 shared base query snapshot; prompts match v2/v3 base query wording.",
             "",
-            "## v5 Runtime Addenda",
+            "## v5 Runtime Prompt Parts",
             "",
             "- `v5/model_query_guidance.json`: model-specific addenda keyed by model and case.",
-            "- `v5/prompt_parts_preview.jsonl`: base query and addendum parts without dataset tables.",
+            "- `v5/prompt_parts_preview.jsonl`: five-part prompt preview without dataset tables.",
             "- `v5/model_query_guidance_summary.csv`: compact audit table.",
             "- `v5/source_failure_points_by_case.csv`: combined v2/v3/v4 failure-point source table.",
             "",
-            "The runner appends the addendum after the base task text only when the manifest enables `query_engineering`.",
+            "When the manifest enables `query_engineering`, the runner builds five prompt parts: standard base instructions, standard model-specific instruction, query-specific context, model/query-specific guidance, and model-specific query footer.",
             "Addenda are derived from v2/v3/v4 failures and avoid embedding complete gold answer rows, expected row counts, or row identifiers.",
             "The source failure-point CSV keeps detailed audit labels; those labels are sanitized before becoming runtime guidance.",
             "",
@@ -390,10 +398,19 @@ def main() -> None:
                     "model": model,
                     "display_model": addendum["display_model"],
                     "case_id": case_id,
+                    "prompt_part_names": [
+                        "standard_base_instructions",
+                        "standard_model_instruction",
+                        "query_base_context",
+                        "query_model_guidance",
+                        "query_model_footer",
+                    ],
                     "base_prompt_source": "v2/v3",
-                    "base_prompt": case["prompt"],
+                    "query_base_context": case["prompt"],
                     "addendum_id": addendum["addendum_id"],
-                    "addendum_text": addendum["text"],
+                    "query_model_guidance": addendum["text"],
+                    "standard_model_instruction_source": "runtime model profile",
+                    "query_model_footer_source": "runtime model profile",
                 }
             )
             summary_rows.append(
@@ -419,7 +436,7 @@ def main() -> None:
             )
 
     registry["created_by"] = "scripts/update_v5_guidance_from_v4.py"
-    registry["strategy"] = "compose prompt as shared v2/v3 base query plus model-specific v5 addendum updated with v4 evidence"
+    registry["strategy"] = "compose five prompt parts: standard base, standard model instruction, query context, model/query guidance, and model query footer"
     registry["non_leakage_policy"] = "Runtime addenda use failure modes, component weaknesses, prompt-derived guardrails, and sanitized failure categories; they do not include gold answer rows, expected row counts, or row identifiers."
     registry["source_runs"] = list(SOURCE_RUNS)
     registry["active_models"] = selected_models

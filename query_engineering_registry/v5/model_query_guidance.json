@@ -2,7 +2,7 @@
   "registry_id": "photosynthesis_snowflake_v5_model_query_guidance",
   "benchmark_id": "AIBioBench_photosynthesis_snowflake_v5",
   "created_by": "scripts/update_v5_guidance_from_v4.py",
-  "strategy": "compose prompt as shared v2/v3 base query plus model-specific v5 addendum updated with v4 evidence",
+  "strategy": "compose five prompt parts: standard base, standard model instruction, query context, model/query guidance, and model query footer",
   "non_leakage_policy": "Runtime addenda use failure modes, component weaknesses, prompt-derived guardrails, and sanitized failure categories; they do not include gold answer rows, expected row counts, or row identifiers.",
   "source_runs": [
     "photosynthesis_snowflake_v2",
@@ -1495,6 +1495,14 @@
           "order_only": 6,
           "row_count_mismatch": 14
         }
+      },
+      "standard_model_instruction": {
+        "heading": "Standard model-specific instruction",
+        "text": "- Gemma 4 26B: Keep the solution concise and literal; historical non-exact risk is `same_count_wrong_values`.\n- Model-specific standard check: fix the row set first, then recompute every requested value from the shown CSV rows rather than using plausible shortcuts."
+      },
+      "query_model_footer": {
+        "heading": "Model-specific query footer",
+        "text": "- Final Gemma 4 26B (`gemma4` family) footer: before returning, compare the requested row identities, numeric fields, NULL handling, column order, and sort order against the task.\n- Return only the JSON object. Do not include markdown, reasoning, code, helper columns, or explanatory text."
       }
     },
     "phi4-mini-sqlbench:latest": {
@@ -2979,6 +2987,14 @@
           "row_count_mismatch": 22,
           "same_count_wrong_values": 128
         }
+      },
+      "standard_model_instruction": {
+        "heading": "Standard model-specific instruction",
+        "text": "- Phi-4 Mini: Be conservative and verify each boundary; historical non-exact risk is `same_count_wrong_values`.\n- Model-specific standard check: fix the row set first, then recompute every requested value from the shown CSV rows rather than using plausible shortcuts."
+      },
+      "query_model_footer": {
+        "heading": "Model-specific query footer",
+        "text": "- Final Phi-4 Mini (`phi3` family) footer: before returning, compare the requested row identities, numeric fields, NULL handling, column order, and sort order against the task.\n- Return only the JSON object. Do not include markdown, reasoning, code, helper columns, or explanatory text."
       }
     },
     "gemma4-31b-sqlbench:latest": {
@@ -4464,6 +4480,14 @@
           "order_only": 3,
           "same_count_wrong_values": 102
         }
+      },
+      "standard_model_instruction": {
+        "heading": "Standard model-specific instruction",
+        "text": "- Gemma 4 31B: Keep the solution concise and literal; historical non-exact risk is `same_count_wrong_values`.\n- Model-specific standard check: fix the row set first, then recompute every requested value from the shown CSV rows rather than using plausible shortcuts."
+      },
+      "query_model_footer": {
+        "heading": "Model-specific query footer",
+        "text": "- Final Gemma 4 31B (`gemma4` family) footer: before returning, compare the requested row identities, numeric fields, NULL handling, column order, and sort order against the task.\n- Return only the JSON object. Do not include markdown, reasoning, code, helper columns, or explanatory text."
       }
     },
     "qwen3-coder-30b-sqlbench:latest": {
@@ -5950,6 +5974,14 @@
           "same_count_wrong_values": 129,
           "order_only": 2
         }
+      },
+      "standard_model_instruction": {
+        "heading": "Standard model-specific instruction",
+        "text": "- Qwen3 Coder 30B: Be conservative and verify each boundary; historical non-exact risk is `same_count_wrong_values`.\n- Model-specific standard check: fix the row set first, then recompute every requested value from the shown CSV rows rather than using plausible shortcuts."
+      },
+      "query_model_footer": {
+        "heading": "Model-specific query footer",
+        "text": "- Final Qwen3 Coder 30B (`qwen3moe` family) footer: before returning, compare the requested row identities, numeric fields, NULL handling, column order, and sort order against the task.\n- Return only the JSON object. Do not include markdown, reasoning, code, helper columns, or explanatory text."
       }
     },
     "qwen3.6-sqlbench:latest": {
@@ -7435,6 +7467,14 @@
           "order_only": 3,
           "same_count_wrong_values": 120
         }
+      },
+      "standard_model_instruction": {
+        "heading": "Standard model-specific instruction",
+        "text": "- Qwen3.6: Keep the solution concise and literal; historical non-exact risk is `same_count_wrong_values`.\n- Model-specific standard check: fix the row set first, then recompute every requested value from the shown CSV rows rather than using plausible shortcuts."
+      },
+      "query_model_footer": {
+        "heading": "Model-specific query footer",
+        "text": "- Final Qwen3.6 (`qwen35moe` family) footer: before returning, compare the requested row identities, numeric fields, NULL handling, column order, and sort order against the task.\n- Return only the JSON object. Do not include markdown, reasoning, code, helper columns, or explanatory text."
       }
     },
     "qwen3.6-27b-sqlbench:latest": {
@@ -8920,6 +8960,14 @@
           "order_only": 3,
           "same_count_wrong_values": 111
         }
+      },
+      "standard_model_instruction": {
+        "heading": "Standard model-specific instruction",
+        "text": "- Qwen3.6 27B: Keep the solution concise and literal; historical non-exact risk is `same_count_wrong_values`.\n- Model-specific standard check: fix the row set first, then recompute every requested value from the shown CSV rows rather than using plausible shortcuts."
+      },
+      "query_model_footer": {
+        "heading": "Model-specific query footer",
+        "text": "- Final Qwen3.6 27B (`qwen35` family) footer: before returning, compare the requested row identities, numeric fields, NULL handling, column order, and sort order against the task.\n- Return only the JSON object. Do not include markdown, reasoning, code, helper columns, or explanatory text."
       }
     }
   },
@@ -8931,5 +8979,32 @@
     "qwen3-coder-30b-sqlbench:latest",
     "qwen3.6-sqlbench:latest",
     "qwen3.6-27b-sqlbench:latest"
+  ],
+  "prompt_part_schema": [
+    {
+      "order": 1,
+      "name": "standard_base_instructions",
+      "source": "standard_instructions.json text plus benchmark JSON-only output contract"
+    },
+    {
+      "order": 2,
+      "name": "standard_model_instruction",
+      "source": "model-level registry field, derived from model profile if absent"
+    },
+    {
+      "order": 3,
+      "name": "query_base_context",
+      "source": "benchmark metadata, schema, dataset tables at runtime, case prompt, and required output columns"
+    },
+    {
+      "order": 4,
+      "name": "query_model_guidance",
+      "source": "model-and-case registry guidance"
+    },
+    {
+      "order": 5,
+      "name": "query_model_footer",
+      "source": "model-level or case-level registry footer, derived from model profile if absent"
+    }
   ]
 }
