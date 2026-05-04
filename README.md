@@ -103,7 +103,7 @@ Useful runner flags:
 - `--output-dir`: force a specific output directory
 - `--no-append-output`: create a fresh timestamped results directory instead of merging into the shared bundle
 - `--bundle-dir-name`: override the shared bundle basename when appending
-- `--query-engineering-registry`: override the v5 model-specific addendum registry
+- `--query-engineering-registry`: override the v5/v5.1 query-engineering registry
 - `--no-query-engineering`: run only the shared base prompts without v5 addenda
 - `--dry-run`: print the selected cases without executing model calls
 
@@ -111,7 +111,7 @@ Current output behavior:
 
 - By default, `aibiobench.py` appends into `results/photosynthesis_snowflake_v5`.
 - If that bundle does not exist, it creates `results/photosynthesis_snowflake_v5`.
-- v5 prompts are composed as shared v2/v3 base query text plus optional model-specific addenda from `query_engineering_registry/v5/model_query_guidance.json`.
+- v5.1 prompts are composed from `query_engineering_registry/v5.1/aibiobench_v51_task_specific_prompts.md`: common JSON contract, model-specific task agenda, task-specific prompt template with only required CSV tables, target-model addendum, and footer focus.
 - The root files written by the runner include:
   - `detailed_results.csv`
   - `detailed_results.jsonl`

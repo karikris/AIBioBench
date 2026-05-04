@@ -42,6 +42,16 @@ KEEP_ALIVE = "10m"
 REQUEST_TIMEOUT_S = 7200
 HEARTBEAT_INTERVAL_S = 15.0
 SAMPLE_INTERVAL_S = 1.0
+V51_MARKDOWN_REGISTRY_FORMAT = "v51_task_specific_markdown"
+V51_EXPECTED_CASE_COUNT = 50
+V51_MODEL_DISPLAY_BY_OLLAMA_BASE = {
+    "gemma4-26b-sqlbench": "Gemma 4 26B",
+    "gemma4-31b-sqlbench": "Gemma 4 31B",
+    "phi4-mini-sqlbench": "Phi-4 Mini",
+    "qwen3-coder-30b-sqlbench": "Qwen3 Coder 30B",
+    "qwen3.6-sqlbench": "Qwen3.6",
+    "qwen3.6-27b-sqlbench": "Qwen3.6 27B",
+}
 
 OUTPUT_TABLE_SCHEMA: Dict[str, Any] = {
     "type": "object",
@@ -496,6 +506,140 @@ def make_csv_text(table_name: str, table: dict) -> str:
     return "\n".join(lines)
 
 
+def normalize_newlines(text: str) -> str:
+    return text.replace("\r\n", "\n").replace("\r", "\n")
+
+
+def markdown_h2_section(text: str, heading: str) -> str:
+    pattern = re.compile(rf"^##\s+{re.escape(heading)}\s*$", flags=re.MULTILINE)
+    match = pattern.search(text)
+    if not match:
+        raise ValueError(f"Missing Markdown section: ## {heading}")
+    next_match = re.search(r"^##\s+", text[match.end():], flags=re.MULTILINE)
+    end = match.end() + next_match.start() if next_match else len(text)
+    return text[match.end():end].strip()
+
+
+def parse_agenda_field(body: str, label: str, model: str) -> str:
+    match = re.search(rf"^-\s+\*\*{re.escape(label)}:\*\*\s*(.+?)\s*$", body, flags=re.MULTILINE)
+    if not match:
+        raise ValueError(f"Missing `{label}` for v5.1 model agenda: {model}")
+    return match.group(1).strip()
+
+
+def parse_v51_model_agendas(text: str) -> Dict[str, dict]:
+    section = markdown_h2_section(text, "Model-Specific Task Agendas")
+    heading_re = re.compile(r"^###\s+(.+?)\s*$", flags=re.MULTILINE)
+    matches = list(heading_re.finditer(section))
+    agendas: Dict[str, dict] = {}
+    for index, match in enumerate(matches):
+        model = match.group(1).strip()
+        end = matches[index + 1].start() if index + 1 < len(matches) else len(section)
+        body = section[match.end():end]
+        agendas[model] = {
+            "display_model": model,
+            "core_agenda": parse_agenda_field(body, "Core agenda", model),
+            "sql_agenda": parse_agenda_field(body, "SQL agenda", model),
+            "pandas_agenda": parse_agenda_field(body, "Pandas agenda", model),
+            "footer_focus": parse_agenda_field(body, "Footer focus", model),
+        }
+    if not agendas:
+        raise ValueError("No v5.1 model agendas found.")
+    return agendas
+
+
+def parse_v51_target_model_addenda(section: str, case_id: str) -> Dict[str, str]:
+    marker = "**Target-model addendum"
+    marker_pos = section.find(marker)
+    if marker_pos < 0:
+        raise ValueError(f"Missing target-model addendum block for {case_id}")
+    addenda_text = section[marker_pos:]
+    addenda: Dict[str, str] = {}
+    current_models: List[str] = []
+    current_lines: List[str] = []
+
+    def flush_current() -> None:
+        if not current_models:
+            return
+        text = " ".join(line.strip() for line in current_lines if line.strip()).strip()
+        if not text:
+            raise ValueError(f"Empty target-model addendum in {case_id}: {current_models}")
+        for model in current_models:
+            if model in addenda:
+                raise ValueError(f"Duplicate target-model addendum for {model} in {case_id}")
+            addenda[model] = text
+
+    for line in addenda_text.splitlines():
+        stripped = line.strip()
+        bullet = re.match(r"^-\s+\*\*(.+?):\*\*\s*(.*)$", stripped)
+        if bullet:
+            flush_current()
+            current_models = [part.strip() for part in bullet.group(1).split("/") if part.strip()]
+            current_lines = [bullet.group(2).strip()]
+        elif current_models and stripped and not stripped.startswith("**Target-model addendum"):
+            current_lines.append(stripped)
+    flush_current()
+    if not addenda:
+        raise ValueError(f"No target-model addenda parsed for {case_id}")
+    return addenda
+
+
+def parse_v51_case_sections(text: str) -> Dict[str, dict]:
+    heading_re = re.compile(
+        r"^##\s+(pass[1-5]\.query(?:[1-9]|10))\s+(?:-|\u2014)\s+(SQL|PANDAS)\s+(?:-|\u2014)\s+(.*?)\s*$",
+        flags=re.MULTILINE,
+    )
+    matches = list(heading_re.finditer(text))
+    cases: Dict[str, dict] = {}
+    for index, match in enumerate(matches):
+        case_id = match.group(1)
+        language_label = match.group(2)
+        heading_task = match.group(3).strip()
+        end = matches[index + 1].start() if index + 1 < len(matches) else len(text)
+        section = text[match.end():end]
+        fenced = re.search(r"```text\s*\n(.*?)\n```", section, flags=re.DOTALL)
+        if not fenced:
+            raise ValueError(f"Missing fenced text prompt body for {case_id}")
+        template_text = fenced.group(1).strip()
+        required_tables = sorted(set(re.findall(r"--- BEGIN ([A-Za-z0-9_]+) CSV ---", template_text)))
+        cases[case_id] = {
+            "case_id": case_id,
+            "language_label": language_label,
+            "heading_task": heading_task,
+            "template_text": template_text,
+            "required_tables": required_tables,
+            "addenda_by_model": parse_v51_target_model_addenda(section[fenced.end():], case_id),
+        }
+    if len(cases) != V51_EXPECTED_CASE_COUNT:
+        raise ValueError(f"Expected {V51_EXPECTED_CASE_COUNT} v5.1 case sections, found {len(cases)}")
+    return cases
+
+
+def parse_v51_markdown_registry(registry_path: Path) -> dict:
+    text = normalize_newlines(registry_path.read_text(encoding="utf-8"))
+    title_match = re.search(r"^#\s+(.+?)\s*$", text, flags=re.MULTILINE)
+    common_json_contract = markdown_h2_section(text, "Common JSON Contract")
+    registry = {
+        "registry_id": "photosynthesis_snowflake_v5_1_task_specific_prompts",
+        "benchmark_id": "AIBioBench_photosynthesis_snowflake_v5",
+        "title": title_match.group(1).strip() if title_match else registry_path.stem,
+        "_registry_format": V51_MARKDOWN_REGISTRY_FORMAT,
+        "strategy": "common_contract_model_agenda_task_template_model_addendum_footer_focus",
+        "prompt_parts": [
+            "common_json_contract",
+            "model_specific_task_agenda",
+            "task_specific_prompt",
+            "target_model_addendum",
+            "footer_focus",
+        ],
+        "common_json_contract": common_json_contract,
+        "model_agendas": parse_v51_model_agendas(text),
+        "cases": parse_v51_case_sections(text),
+    }
+    registry["_registry_path"] = str(registry_path)
+    return registry
+
+
 def load_query_engineering_registry(repo_root: Path, manifest: dict, args: argparse.Namespace) -> dict:
     if not getattr(args, "query_engineering", True):
         return {}
@@ -509,14 +653,31 @@ def load_query_engineering_registry(repo_root: Path, manifest: dict, args: argpa
         registry_path = repo_root / registry_path
     if not registry_path.exists():
         raise FileNotFoundError(f"Query engineering registry not found: {registry_path}")
+    if registry_path.suffix.lower() == ".md":
+        return parse_v51_markdown_registry(registry_path)
     registry = load_json(registry_path)
     registry["_registry_path"] = str(registry_path)
     return registry
 
 
+def is_v51_markdown_registry(registry: dict) -> bool:
+    return bool(registry) and registry.get("_registry_format") == V51_MARKDOWN_REGISTRY_FORMAT
+
+
 def model_registry_entry(registry: dict, model: str) -> Optional[dict]:
     if not registry:
         return None
+    if is_v51_markdown_registry(registry):
+        display_model = v51_display_model_for_model(registry, model)
+        agenda = registry.get("model_agendas", {}).get(display_model)
+        if agenda is None:
+            return None
+        return {
+            "_registry_format": V51_MARKDOWN_REGISTRY_FORMAT,
+            "display_model": display_model,
+            "model_family": v51_model_family(display_model),
+            "agenda": agenda,
+        }
     guidance_by_model = registry.get("guidance_by_model", {})
     model_entry = guidance_by_model.get(model)
     if model_entry is None and model.endswith(":latest"):
@@ -525,6 +686,28 @@ def model_registry_entry(registry: dict, model: str) -> Optional[dict]:
 
 
 def model_guidance_entry(registry: dict, model: str, case_id: str) -> Optional[dict]:
+    if is_v51_markdown_registry(registry):
+        model_entry = model_registry_entry(registry, model)
+        case_entry = (registry.get("cases") or {}).get(case_id)
+        if model_entry is None or case_entry is None:
+            return None
+        display_model = model_entry["display_model"]
+        addendum_text = (case_entry.get("addenda_by_model") or {}).get(display_model)
+        if not addendum_text:
+            return None
+        return {
+            "_registry_format": V51_MARKDOWN_REGISTRY_FORMAT,
+            "addendum_id": f"v5.1::{display_model}::{case_id}",
+            "model": model,
+            "display_model": display_model,
+            "model_family": model_entry.get("model_family", ""),
+            "case_id": case_id,
+            "heading": "Target-model addendum",
+            "text": addendum_text,
+            "source_runs": ["v5.1"],
+            "case_entry": case_entry,
+            "common_json_contract": registry["common_json_contract"],
+        }
     model_entry = model_registry_entry(registry, model)
     if model_entry is None:
         return None
@@ -533,6 +716,28 @@ def model_guidance_entry(registry: dict, model: str, case_id: str) -> Optional[d
 
 def base_model_name(model: str) -> str:
     return model[:-7] if model.endswith(":latest") else model
+
+
+def v51_display_model_for_model(registry: dict, model: str) -> str:
+    base = base_model_name(model)
+    display_model = V51_MODEL_DISPLAY_BY_OLLAMA_BASE.get(base)
+    if display_model:
+        return display_model
+    if base in (registry.get("model_agendas") or {}):
+        return base
+    raise KeyError(f"No v5.1 Markdown model mapping for model `{model}`")
+
+
+def v51_model_family(display_model: str) -> str:
+    if display_model.startswith("Gemma 4"):
+        return "gemma4"
+    if display_model == "Phi-4 Mini":
+        return "phi4-mini"
+    if display_model == "Qwen3 Coder 30B":
+        return "qwen3-coder"
+    if display_model.startswith("Qwen3.6"):
+        return "qwen3.6"
+    return re.sub(r"[^A-Za-z0-9]+", "_", display_model).strip("_").lower()
 
 
 def clean_instruction_text(value: Any) -> str:
@@ -620,6 +825,66 @@ def render_prompt_parts(parts: List[dict]) -> str:
     return "\n\n".join(rendered).strip() + "\n"
 
 
+def render_v51_task_prompt(template_text: str, dataset: dict) -> str:
+    def replace_csv_placeholder(match: re.Match) -> str:
+        table_name = match.group(1)
+        table = (dataset.get("tables") or {}).get(table_name)
+        if table is None:
+            raise ValueError(f"v5.1 prompt template references missing dataset table: {table_name}")
+        return (
+            f"--- BEGIN {table_name} CSV ---\n"
+            f"{make_csv_text(table_name, table)}\n"
+            f"--- END {table_name} CSV ---"
+        )
+
+    pattern = re.compile(
+        r"--- BEGIN ([A-Za-z0-9_]+) CSV ---\n"
+        r"\[full \1 CSV here\]\n"
+        r"--- END \1 CSV ---"
+    )
+    rendered, replacement_count = pattern.subn(replace_csv_placeholder, template_text)
+    required_tables = set(re.findall(r"--- BEGIN ([A-Za-z0-9_]+) CSV ---", template_text))
+    if replacement_count != len(required_tables):
+        raise ValueError(
+            "v5.1 prompt template CSV placeholders are malformed: "
+            f"replaced={replacement_count} required_tables={sorted(required_tables)}"
+        )
+    return rendered
+
+
+def build_v51_markdown_prompt_parts(
+    case: dict,
+    dataset: dict,
+    model_entry: dict,
+    model_guidance: dict,
+) -> List[dict]:
+    agenda = model_entry["agenda"]
+    case_entry = model_guidance["case_entry"]
+    pass_group_agenda_name = "SQL agenda" if int(case["pass"]) in (1, 2, 3) else "Pandas agenda"
+    pass_group_agenda_key = "sql_agenda" if pass_group_agenda_name == "SQL agenda" else "pandas_agenda"
+    display_model = model_entry["display_model"]
+    agenda_text = (
+        f"Target model: {display_model}\n"
+        f"- Core agenda: {agenda['core_agenda']}\n"
+        f"- {pass_group_agenda_name}: {agenda[pass_group_agenda_key]}"
+    )
+    addendum_text = (
+        f"Target model: {display_model}\n"
+        f"{model_guidance['text']}"
+    )
+    footer_text = (
+        f"Target model: {display_model}\n"
+        f"- Footer focus: {agenda['footer_focus']}"
+    )
+    return [
+        make_prompt_part("common_json_contract", "Part 1 - Common JSON Contract", model_guidance["common_json_contract"]),
+        make_prompt_part("model_specific_task_agenda", "Part 2 - Model-Specific Task Agenda", agenda_text),
+        make_prompt_part("task_specific_prompt", "Part 3 - Task-Specific Prompt", render_v51_task_prompt(case_entry["template_text"], dataset)),
+        make_prompt_part("target_model_addendum", "Part 4 - Target-Model Addendum", addendum_text),
+        make_prompt_part("footer_focus", "Part 5 - Footer Focus", footer_text),
+    ]
+
+
 def build_case_prompt_parts(
     case: dict,
     dataset: dict,
@@ -629,6 +894,11 @@ def build_case_prompt_parts(
     model_entry: Optional[dict] = None,
     model_guidance: Optional[dict] = None,
 ) -> List[dict]:
+    if model_guidance and model_guidance.get("_registry_format") == V51_MARKDOWN_REGISTRY_FORMAT:
+        if not model_entry:
+            raise ValueError(f"Missing v5.1 model agenda for model `{model}`")
+        return build_v51_markdown_prompt_parts(case, dataset, model_entry, model_guidance)
+
     inst = instruction_lookup[case["standard_instructions_id"]]["text"].strip()
     table_blocks = []
     for table_name, table in dataset["tables"].items():
@@ -682,6 +952,46 @@ def build_case_prompt(
     model_guidance: Optional[dict] = None,
 ) -> str:
     return render_prompt_parts(build_case_prompt_parts(case, dataset, instruction_lookup, answer_columns, model, model_entry, model_guidance))
+
+
+def validate_query_engineering_registry_for_run(
+    registry: dict,
+    selected_cases: List[dict],
+    models: List[str],
+    dataset: dict,
+) -> None:
+    if not is_v51_markdown_registry(registry):
+        return
+
+    cases_by_id = registry.get("cases") or {}
+    if len(cases_by_id) != V51_EXPECTED_CASE_COUNT:
+        raise ValueError(f"Expected {V51_EXPECTED_CASE_COUNT} v5.1 cases, found {len(cases_by_id)}")
+
+    for model in models:
+        model_entry = model_registry_entry(registry, model)
+        if model_entry is None:
+            raise ValueError(f"Missing v5.1 model agenda for model `{model}`")
+
+    dataset_tables = set((dataset.get("tables") or {}).keys())
+    for case in selected_cases:
+        case_id = case["case_id"]
+        case_entry = cases_by_id.get(case_id)
+        if case_entry is None:
+            raise ValueError(f"Missing v5.1 prompt template for selected case `{case_id}`")
+        expected_label = "SQL" if case["language"] == "sql" else "PANDAS"
+        if case_entry["language_label"] != expected_label:
+            raise ValueError(
+                f"v5.1 language label mismatch for {case_id}: "
+                f"template={case_entry['language_label']} benchmark={case['language']}"
+            )
+        missing_tables = sorted(set(case_entry.get("required_tables", [])) - dataset_tables)
+        if missing_tables:
+            raise ValueError(f"v5.1 template {case_id} references missing tables: {missing_tables}")
+        for model in models:
+            guidance = model_guidance_entry(registry, model, case_id)
+            if guidance is None:
+                display = v51_display_model_for_model(registry, model)
+                raise ValueError(f"Missing v5.1 target-model addendum for {display} in {case_id}")
 
 
 def load_json(path: Path) -> Any:
@@ -1266,9 +1576,10 @@ def run_case(
         "query_engineering_model_family": guidance.get("model_family", "") if guidance else "",
         "query_engineering_source_runs": json.dumps(guidance.get("source_runs", []), ensure_ascii=False) if guidance else "[]",
         "query_engineering_addendum_chars": len(guidance.get("text", "")) if guidance else 0,
-        "query_engineering_standard_model_chars": sum(len(part["text"]) for part in active_prompt_parts if part["name"] == "standard_model_instruction"),
-        "query_engineering_query_guidance_chars": sum(len(part["text"]) for part in active_prompt_parts if part["name"] == "query_model_guidance"),
-        "query_engineering_query_footer_chars": sum(len(part["text"]) for part in active_prompt_parts if part["name"] == "query_model_footer"),
+        "query_engineering_registry_format": query_engineering_registry.get("_registry_format", "json") if query_engineering_registry else "",
+        "query_engineering_standard_model_chars": sum(len(part["text"]) for part in active_prompt_parts if part["name"] in ("standard_model_instruction", "model_specific_task_agenda")),
+        "query_engineering_query_guidance_chars": sum(len(part["text"]) for part in active_prompt_parts if part["name"] in ("query_model_guidance", "target_model_addendum")),
+        "query_engineering_query_footer_chars": sum(len(part["text"]) for part in active_prompt_parts if part["name"] in ("query_model_footer", "footer_focus")),
         "query_engineering_prompt_parts": len(active_prompt_parts),
         "query_engineering_prompt_part_names": json.dumps([part["name"] for part in active_prompt_parts], ensure_ascii=False),
         "ps_context": ps.get("context_length"),
@@ -1590,6 +1901,12 @@ OUTPUT_FILE_SPECS: Dict[str, Tuple[str, str]] = {
 
 
 def run_version_identifier(manifest: dict) -> str:
+    explicit_identifier = str(manifest.get("output_version_id", "")).strip()
+    if explicit_identifier:
+        identifier = re.sub(r"[^A-Za-z0-9]+", "_", explicit_identifier).strip("_").lower()
+        if identifier:
+            return identifier
+
     benchmark_id = str(manifest.get("benchmark_id", ""))
     match = re.search(r"(?:^|_)(v\d+(?:[._-]\d+)*)$", benchmark_id, flags=re.IGNORECASE)
     if match:
@@ -1914,6 +2231,8 @@ def main() -> None:
 
     if not selected_cases:
         raise SystemExit("No benchmark cases selected.")
+
+    validate_query_engineering_registry_for_run(query_engineering_registry, selected_cases, models, dataset)
 
     repeats = int(args.repeats or manifest.get("default_repeats_per_case", 1))
     args.repeat_group_id = args.repeat_group_id or manifest.get("default_repeat_group_id", "default_repeatability")

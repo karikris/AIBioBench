@@ -8,6 +8,7 @@ This registry records query prompt evolution and v5 runtime prompt composition.
 - `runs/v3/`: v3 case/query snapshot from git history.
 - `runs/v4/`: v4 case/query snapshot with task-specific prompt guidance.
 - `runs/v5/`: v5 shared base query snapshot; prompts match v2/v3 base query wording.
+- `runs/v5.1/`: v5.1 manifest and task-specific Markdown prompt snapshot.
 
 ## v5 Runtime Prompt Parts
 
@@ -28,3 +29,17 @@ Addenda are derived from v2/v3/v4 failures and avoid embedding complete gold ans
 The source failure-point CSV keeps detailed audit labels; those labels are sanitized before becoming runtime guidance.
 
 Current registry id: `photosynthesis_snowflake_v5_model_query_guidance`
+
+## v5.1 Runtime Prompt Parts
+
+- `v5.1/aibiobench_v51_task_specific_prompts.md`: single Markdown source for common JSON contract, model agendas, all 50 task-specific prompt templates, and target-model addenda.
+
+When the manifest enables v5.1 query engineering, the runner builds a five-part prompt:
+
+1. `common_json_contract`: shared JSON-only output contract.
+2. `model_specific_task_agenda`: target model core agenda plus SQL agenda for passes 1-3 or Pandas agenda for passes 4-5.
+3. `task_specific_prompt`: fenced task prompt body with only the CSV tables named by that case.
+4. `target_model_addendum`: only the addendum bullet that names the model being run.
+5. `footer_focus`: target model footer focus, rendered after the target-model addendum.
+
+Current v5.1 registry id: `photosynthesis_snowflake_v5_1_task_specific_prompts`
