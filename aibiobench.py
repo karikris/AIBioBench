@@ -862,20 +862,12 @@ def build_v51_markdown_prompt_parts(
     case_entry = model_guidance["case_entry"]
     pass_group_agenda_name = "SQL agenda" if int(case["pass"]) in (1, 2, 3) else "Pandas agenda"
     pass_group_agenda_key = "sql_agenda" if pass_group_agenda_name == "SQL agenda" else "pandas_agenda"
-    display_model = model_entry["display_model"]
     agenda_text = (
-        f"Target model: {display_model}\n"
         f"- Core agenda: {agenda['core_agenda']}\n"
         f"- {pass_group_agenda_name}: {agenda[pass_group_agenda_key]}"
     )
-    addendum_text = (
-        f"Target model: {display_model}\n"
-        f"{model_guidance['text']}"
-    )
-    footer_text = (
-        f"Target model: {display_model}\n"
-        f"- Footer focus: {agenda['footer_focus']}"
-    )
+    addendum_text = model_guidance["text"]
+    footer_text = f"- Footer focus: {agenda['footer_focus']}"
     return [
         make_prompt_part("common_json_contract", "Part 1 - Common JSON Contract", model_guidance["common_json_contract"]),
         make_prompt_part("model_specific_task_agenda", "Part 2 - Model-Specific Task Agenda", agenda_text),
