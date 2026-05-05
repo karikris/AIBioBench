@@ -277,6 +277,12 @@ def row_ids(rows):
     return {row[0] for row in rows if isinstance(row, list) and row}
 
 
+def row_value(row, index, default=None):
+    if isinstance(row, list) and len(row) > index:
+        return row[index]
+    return default
+
+
 def detect_issue_flags(case_id: str, pred_rows: list, gold_rows: list, row: dict) -> list[str]:
     flags = []
     pred_rows = coerce_numeric_strings(pred_rows)
@@ -307,7 +313,7 @@ def detect_issue_flags(case_id: str, pred_rows: list, gold_rows: list, row: dict
         expected_genes = {1: "NDHB", 2: "NDHB", 3: "NDHB", 4: "NDHK", 5: "PGR5", 6: None, 7: "NDHK", 8: "NDHB", 9: None}
         for call_id, expected in expected_genes.items():
             pred_row = pred.get(call_id) or pred.get(str(call_id))
-            if pred_row is not None and pred_row[5] != expected:
+            if pred_row is not None and row_value(pred_row, 5) != expected:
                 flags.append("q2_wrong_gene_mapping")
                 break
         row8 = pred.get(8) or pred.get("8")
@@ -315,7 +321,7 @@ def detect_issue_flags(case_id: str, pred_rows: list, gold_rows: list, row: dict
             flags.append("q2_bad_sample_nulls")
         for call_id in [6, 9]:
             pred_row = pred.get(call_id) or pred.get(str(call_id))
-            if pred_row is not None and pred_row[5] is not None:
+            if pred_row is not None and row_value(pred_row, 5) is not None:
                 flags.append("q2_bad_chain_nulls")
                 break
 
@@ -350,13 +356,14 @@ def detect_issue_flags(case_id: str, pred_rows: list, gold_rows: list, row: dict
         }
         if set(pred) != set(expected):
             flags.append("q4_wrong_group_set")
-        if ("control", "high") not in pred or pred[("control", "high")][2] != 2 or not numeric_close(pred[("control", "high")][3], 84.0):
+        control_high = pred.get(("control", "high"))
+        if control_high is None or row_value(control_high, 2) != 2 or not numeric_close(row_value(control_high, 3), 84.0):
             flags.append("q4_control_high_wrong")
         if any(key[1] in {"SNV", "indel", "chloroplast_NDH_complex"} for key in pred):
             flags.append("q4_wrong_impact_bucket")
         for key, (count, avg_qual) in expected.items():
             if key in pred:
-                if pred[key][2] != count or not numeric_close(pred[key][3], avg_qual):
+                if row_value(pred[key], 2) != count or not numeric_close(row_value(pred[key], 3), avg_qual):
                     flags.append("q4_avg_wrong")
                     break
 
@@ -369,9 +376,9 @@ def detect_issue_flags(case_id: str, pred_rows: list, gold_rows: list, row: dict
             flags.append("q5_leaked_unmatched_gene")
         for gene, (avg_vaf, max_qual) in expected.items():
             if gene in pred:
-                if not numeric_close(pred[gene][1], avg_vaf):
+                if not numeric_close(row_value(pred[gene], 1), avg_vaf):
                     flags.append("q5_wrong_vaf")
-                if pred[gene][2] != max_qual:
+                if row_value(pred[gene], 2) != max_qual:
                     flags.append("q5_wrong_max_qual")
         flags = list(dict.fromkeys(flags))
 
@@ -383,9 +390,9 @@ def detect_issue_flags(case_id: str, pred_rows: list, gold_rows: list, row: dict
             flags.append("q6_included_root")
         expected = {"mature_leaf": (2, 750.0), "young_leaf": (2, 500.0)}
         for tissue, (distinct_genes, avg_expr) in expected.items():
-            if tissue not in pred or pred[tissue][1] != distinct_genes:
+            if tissue not in pred or row_value(pred[tissue], 1) != distinct_genes:
                 flags.append("q6_wrong_distinct_genes")
-            if tissue not in pred or not numeric_close(pred[tissue][2], avg_expr):
+            if tissue not in pred or not numeric_close(row_value(pred[tissue], 2), avg_expr):
                 flags.append("q6_wrong_expr_average")
         if set(pred) != set(expected):
             flags.append("q6_wrong_distinct_genes")
@@ -397,13 +404,13 @@ def detect_issue_flags(case_id: str, pred_rows: list, gold_rows: list, row: dict
         if not expected_samples.issubset(set(pred)):
             flags.append("q7_missing_preserved_sample")
         row4 = pred.get("S4")
-        if row4 is None or row4[2] != 1 or not numeric_close(row4[3], 0.0):
+        if row4 is None or row_value(row4, 2) != 1 or not numeric_close(row_value(row4, 3), 0.0):
             flags.append("q7_missed_zero_alt_high")
         row3 = pred.get("S3")
-        if row3 is not None and row3[2] != 0:
+        if row3 is not None and row_value(row3, 2) != 0:
             flags.append("q7_counted_non_high")
         for sample, expected_avg in {"S1": 28.0, "S2": 10.0, "S4": 0.0}.items():
-            if sample in pred and not numeric_close(pred[sample][3], expected_avg):
+            if sample in pred and not numeric_close(row_value(pred[sample], 3), expected_avg):
                 flags.append("q7_wrong_alt_average")
                 break
 
@@ -418,9 +425,9 @@ def detect_issue_flags(case_id: str, pred_rows: list, gold_rows: list, row: dict
             flags.append("q8_dropped_gene")
         for gene, (total_alt, avg_qual, max_alt) in expected.items():
             if gene in pred:
-                if pred[gene][1] != total_alt or pred[gene][3] != max_alt:
+                if row_value(pred[gene], 1) != total_alt or row_value(pred[gene], 3) != max_alt:
                     flags.append("q8_wrong_alt_total")
-                if not numeric_close(pred[gene][2], avg_qual):
+                if not numeric_close(row_value(pred[gene], 2), avg_qual):
                     flags.append("q8_wrong_avg_qual")
         flags = list(dict.fromkeys(flags))
 
@@ -437,9 +444,9 @@ def detect_issue_flags(case_id: str, pred_rows: list, gold_rows: list, row: dict
             flags.append("q9_leaked_incomplete_pathway")
         for key, (call_count, mean_vaf, distinct_samples) in expected.items():
             if key in pred:
-                if pred[key][2] != call_count or pred[key][4] != distinct_samples:
+                if row_value(pred[key], 2) != call_count or row_value(pred[key], 4) != distinct_samples:
                     flags.append("q9_wrong_counts")
-                if not numeric_close(pred[key][3], mean_vaf):
+                if not numeric_close(row_value(pred[key], 3), mean_vaf):
                     flags.append("q9_wrong_vaf")
         flags = list(dict.fromkeys(flags))
 
@@ -456,9 +463,9 @@ def detect_issue_flags(case_id: str, pred_rows: list, gold_rows: list, row: dict
             flags.append("q10_missing_s5")
         for sample, (total, complete, incomplete) in expected.items():
             if sample in pred:
-                if pred[sample][2] != total:
+                if row_value(pred[sample], 2) != total:
                     flags.append("q10_wrong_total_calls")
-                if pred[sample][3] != complete or pred[sample][4] != incomplete:
+                if row_value(pred[sample], 3) != complete or row_value(pred[sample], 4) != incomplete:
                     flags.append("q10_wrong_chain_counts")
         flags = list(dict.fromkeys(flags))
 
