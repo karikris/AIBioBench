@@ -9,6 +9,7 @@ This registry records query prompt evolution and v5 runtime prompt composition.
 - `runs/v4/`: v4 case/query snapshot with task-specific prompt guidance.
 - `runs/v5/`: v5 shared base query snapshot; prompts match v2/v3 base query wording.
 - `runs/v5.1/`: v5.1 manifest and task-specific Markdown prompt snapshot.
+- `runs/v6/`: v6 oracle-code control snapshot; prompts use original v2 query text plus a reference SQL/Python code footer.
 
 ## v5 Runtime Prompt Parts
 
@@ -43,3 +44,14 @@ When the manifest enables v5.1 query engineering, the runner builds a five-part 
 5. `footer_focus`: target model footer focus, rendered after the target-model addendum.
 
 Current v5.1 registry id: `photosynthesis_snowflake_v5_1_task_specific_prompts`
+
+## v6 Code-Footer Control
+
+- `runs/v6/benchmark_cases.jsonl`: original v2 prompt text with only the code-footer appended.
+- `runs/v6/reference_solutions.jsonl`: reference SQL for passes 1-3 and Python/pandas for passes 4-5.
+- `runs/v6/prompt_preview.jsonl`: audit preview of the final case prompt field.
+
+v6 is an oracle-code control. Reference solution code is present in each prompt,
+so v6 scores measure code-following and JSON output compliance rather than
+independent data reasoning. Do not compare v6 scores directly with v2-v5.1
+benchmark scores.
