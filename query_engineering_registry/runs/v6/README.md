@@ -18,6 +18,8 @@ Footer policy:
 - passes 4-5 use Python/pandas reference code
 - no gold-answer rows are pasted directly into the footer
 - every reference solution is validated against `gold_answers.jsonl`
+- v6 suppresses the runner-added `Part 3 - Query-specific context` title and
+  benchmark/case/pass/difficulty/language metadata in the model prompt
 
 Generated files:
 

@@ -116,5 +116,10 @@
     "reference_solution_file": "query_engineering_registry/runs/v6/reference_solutions.jsonl",
     "footer_policy": "append only `Produce the output using the following code:` plus fenced SQL for passes 1-3 or fenced Python for passes 4-5",
     "comparability": "oracle-code control; not comparable to non-oracle benchmark runs"
+  },
+  "prompt_rendering": {
+    "include_query_context_title": false,
+    "include_query_metadata": false,
+    "reason": "v6 prompts keep original v2 query text plus code footer; runner-added Part 3 title and case metadata are suppressed."
   }
 }

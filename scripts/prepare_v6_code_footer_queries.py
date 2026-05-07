@@ -1286,6 +1286,11 @@ def build_manifest() -> dict[str, Any]:
     }
     manifest["standard_instructions_file"] = "standard_instructions.json"
     manifest["default_repeat_group_id"] = "default_repeatability_v6_code_footer"
+    manifest["prompt_rendering"] = {
+        "include_query_context_title": False,
+        "include_query_metadata": False,
+        "reason": "v6 prompts keep original v2 query text plus code footer; runner-added Part 3 title and case metadata are suppressed.",
+    }
     manifest["query_engineering"] = {
         "enabled": False,
         "registry_id": "photosynthesis_snowflake_v6_code_footer",
@@ -1366,6 +1371,8 @@ Footer policy:
 - passes 4-5 use Python/pandas reference code
 - no gold-answer rows are pasted directly into the footer
 - every reference solution is validated against `gold_answers.jsonl`
+- v6 suppresses the runner-added `Part 3 - Query-specific context` title and
+  benchmark/case/pass/difficulty/language metadata in the model prompt
 
 Generated files:
 

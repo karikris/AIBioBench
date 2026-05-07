@@ -885,11 +885,16 @@ def build_case_prompt_parts(
     model: str,
     model_entry: Optional[dict] = None,
     model_guidance: Optional[dict] = None,
+    prompt_rendering: Optional[dict] = None,
 ) -> List[dict]:
     if model_guidance and model_guidance.get("_registry_format") == V51_MARKDOWN_REGISTRY_FORMAT:
         if not model_entry:
             raise ValueError(f"Missing v5.1 model agenda for model `{model}`")
         return build_v51_markdown_prompt_parts(case, dataset, model_entry, model_guidance)
+
+    prompt_rendering = prompt_rendering or {}
+    include_query_metadata = bool(prompt_rendering.get("include_query_metadata", True))
+    query_context_title = "Part 3 - Query-specific context" if prompt_rendering.get("include_query_context_title", True) else ""
 
     inst = instruction_lookup[case["standard_instructions_id"]]["text"].strip()
     table_blocks = []
@@ -908,13 +913,18 @@ def build_case_prompt_parts(
         "Preserve exact column order and row order requested by the task.\n"
         "Do not include markdown. Do not include commentary."
     )
-    query_base = (
+    query_metadata = (
         f"Benchmark ID: {case['benchmark_id']}\n"
         f"Case ID: {case['case_id']}\n"
         f"Pass: {case['pass']}\n"
         f"Difficulty: {case['difficulty']}\n"
         f"Language: {case['language']}\n\n"
-        f"Schema shape:\n{dataset['schema_text']}\n\n"
+        if include_query_metadata
+        else ""
+    )
+    query_base = (
+        query_metadata
+        + f"Schema shape:\n{dataset['schema_text']}\n\n"
         "Shared dataset tables:\n\n"
         + "\n\n".join(table_blocks)
         + "\n\n"
@@ -928,7 +938,7 @@ def build_case_prompt_parts(
     return [
         make_prompt_part("standard_base_instructions", "Part 1 - Standard base instructions", standard_base),
         make_prompt_part("standard_model_instruction", "Part 2 - Standard model-specific instruction", model_standard_instruction(model_entry, model)),
-        make_prompt_part("query_base_context", "Part 3 - Query-specific context", query_base),
+        make_prompt_part("query_base_context", query_context_title, query_base),
         make_prompt_part("query_model_guidance", f"Part 4 - {guidance_heading}", guidance_text),
         make_prompt_part("query_model_footer", "Part 5 - Model-specific query footer", footer_text),
     ]
@@ -942,8 +952,11 @@ def build_case_prompt(
     model: str,
     model_entry: Optional[dict] = None,
     model_guidance: Optional[dict] = None,
+    prompt_rendering: Optional[dict] = None,
 ) -> str:
-    return render_prompt_parts(build_case_prompt_parts(case, dataset, instruction_lookup, answer_columns, model, model_entry, model_guidance))
+    return render_prompt_parts(
+        build_case_prompt_parts(case, dataset, instruction_lookup, answer_columns, model, model_entry, model_guidance, prompt_rendering)
+    )
 
 
 def validate_query_engineering_registry_for_run(
@@ -1374,7 +1387,16 @@ def run_case(
     answer_columns = gold["columns"]
     model_entry = model_registry_entry(query_engineering_registry, model)
     guidance = model_guidance_entry(query_engineering_registry, model, case_id)
-    prompt_parts = build_case_prompt_parts(case, dataset, instruction_lookup, answer_columns, model, model_entry, guidance)
+    prompt_parts = build_case_prompt_parts(
+        case,
+        dataset,
+        instruction_lookup,
+        answer_columns,
+        model,
+        model_entry,
+        guidance,
+        manifest.get("prompt_rendering", {}),
+    )
     active_prompt_parts = [part for part in prompt_parts if str(part.get("text", "")).strip()]
     prompt = render_prompt_parts(active_prompt_parts)
 
@@ -2263,7 +2285,16 @@ def main() -> None:
                 entry = model_registry_entry(query_engineering_registry, model)
                 guidance = model_guidance_entry(query_engineering_registry, model, case["case_id"])
                 answer_columns = gold_lookup[case["case_id"]]["columns"]
-                parts = build_case_prompt_parts(case, dataset, instruction_lookup, answer_columns, model, entry, guidance)
+                parts = build_case_prompt_parts(
+                    case,
+                    dataset,
+                    instruction_lookup,
+                    answer_columns,
+                    model,
+                    entry,
+                    guidance,
+                    manifest.get("prompt_rendering", {}),
+                )
                 active_parts = [part for part in parts if str(part.get("text", "")).strip()]
                 suffix += f" prompt_parts_sample={len(active_parts)}"
             log(f"DRY RUN case={case['case_id']} pass={case['pass']} lang={case['language']} difficulty={case['difficulty']}{suffix}")
