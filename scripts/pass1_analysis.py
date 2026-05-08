@@ -14,6 +14,8 @@ os.environ.setdefault("MPLCONFIGDIR", "/tmp/matplotlib")
 import matplotlib.pyplot as plt
 from matplotlib.colors import LinearSegmentedColormap, ListedColormap
 
+import analysis_metadata
+
 
 PAGE_BG = "#102A43"
 PANEL_BG = "#173B59"
@@ -179,22 +181,11 @@ def classify_failure(row: dict) -> str:
     return "same_count_wrong_values"
 
 
-def load_metadata(repo_root: Path):
-    case_meta = {}
-    with (repo_root / "benchmark_cases.jsonl").open(encoding="utf-8") as f:
-        for line in f:
-            item = json.loads(line)
-            if item["case_id"].startswith("pass1."):
-                case_meta[item["case_id"]] = item
-
-    gold = {}
-    with (repo_root / "gold_answers.jsonl").open(encoding="utf-8") as f:
-        for line in f:
-            item = json.loads(line)
-            if item["case_id"].startswith("pass1."):
-                gold[item["case_id"]] = item
-
-    return case_meta, gold
+def load_metadata(results_dir: Path, repo_root: Path):
+    return (
+        analysis_metadata.load_case_meta(results_dir, repo_root, {1}),
+        analysis_metadata.load_gold_answers(results_dir, repo_root, {1}),
+    )
 
 
 def load_rows(results_dir: Path) -> list[dict]:
@@ -1061,14 +1052,11 @@ def main() -> int:
         return 1
 
     repo_root = results_dir.parent.parent
-    if not (repo_root / "benchmark_cases.jsonl").exists():
-        print(f"missing benchmark_cases.jsonl in repo root inferred from {results_dir}", file=sys.stderr)
-        return 1
 
     out_dir = results_dir / "pass1_analysis"
     out_dir.mkdir(exist_ok=True)
 
-    case_meta, _gold = load_metadata(repo_root)
+    case_meta, _gold = load_metadata(results_dir, repo_root)
     rows = load_rows(results_dir)
     model_summary, case_summary, model_query_rows = build_summaries(rows, case_meta)
     family_scores = compute_family_scores(model_query_rows, case_meta)

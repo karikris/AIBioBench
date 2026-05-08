@@ -14,6 +14,7 @@ warnings.filterwarnings("ignore", message="Unable to import Axes3D.*")
 import matplotlib.pyplot as plt
 from matplotlib.colors import LinearSegmentedColormap
 
+import analysis_metadata
 import pass4_analysis as base
 
 
@@ -57,14 +58,8 @@ def query_label(case_id: str) -> str:
     return f"P{pass_no} Q{query_no}"
 
 
-def load_case_meta(repo_root: Path) -> dict:
-    out = {}
-    with (repo_root / "benchmark_cases.jsonl").open(encoding="utf-8") as f:
-        for line in f:
-            row = json.loads(line)
-            if row["pass"] in {1, 2, 3}:
-                out[row["case_id"]] = row
-    return out
+def load_case_meta(results_dir: Path, repo_root: Path) -> dict:
+    return analysis_metadata.load_case_meta(results_dir, repo_root, {1, 2, 3})
 
 
 def load_rows(results_dir: Path) -> list[dict]:
@@ -595,7 +590,7 @@ def main() -> int:
     out_dir = results_dir / "pass123_overall_analysis"
     out_dir.mkdir(exist_ok=True)
 
-    case_meta = load_case_meta(repo_root)
+    case_meta = load_case_meta(results_dir, repo_root)
     rows = load_rows(results_dir)
     pass_summary, model_summary, query_summary, model_pass_rows = build_summaries(rows, case_meta)
     query_failures = read_pass_failure_points(results_dir)

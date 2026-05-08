@@ -15,6 +15,8 @@ import pass4_analysis as base
 import matplotlib.pyplot as plt
 from matplotlib.colors import LinearSegmentedColormap
 
+import analysis_metadata
+
 
 QUERY_LABELS = {
     "pass5.query1": "Q1\nsample\nfeatures",
@@ -151,20 +153,11 @@ def pair_keys_in_order(rows, first=0, second=1):
     return [(row[first], row[second]) for row in rows if isinstance(row, list) and len(row) > max(first, second)]
 
 
-def load_metadata(repo_root: Path):
-    case_meta = {}
-    with (repo_root / "benchmark_cases.jsonl").open(encoding="utf-8") as f:
-        for line in f:
-            item = json.loads(line)
-            if item["case_id"].startswith("pass5."):
-                case_meta[item["case_id"]] = item
-    gold = {}
-    with (repo_root / "gold_answers.jsonl").open(encoding="utf-8") as f:
-        for line in f:
-            item = json.loads(line)
-            if item["case_id"].startswith("pass5."):
-                gold[item["case_id"]] = item
-    return case_meta, gold
+def load_metadata(results_dir: Path, repo_root: Path):
+    return (
+        analysis_metadata.load_case_meta(results_dir, repo_root, {5}),
+        analysis_metadata.load_gold_answers(results_dir, repo_root, {5}),
+    )
 
 
 def load_rows(results_dir: Path) -> list[dict]:
@@ -967,7 +960,7 @@ def main() -> int:
     out_dir = results_dir / "pass5_analysis"
     out_dir.mkdir(exist_ok=True)
 
-    case_meta, _gold = load_metadata(repo_root)
+    case_meta, _gold = load_metadata(results_dir, repo_root)
     rows = load_rows(results_dir)
     if not rows:
         print("no pass-5 rows found", file=sys.stderr)

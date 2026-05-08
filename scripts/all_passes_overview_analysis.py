@@ -14,6 +14,7 @@ warnings.filterwarnings("ignore", message="Unable to import Axes3D.*")
 import matplotlib.pyplot as plt
 from matplotlib.colors import LinearSegmentedColormap
 
+import analysis_metadata
 import pass4_analysis as base
 
 
@@ -64,13 +65,8 @@ def run_failure_family(row: dict, case_meta: dict) -> str:
     return meta.get("metadata", {}).get("failure_family_primary", "")
 
 
-def load_case_meta(repo_root: Path) -> dict:
-    out = {}
-    with (repo_root / "benchmark_cases.jsonl").open(encoding="utf-8") as f:
-        for line in f:
-            row = json.loads(line)
-            out[row["case_id"]] = row
-    return out
+def load_case_meta(results_dir: Path, repo_root: Path) -> dict:
+    return analysis_metadata.load_case_meta(results_dir, repo_root)
 
 
 def load_run_meta(results_dir: Path) -> dict:
@@ -731,7 +727,7 @@ def main() -> int:
     out_dir.mkdir(exist_ok=True)
 
     run_meta = load_run_meta(results_dir)
-    case_meta = load_case_meta(repo_root)
+    case_meta = load_case_meta(results_dir, repo_root)
     rows = load_rows(results_dir)
     pass_summary, model_summary, query_summary, family_summary, model_pass_rows = build_summaries(rows, case_meta)
     query_failures = read_pass_failure_points(results_dir)

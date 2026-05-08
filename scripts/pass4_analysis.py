@@ -16,6 +16,8 @@ warnings.filterwarnings("ignore", message="Unable to import Axes3D.*")
 import matplotlib.pyplot as plt
 from matplotlib.colors import LinearSegmentedColormap
 
+import analysis_metadata
+
 
 PAGE_BG = "#102A43"
 PANEL_BG = "#173B59"
@@ -212,20 +214,11 @@ def dominant_non_exact_mode(modes: Counter) -> str:
     return non_exact.most_common(1)[0][0] if non_exact else "none"
 
 
-def load_metadata(repo_root: Path):
-    case_meta = {}
-    with (repo_root / "benchmark_cases.jsonl").open(encoding="utf-8") as f:
-        for line in f:
-            item = json.loads(line)
-            if item["case_id"].startswith("pass4."):
-                case_meta[item["case_id"]] = item
-    gold = {}
-    with (repo_root / "gold_answers.jsonl").open(encoding="utf-8") as f:
-        for line in f:
-            item = json.loads(line)
-            if item["case_id"].startswith("pass4."):
-                gold[item["case_id"]] = item
-    return case_meta, gold
+def load_metadata(results_dir: Path, repo_root: Path):
+    return (
+        analysis_metadata.load_case_meta(results_dir, repo_root, {4}),
+        analysis_metadata.load_gold_answers(results_dir, repo_root, {4}),
+    )
 
 
 def load_rows(results_dir: Path) -> list[dict]:
@@ -941,13 +934,10 @@ def main() -> int:
         print(f"missing detailed_results.csv in {results_dir}", file=sys.stderr)
         return 1
     repo_root = results_dir.parent.parent
-    if not (repo_root / "benchmark_cases.jsonl").exists():
-        print(f"missing benchmark_cases.jsonl in repo root inferred from {results_dir}", file=sys.stderr)
-        return 1
     out_dir = results_dir / "pass4_analysis"
     out_dir.mkdir(exist_ok=True)
 
-    case_meta, _gold = load_metadata(repo_root)
+    case_meta, _gold = load_metadata(results_dir, repo_root)
     rows = load_rows(results_dir)
     model_summary, case_summary, model_query_rows = build_summaries(rows, case_meta)
     family_scores = compute_family_scores(model_query_rows, case_meta)
