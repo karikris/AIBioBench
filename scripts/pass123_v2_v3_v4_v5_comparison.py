@@ -20,11 +20,13 @@ from matplotlib.colors import LinearSegmentedColormap
 import pass4_analysis as base
 
 
-RUNS = ("v2", "v3", "v4", "v5")
-RUN_PAIRS = (("v3", "v2"), ("v4", "v3"), ("v5", "v4"), ("v5", "v2"))
+RUNS = ("v2", "v3", "v4", "v5", "v6")
+RUN_PAIRS = tuple(zip(RUNS[1:], RUNS[:-1])) + ((RUNS[-1], RUNS[0]),)
 EXPECTED_REPEATS = 3
 EXPECTED_QUERIES_PER_PASS = 10
 EXPECTED_ATTEMPTS_PER_MODEL_PASS = EXPECTED_REPEATS * EXPECTED_QUERIES_PER_PASS
+RUN_RANGE_LABEL = f"{RUNS[0]}-{RUNS[-1]}"
+RUN_JOINED_LABEL = "_".join(RUNS)
 PASSES = ("1", "2", "3")
 PASS_LABELS = {pass_no: f"Pass {pass_no}" for pass_no in PASSES}
 EXPECTED_QUERY_RUN_CELLS = 0
@@ -42,8 +44,19 @@ RUN_COLORS = {
     "v3": base.BLUE,
     "v4": base.BLUE_LIGHT,
     "v5": base.BLUE_PALE,
+    "v6": base.FAIL_LIGHT,
 }
-RUN_MARKERS = {"v2": "o", "v3": "^", "v4": "s", "v5": "D"}
+RUN_MARKERS = {"v2": "o", "v3": "^", "v4": "s", "v5": "D", "v6": "P"}
+RUN_DIR_NAMES = {
+    "v6": "photosynthesis_snowflake_v6_code_footer",
+}
+RESULT_FILE_CANDIDATES = {
+    "v2": ("detailed_results_v2.csv", "detailed_results.csv"),
+    "v3": ("detailed_results_v3.csv", "detailed_results.csv"),
+    "v4": ("detailed_results_v4.csv", "detailed_results.csv"),
+    "v5": ("detailed_results_v5.csv", "detailed_results.csv"),
+    "v6": ("detailed_results_v6_code_footer.csv", "detailed_results.csv"),
+}
 PASS_COLORS = {
     "1": base.BLUE_PALE,
     "2": base.BLUE_LIGHT,
@@ -111,15 +124,15 @@ def configure_scope(scope: str = "pass123") -> None:
         SCOPE_TITLE = "Pass 1+2+3+4+5"
         SCOPE_COMPACT = "pass12345"
         SCOPE_DESCRIPTION = "passes 1, 2, 3, 4, and 5 only; 50 tasks per model per run with 3 repeats per task"
-        DEFAULT_PREFIX = "pass12345_v2_v3_v4_v5"
-        DEFAULT_OUTPUT_DIR_NAME = "pass12345_v2_v3_v4_v5_comparison_analysis"
+        DEFAULT_PREFIX = f"pass12345_{RUN_JOINED_LABEL}"
+        DEFAULT_OUTPUT_DIR_NAME = f"pass12345_{RUN_JOINED_LABEL}_comparison_analysis"
     elif scope in {"pass123", "1-3", "pass1-3"}:
         PASSES = ("1", "2", "3")
         SCOPE_TITLE = "Pass 1+2+3"
         SCOPE_COMPACT = "pass123"
         SCOPE_DESCRIPTION = "passes 1, 2, and 3 only; 30 SQL tasks per model per run with 3 repeats per task"
-        DEFAULT_PREFIX = "pass123_v2_v3_v4_v5"
-        DEFAULT_OUTPUT_DIR_NAME = "pass123_v2_v3_v4_v5_comparison_analysis"
+        DEFAULT_PREFIX = f"pass123_{RUN_JOINED_LABEL}"
+        DEFAULT_OUTPUT_DIR_NAME = f"pass123_{RUN_JOINED_LABEL}_comparison_analysis"
     else:
         raise ValueError(f"unknown comparison scope: {scope}")
 
@@ -179,10 +192,17 @@ def load_case_meta(repo_root: Path) -> dict:
     return out
 
 
+def resolve_results_file(results_dir: Path, run_label: str) -> Path:
+    for candidate in RESULT_FILE_CANDIDATES.get(run_label, ("detailed_results.csv",)):
+        candidate_path = results_dir / candidate
+        if candidate_path.exists():
+            return candidate_path
+    tried = ", ".join(RESULT_FILE_CANDIDATES.get(run_label, ("detailed_results.csv",)))
+    raise FileNotFoundError(f"{results_dir}: none of {tried}")
+
+
 def load_rows(results_dir: Path, run_label: str, case_meta: dict) -> list[dict]:
-    path = results_dir / "detailed_results.csv"
-    if not path.exists():
-        raise FileNotFoundError(path)
+    path = resolve_results_file(results_dir, run_label)
 
     rows = []
     with path.open(newline="", encoding="utf-8") as f:
@@ -536,7 +556,7 @@ def render_page1(data: dict):
     fig = plt.figure(figsize=(23, 16), facecolor=base.PAGE_BG, constrained_layout=True)
     gs = fig.add_gridspec(3, 4, height_ratios=[1.0, 1.05, 1.0])
     fig.suptitle(
-        f"{SCOPE_TITLE}, Runs v2-v5: Who is Good, Stable, and Improving?",
+        f"{SCOPE_TITLE}, Runs {RUN_RANGE_LABEL}: Who is Good, Stable, and Improving?",
         fontsize=23,
         fontweight="bold",
         color=base.TEXT,
@@ -563,7 +583,7 @@ def render_page1(data: dict):
     ax1.set_xticks(range(len(col_labels)), col_labels)
     ax1.set_yticks(range(len(model_order)), model_labels)
     ax1.set_title(
-        f"1. Benchmark Coverage Audit\n{len(PASSES)} pass blocks; within each block columns are v2-v5; text = exact / observed",
+        f"1. Benchmark Coverage Audit\n{len(PASSES)} pass blocks; within each block columns are {RUN_RANGE_LABEL}; text = exact / observed",
         fontweight="bold",
     )
     for i, row in enumerate(coverage_text):
@@ -616,10 +636,11 @@ def render_page1(data: dict):
     scores = [r["mean_score"] for r in model_rows]
     med_exact = median(exact_rates)
     med_score = median(scores)
-    v5_rank_order = sorted(model_order, key=lambda m: (-run_lookup[(m, "v5")]["mean_score"], base.canonical_model_name(m)))
+    latest_run = RUNS[-1]
+    latest_rank_order = sorted(model_order, key=lambda m: (-run_lookup[(m, latest_run)]["mean_score"], base.canonical_model_name(m)))
     rank_color_lookup = {
         model: [base.BLUE_PALE, base.BLUE_LIGHT, base.BLUE_MID, base.BLUE, base.FAIL_LIGHT, base.BLUE_DARK][idx]
-        for idx, model in enumerate(v5_rank_order)
+        for idx, model in enumerate(latest_rank_order)
     }
     for row in model_rows:
         size = 100 + row["stable_exact_cells"] * 8
@@ -663,7 +684,7 @@ def render_page1(data: dict):
     ax5.set_xticks(range(len(PASSES)), [PASS_LABELS[p] for p in PASSES])
     ax5.set_yticks(range(len(model_order)), model_labels)
     ax5.set_title(
-        f"5. Model x Pass Degradation Heatmap\nmean across v2-v5; text = exact attempts out of {per_pass_expected_all_runs}",
+        f"5. Model x Pass Degradation Heatmap\nmean across {RUN_RANGE_LABEL}; text = exact attempts out of {per_pass_expected_all_runs}",
         fontweight="bold",
     )
     for i in range(len(model_order)):
@@ -694,7 +715,7 @@ def render_page1(data: dict):
     ax6.set_yticks(range(len(model_order)), model_labels)
     ax6.invert_yaxis()
     ax6.set_xlim(0, EXPECTED_QUERY_RUN_CELLS)
-    ax6.set_xlabel("Model-query-run cells out of 120")
+    ax6.set_xlabel(f"Model-query-run cells out of {EXPECTED_QUERY_RUN_CELLS}")
     ax6.set_title("6. Repeatability Fingerprint\nsame query repeated 3 times in each run", fontweight="bold")
     ax6.grid(axis="x", color=base.GRID, linewidth=0.8, alpha=0.75)
     set_legend_text_color(ax6.legend(frameon=False, loc="lower right", fontsize=8))
@@ -730,7 +751,7 @@ def render_page2(data: dict):
     fig = plt.figure(figsize=(page_width, page_height), facecolor=base.PAGE_BG, constrained_layout=True)
     gs = fig.add_gridspec(4, 4, height_ratios=[1.0, 1.2, 1.05, 1.05])
     fig.suptitle(
-        f"{SCOPE_TITLE}, Runs v2-v5: Where and Why Do Models Fail?",
+        f"{SCOPE_TITLE}, Runs {RUN_RANGE_LABEL}: Where and Why Do Models Fail?",
         fontsize=23,
         fontweight="bold",
         color=base.TEXT,
@@ -742,7 +763,7 @@ def render_page2(data: dict):
     ax7.set_xticks(range(len(cases)), [query_label(c) for c in cases], rotation=55, ha="right")
     ax7.set_yticks(range(len(model_order)), model_labels)
     ax7.set_title(
-        f"7. Full {TOTAL_QUERY_COUNT}-Query Model x Query Heatmap\ncell colour = macro weighted score across v2-v5; text = exact attempts out of 12",
+        f"7. Full {TOTAL_QUERY_COUNT}-Query Model x Query Heatmap\ncell colour = macro weighted score across {RUN_RANGE_LABEL}; text = exact attempts out of {len(RUNS) * EXPECTED_REPEATS}",
         fontweight="bold",
     )
     for i, model in enumerate(model_order):
@@ -815,7 +836,7 @@ def render_page2(data: dict):
     ax10.set_xticks(range(len(PASSES)), [PASS_LABELS[p] for p in PASSES])
     ax10.set_ylim(0, 1)
     ax10.set_ylabel("Share of attempts")
-    ax10.set_title("10. Failure Mode Composition by Pass\nnormalised across v2-v5 and all models", fontweight="bold")
+    ax10.set_title(f"10. Failure Mode Composition by Pass\nnormalised across {RUN_RANGE_LABEL} and all models", fontweight="bold")
     ax10.grid(axis="y", color=base.GRID, linewidth=0.8, alpha=0.75)
     set_legend_text_color(ax10.legend(frameon=False, loc="center left", bbox_to_anchor=(1.01, 0.5), fontsize=7))
     style_axis(ax10)
@@ -870,7 +891,8 @@ def render_page2(data: dict):
     for i in range(len(model_order)):
         for j, val in enumerate(delta_values[i]):
             ax12.text(j, i, f"{delta_exact_text[i][j]:+d}", ha="center", va="center", color=base.PAGE_BG if val > max_abs * 0.45 else base.TEXT, fontsize=7)
-    for boundary in (3.5, 7.5, 11.5):
+    columns_per_pair = len(PASSES) + 1
+    for boundary in (idx * columns_per_pair - 0.5 for idx in range(1, len(RUN_PAIRS))):
         ax12.axvline(boundary, color=base.GRID, linewidth=1.4)
     make_colorbar(fig, im, ax12, "score delta")
     style_axis(ax12)
@@ -886,16 +908,30 @@ def write_report(path: Path, data: dict, dirs_by_run: dict[str, Path]) -> None:
     total_exact = sum(r["exact_attempts"] for r in model_rows)
     best = model_rows[0]
     worst = model_rows[-1]
+    run_list = ", ".join(RUNS[:-1]) + f", and {RUNS[-1]}"
+    delta_list = ", ".join(f"{end}-{start}" for end, start in RUN_PAIRS)
+    model_summary_columns = [
+        "Model",
+        "Macro weighted score",
+        "Exact attempts",
+        "Exact rate",
+        "Stable exact cells",
+        "Unstable exact cells",
+        "Query coverage",
+        *[f"{run} score" for run in RUNS],
+    ]
+    model_summary_alignment = ["---", "---:", "---:", "---:", "---:", "---:", "---:", *(["---:"] * len(RUNS))]
     lines = [
-        f"# {SCOPE_TITLE} v2-v5 Comparison",
+        f"# {SCOPE_TITLE} {RUN_RANGE_LABEL} Comparison",
         "",
-        f"Scope: runs v2, v3, v4, and v5; {SCOPE_DESCRIPTION}.",
+        f"Scope: runs {run_list}; {SCOPE_DESCRIPTION}.",
         "",
         "## Sources",
         "",
     ]
     for run in RUNS:
-        lines.append(f"- {run}: `{dirs_by_run[run]}`")
+        source_file = resolve_results_file(dirs_by_run[run], run)
+        lines.append(f"- {run}: `{dirs_by_run[run]}` (`{source_file.name}`)")
 
     lines.extend(
         [
@@ -904,7 +940,7 @@ def write_report(path: Path, data: dict, dirs_by_run: dict[str, Path]) -> None:
             "",
             f"- Coverage is balanced for this comparison: {len(model_rows)} models, {len(RUNS)} runs, {len(PASSES)} passes, {total_attempts} observed attempts.",
             f"- Exactness remains strict and sparse: {total_exact}/{total_attempts} exact attempts overall.",
-            f"- Top macro weighted model across v2-v5 is {best['display_model']} at {best['mean_score']:.3f}; lowest is {worst['display_model']} at {worst['mean_score']:.3f}.",
+            f"- Top macro weighted model across {RUN_RANGE_LABEL} is {best['display_model']} at {best['mean_score']:.3f}; lowest is {worst['display_model']} at {worst['mean_score']:.3f}.",
             f"- Hardest aggregate query is {query_sorted[0]['query']} ({query_sorted[0]['family']}) with weighted score {query_sorted[0]['mean_score']:.3f} and exact rate {query_sorted[0]['exact_attempt_rate']:.1%}.",
             "",
             "## Hidden Factors Checked",
@@ -914,20 +950,21 @@ def write_report(path: Path, data: dict, dirs_by_run: dict[str, Path]) -> None:
             "- Exactness is treated as a conversion outcome; high weighted score with low exact rate is interpreted as a near-miss class, not as a total capability failure.",
             "- Repeatability is counted at model-query-run level because each query has three repeats. A 3/3 exact cell is different from a 1/3 or 2/3 cell.",
             "- Failure-family results are exposure-normalised by mean score within the family, not raw counts, so common families do not dominate just because they appear more often.",
-            "- Run deltas are separated into v3-v2, v4-v3, v5-v4, and v5-v2 so prompt-engineering effects are not collapsed into one average.",
+            f"- Run deltas are separated into {delta_list} so prompt-engineering effects are not collapsed into one average.",
             "",
             "## Model Summary",
             "",
-            "| Model | Macro weighted score | Exact attempts | Exact rate | Stable exact cells | Unstable exact cells | Query coverage | v2 score | v3 score | v4 score | v5 score |",
-            "|---|---:|---:|---:|---:|---:|---:|---:|---:|---:|---:|",
+            "| " + " | ".join(model_summary_columns) + " |",
+            "| " + " | ".join(model_summary_alignment) + " |",
         ]
     )
     for row in model_rows:
         run_scores = [model_run_lookup[(row["model"], run)]["mean_score"] for run in RUNS]
+        run_score_text = " | ".join(f"{score:.3f}" for score in run_scores)
         lines.append(
             f"| {row['display_model']} | {row['mean_score']:.3f} | {int(row['exact_attempts'])}/{int(row['attempts'])} | {row['exact_attempt_rate']:.1%} | "
             f"{int(row['stable_exact_cells'])} | {int(row['unstable_exact_cells'])} | {int(row['query_coverage_any_exact'])}/{TOTAL_QUERY_COUNT} | "
-            f"{run_scores[0]:.3f} | {run_scores[1]:.3f} | {run_scores[2]:.3f} | {run_scores[3]:.3f} |"
+            f"{run_score_text} |"
         )
 
     lines.extend(
@@ -1003,7 +1040,7 @@ def run_comparison(dirs_by_run: dict[str, Path], out_dir: Path, prefix: str = DE
 
 
 def default_dirs(repo_root: Path) -> dict[str, Path]:
-    return {run: repo_root / "results" / f"photosynthesis_snowflake_{run}" for run in RUNS}
+    return {run: repo_root / "results" / RUN_DIR_NAMES.get(run, f"photosynthesis_snowflake_{run}") for run in RUNS}
 
 
 def main() -> int:
@@ -1025,13 +1062,13 @@ def main() -> int:
 
     if len(args) == 0:
         dirs = default_dirs(repo_root)
-        out_dir = dirs["v5"] / DEFAULT_OUTPUT_DIR_NAME
-    elif len(args) == 5:
-        dirs = {run: Path(arg).resolve() for run, arg in zip(RUNS, args[:4])}
-        out_dir = Path(args[4]).resolve()
+        out_dir = dirs[RUNS[-1]] / DEFAULT_OUTPUT_DIR_NAME
+    elif len(args) == len(RUNS) + 1:
+        dirs = {run: Path(arg).resolve() for run, arg in zip(RUNS, args[: len(RUNS)])}
+        out_dir = Path(args[len(RUNS)]).resolve()
     else:
         print(
-            "usage: pass123_v2_v3_v4_v5_comparison.py [--all-passes] [<v2_results_dir> <v3_results_dir> <v4_results_dir> <v5_results_dir> <out_dir>]",
+            "usage: pass123_v2_v3_v4_v5_comparison.py [--all-passes] [<v2_results_dir> <v3_results_dir> <v4_results_dir> <v5_results_dir> <v6_results_dir> <out_dir>]",
             file=sys.stderr,
         )
         return 2
